@@ -1,0 +1,7 @@
+{
+  "name": "ship-tracker-tracker",
+  "private": true,
+  "type": "module",
+  "description": "定盤海運案 船班追蹤：官網即時船期＋即時 AIS 船位＋颱風",
+  "dependencies": { "unpdf": "0.12.1" }
+}

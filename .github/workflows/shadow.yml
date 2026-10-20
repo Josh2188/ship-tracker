@@ -1,0 +1,42 @@
+# 影子模擬備份：每 8 小時重抓一次颱風預報、陽明船期、AIS 船位，存到 public/shadow/。
+# 時間是 UTC：05:49、13:49、21:49 UTC ＝ 台灣時間 13:49、21:49、05:49。GitHub 的排程常會晚幾分鐘到幾十分鐘。
+# 也可以在 GitHub 的 Actions 頁籤按「Run workflow」手動跑一次。
+name: shadow-snapshot
+
+on:
+  schedule:
+    - cron: "49 5,13,21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shadow-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --omit=dev
+      - name: Take snapshot
+        run: node scripts/snapshot.mjs
+      - name: Commit snapshot
+        run: |
+          git config user.name "${GIT_NAME}"
+          git config user.email "${GIT_EMAIL}"
+          git add public/shadow
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "shadow snapshot $(TZ=Asia/Taipei date '+%Y-%m-%d %H:%M') (Taipei)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1
+        env:
+          # Vercel（免費方案）只部署 repo 擁有者的 commit，所以用擁有者的 GitHub noreply 信箱。
+          GIT_NAME: ${{ github.repository_owner }}
+          GIT_EMAIL: ${{ github.repository_owner_id }}+${{ github.repository_owner }}@users.noreply.github.com
