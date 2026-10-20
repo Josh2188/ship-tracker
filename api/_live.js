@@ -137,11 +137,30 @@ async function evergreen(c, force) {
   };
 }
 
+// 陽明基隆靠泊表：「(預訂)抵港時間 | 船名 | 航次 | 船掛 | OP | (預訂)離港時間 | 碼頭」。欄位數或日期後的「(今日)」等標記不固定，
+// 所以以船名為錨點：船名前最近的日期時間＝到港，船名後第一個「三位數字＋英文字母」＝航次，之後第一個日期時間＝離港。
+export function parseYmkee(html, name) {
+  const txt = String(html).replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ");
+  const DT = /(\d{4})[-\/](\d\d)[-\/](\d\d) (\d\d:\d\d)/g;
+  const out = [];
+  let i = txt.indexOf(name);
+  while (i >= 0) {
+    const before = txt.slice(Math.max(0, i - 80), i), after = txt.slice(i + name.length, i + name.length + 220);
+    const bs = [...before.matchAll(DT)], as = [...after.matchAll(DT)];
+    const voy = after.match(/^\s*(?:\S+\s+){0,2}?(?:V\.?\s?)?(\d{3,4}[A-Z])\b/);
+    if (bs.length && as.length && voy) {
+      const b = bs[bs.length - 1], a = as[0];
+      const term = (after.slice(a.index + a[0].length).replace(/^\s*\([^)]*\)/, "").match(/^\s*([^\s\d][^\s]*)/) || [])[1] || "";
+      out.push({ voyage: voy[1], eta: `${b[1]}-${b[2]}-${b[3]} ${b[4]}`, etd: `${a[1]}-${a[2]}-${a[3]} ${a[4]}`, terminal: term });
+    }
+    i = txt.indexOf(name, i + name.length);
+  }
+  return { calls: out, snippet: (() => { const k = txt.indexOf(name); return k >= 0 ? txt.slice(Math.max(0, k - 40), k + 120) : txt.slice(0, 120); })() };
+}
+
 async function ymkee(c, force) {
   const html = await cached("ymkee", () => get(URLS.ymkee).then((r) => r.text()), force);
-  const txt = html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ");
-  const re = new RegExp(`(\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)(?: \\([^)]*\\))? ${c.name} (\\S+) \\S+ \\S+ (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)(?: \\([^)]*\\))? (\\S+)`, "g");
-  const calls = [...txt.matchAll(re)].map((m) => ({ voyage: m[2], eta: m[1], etd: m[3], terminal: m[4] }));
+  const { calls } = parseYmkee(html, c.name);
   const mine = calls.find((x) => x.voyage === c.voyage);
   const info = (f) => calls.map(f).join("；");
   if (!mine) throw new LiveError(
@@ -170,10 +189,9 @@ export function parseToyo(html) {
   };
 }
 async function ymjp(c, force) {
+  let keeSnippet = "";
   const kee = cached("ymkee", () => get(URLS.ymkee).then((r) => r.text()), force).then((html) => {
-    const txt = html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ");
-    const re = new RegExp(`(\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)(?: \\([^)]*\\))? ${c.name} (\\S+) \\S+ \\S+ (\\d{4}-\\d\\d-\\d\\d \\d\\d:\\d\\d)(?: \\([^)]*\\))? (\\S+)`, "g");
-    return [...txt.matchAll(re)].map((m) => ({ voyage: m[2], eta: m[1], etd: m[3], terminal: m[4] }));
+    const r = parseYmkee(html, c.name); keeSnippet = r.snippet; return r.calls;
   });
   const jp = Promise.all(c.jp.map((p) => cached(`toyo-${p.code}-${p.id}`, () => get(`${TOYO}?portcode=${p.code}&id=${p.id}`).then((r) => r.text()), force)
     .then((html) => ({ ...p, ...parseToyo(html) }), (e) => ({ ...p, error: String((e && e.message) || e) }))));
@@ -200,7 +218,7 @@ async function ymjp(c, force) {
     ...S("陽明日本代理（即時）", "Yang Ming 日本代理店（リアルタイム）", "Yang Ming Japan agent (live)"), srcUrl: kobe.srcUrl };
   if (!fields.twEta && !fields.kobeEtd) throw new LiveError("陽明基隆靠泊表、陽明日本代理都讀不到這班船", "Yang Ming 基隆着岸予定表・日本代理店のどちらにもこの便が見つかりません", "This sailing was not found on Yang Ming's Keelung berth list or Japan agent pages");
   fields.portCalls = portCalls;
-  fields.portErrors = ports.filter((p) => p.error).map((p) => `${p.port}: ${p.error}`).concat(keeErr ? [`基隆: ${keeErr}`] : (calls && !keeS ? [`基隆: 靠泊表沒有 ${c.voyage}`] : []));
+  fields.portErrors = ports.filter((p) => p.error).map((p) => `${p.port}: ${p.error}`).concat(keeErr ? [`基隆: ${keeErr}`] : (calls && !keeS ? [`基隆: 靠泊表沒有 ${c.voyage}（讀到 ${calls.map((x) => x.voyage).join("、") || "0 筆"}；${keeSnippet.slice(0, 140)}）`] : []));
   return fields;
 }
 
