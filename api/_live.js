@@ -177,7 +177,8 @@ async function ymjp(c, force) {
   });
   const jp = Promise.all(c.jp.map((p) => cached(`toyo-${p.code}-${p.id}`, () => get(`${TOYO}?portcode=${p.code}&id=${p.id}`).then((r) => r.text()), force)
     .then((html) => ({ ...p, ...parseToyo(html) }), (e) => ({ ...p, error: String((e && e.message) || e) }))));
-  const [calls, ports] = await Promise.all([kee.catch(() => null), jp]);
+  let keeErr = null;
+  const [calls, ports] = await Promise.all([kee.catch((e) => { keeErr = String((e && e.message) || e); return null; }), jp]);
   const portCalls = [], fields = {};
   const keeN = calls && calls.find((x) => x.voyage === c.north), keeS = calls && calls.find((x) => x.voyage === c.voyage);
   if (keeN) portCalls.push({ port: "基隆", voyage: c.north, arr: iso(keeN.eta, "+08:00"), dep: iso(keeN.etd, "+08:00"), terminal: keeN.terminal, src: "ymkee" });
@@ -199,7 +200,7 @@ async function ymjp(c, force) {
     ...S("陽明日本代理（即時）", "Yang Ming 日本代理店（リアルタイム）", "Yang Ming Japan agent (live)"), srcUrl: kobe.srcUrl };
   if (!fields.twEta && !fields.kobeEtd) throw new LiveError("陽明基隆靠泊表、陽明日本代理都讀不到這班船", "Yang Ming 基隆着岸予定表・日本代理店のどちらにもこの便が見つかりません", "This sailing was not found on Yang Ming's Keelung berth list or Japan agent pages");
   fields.portCalls = portCalls;
-  fields.portErrors = ports.filter((p) => p.error).map((p) => `${p.port}: ${p.error}`);
+  fields.portErrors = ports.filter((p) => p.error).map((p) => `${p.port}: ${p.error}`).concat(keeErr ? [`基隆: ${keeErr}`] : (calls && !keeS ? [`基隆: 靠泊表沒有 ${c.voyage}`] : []));
   return fields;
 }
 

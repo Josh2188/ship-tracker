@@ -61,3 +61,12 @@
 - `meta.typhoon.forecast`／`cwaTrack`：颱風預報點快照，只在即時抓不到時使用。
 
 改完後重新部署即可。訂艙、到港時間一律以船公司確認為準。
+
+## 影子模擬備份（每 8 小時）
+
+- `.github/workflows/shadow.yml`：GitHub Actions 每天 05:49、13:49、21:49 UTC（台灣時間 13:49、21:49、05:49）跑 `node scripts/snapshot.mjs`。GitHub 的排程常會晚幾分鐘到幾十分鐘。也可以在 repo 的 **Actions → shadow-snapshot → Run workflow** 手動跑。
+- `scripts/snapshot.mjs` 直接呼叫 `api/data.js`（和網站完全相同的程式，強制重抓），把颱風預報（氣象廳、氣象署）、陽明各港船期、AIS 船位存成 `public/shadow/snapshots/<台灣時間>.json`，並更新 `public/shadow/index.json`。存好後自動 commit。
+- 網站的 `shadow.html`（主頁地圖上方有連結）讀這些檔案：任選兩筆比較船期、颱風預報、模擬劇本，地圖疊兩版路徑，並畫出每次備份記下的颱風實際中心和 AIS 船位軌跡。
+- **Vercel 要連到這個 GitHub repo**（Project → Settings → Git → Connect Git Repository → `Josh2188/ship-tracker`），每次備份 commit 才會自動重新部署，新的一筆才會出現在網站上。備份 commit 用 repo 擁有者的 GitHub noreply 信箱，免費方案也能部署。
+- 第一筆 `20261020-1845` 是基準：10/20 18:45 人工查證兩次的資料（`node scripts/snapshot.mjs --baseline --at=... --note=...` 不連網、用 `_plan.js` 的快照值產生）。
+- 換下一個航次時，更新 `api/_live.js` 的 `LIVE_MAP["ym-inception"]`（陽明日本代理各港頁的 `portcode`、`id`）和 `api/_plan.js` 的 `portCalls`；不再需要備份時，到 Actions 把 workflow 停用（Disable workflow）。

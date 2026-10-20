@@ -218,6 +218,7 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
 .chart text{font-family:var(--f-body)}
 .offmap{margin-top:10px; font-size:14px; color:var(--ink-2)}
 /* typhoon vs ship simulation */
+.shadow-link{margin:-4px 0 14px; font-weight:600}
 .sim-grid{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:20px; align-items:start}
 .sim-grid > *{min-width:0}
 .sim-side{display:grid; gap:16px}
@@ -460,6 +461,7 @@ body{font-size:17px; line-height:1.65}
 
   <section class="sim" data-pane="main" aria-labelledby="mapH">
     <div class="sec-head"><h2 id="mapH"></h2><p id="mapSub"></p></div>
+    <p class="shadow-link"><a id="shadowLink" href="shadow.html"></a></p>
     <div class="sim-grid">
       <div class="sim-map">
         <div class="panel map-wrap" id="chartWrap"><svg class="chart" id="chart" viewBox="0 0 1000 1064" role="img"></svg></div>
@@ -1719,6 +1721,7 @@ body{font-size:17px; line-height:1.65}
     setText("mapH", Q("mapH")); setText("mapSub", Q("mapSub"));
     var pb = document.getElementById("playBtn"); if (pb){ pb.textContent = SIM.playing ? "❚❚ " + Q("pause") : "▶ " + Q("play"); pb.setAttribute("aria-pressed", SIM.playing ? "true" : "false"); }
     setText("nowBtn", Q("now"));
+    var sl2 = document.getElementById("shadowLink"); if (sl2){ sl2.textContent = { zh: "影子模擬紀錄：每 8 小時自動備份，可以比較颱風預報和船期怎麼變 →", ja: "シャドー・シミュレーション記録：8 時間ごとに自動保存、台風予報とスケジュールの変化を比較 →", en: "Shadow simulation archive: saved every 8 hours, compare how the forecast and schedule changed →" }[lang]; sl2.href = "shadow.html?lang=" + lang; }
     var sl = document.getElementById("tSlider"); if (sl) sl.setAttribute("aria-label", Q("mapH"));
     var lg = Q("legend");
     document.getElementById("mapLegend").innerHTML =

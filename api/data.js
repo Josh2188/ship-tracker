@@ -53,6 +53,7 @@ export function mergeVessel(v, L) {
   out.liveError_ja = L && L.error ? L.error_ja || tr(L.error, "ja") : null;
   out.liveError_en = L && L.error ? L.error_en || tr(L.error, "en") : null;
   out.liveAt = L && L.fetchedAt;
+  out.portErrors = (L && L.fields && L.fields.portErrors) || [];
   const snap = (k) => localize({ text: v[k] && v[k].text, src: v[k] && v[k].src, note: v[k] && v[k].note }, ["text", "src"]);
   for (const k of ["cyCut", "kobeEtd", "twEta"]) {
     const x = fAll[k];

@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<script>(function(){try{var d=document.createElement("div");d.style.cssText="display:none;background-color:canvas;color-scheme:light";document.documentElement.appendChild(d);var c=getComputedStyle(d).backgroundColor;d.parentNode.removeChild(d);if(c&&c!=="rgb(255, 255, 255)")document.documentElement.setAttribute("data-autodark","");}catch(e){}})();</script>
+<title>影子模擬紀錄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Shadow-simulation archive: every 8 h a copy of the typhoon forecasts, Yang Ming port calls and AIS is saved;
+   pick two copies and compare. Same tokens as the tracker page. */
+:root{
+  --paper:#EEF2F1; --panel:#FFFFFF; --panel-2:#F2F6F6; --ink:#0F2433; --ink-2:#3B5060; --ink-3:#5F7383; --rule:#C6D3D8;
+  --sea:#D7E6EB; --grid:#C3D5DC; --land:#E5DFC6; --land-edge:#B3AA86; --route:#7C95A4;
+  --signal:#F2B600; --ok:#2B7A4B; --ok-soft:#DDEFE3; --watch:#986100; --watch-soft:#F7EACD; --alert:#B5372B; --alert-soft:#F7DDD9; --backup:#2C67A0;
+  --focus:#1F6FB2;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-latin:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:var(--f-latin),"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  color-scheme:light dark;
+}
+:lang(ja){ --f-body:var(--f-latin),"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Meiryo",sans-serif; }
+@media (prefers-color-scheme: dark){ :root{
+  --paper:#0D1A22; --panel:#13232D; --panel-2:#192D39; --ink:#EDF3F5; --ink-2:#C0CDD4; --ink-3:#93A7B3; --rule:#2B4152;
+  --sea:#10283A; --grid:#1E3B4C; --land:#2F3527; --land-edge:#4E5640; --route:#7F99A8;
+  --signal:#F5C230; --ok:#69C590; --ok-soft:#163327; --watch:#E3AE4D; --watch-soft:#352A12; --alert:#F27464; --alert-soft:#3B1D19; --backup:#7EB0E0; --focus:#6CB4E4; color-scheme:dark; } }
+:root[data-autodark]{
+  --paper:#0D1A22; --panel:#13232D; --panel-2:#192D39; --ink:#EDF3F5; --ink-2:#C0CDD4; --ink-3:#93A7B3; --rule:#2B4152;
+  --sea:#10283A; --grid:#1E3B4C; --land:#2F3527; --land-edge:#4E5640; --route:#7F99A8;
+  --signal:#F5C230; --ok:#69C590; --ok-soft:#163327; --watch:#E3AE4D; --watch-soft:#352A12; --alert:#F27464; --alert-soft:#3B1D19; --backup:#7EB0E0; --focus:#6CB4E4; color-scheme:dark; }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+  padding:max(14px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(40px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+h1,h2,h3,h4,p,ul{margin:0}
+a{color:inherit; text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-radius:3px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1160px; margin:0 auto; display:grid; grid-template-columns:minmax(0,1fr); gap:30px}
+.wrap > *{min-width:0}
+.topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+.langs{display:inline-flex; border:1px solid var(--ink); border-radius:6px; overflow:hidden}
+.langs button{font:600 14px/1 var(--f-body); padding:10px 14px; min-height:40px; border:0; background:transparent; color:var(--ink); cursor:pointer}
+.langs button + button{border-left:1px solid var(--ink)}
+.langs button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.back{font-weight:600; font-size:15px}
+.mast h1{font-family:var(--f-display); font-size:clamp(30px, 6vw, 46px); line-height:1.1; letter-spacing:.005em}
+.mast p{color:var(--ink-2); margin-top:8px; max-width:80ch}
+.panel{background:var(--panel); border:1px solid var(--rule); border-radius:8px}
+.sec-head{display:flex; justify-content:space-between; align-items:baseline; gap:6px 20px; flex-wrap:wrap; margin-bottom:12px}
+.sec-head h2{font-size:22px}
+.sec-head p{color:var(--ink-2); font-size:14.5px; max-width:72ch}
+.btn{font:600 15px/1 var(--f-body); color:var(--paper); background:var(--ink); border:0; border-radius:6px; padding:11px 16px; min-height:42px; cursor:pointer}
+.btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--ink-3)}
+.pick{padding:16px 18px; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)) auto; gap:12px 18px; align-items:end}
+.pick label{display:grid; gap:6px; font-size:14px; font-weight:600; color:var(--ink-2)}
+.pick select{font:500 15px var(--f-body); padding:9px 10px; border-radius:6px; border:1.5px solid var(--ink-3); background:var(--panel); color:var(--ink); min-height:42px; width:100%}
+.pick .quick{display:flex; gap:8px; flex-wrap:wrap}
+.tag{display:inline-block; font-size:12px; font-weight:700; padding:1px 7px; border-radius:3px; margin-right:6px; vertical-align:2px}
+.tag.a{background:var(--panel-2); color:var(--ink-2); border:1px solid var(--ink-3)}
+.tag.b{background:var(--ink); color:var(--paper)}
+.tablewrap{padding:4px 16px 12px; overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:15px}
+th, td{text-align:left; padding:10px 8px; border-top:1px solid var(--rule); vertical-align:top}
+thead th{border-top:0; font-size:13px; color:var(--ink-3); font-weight:600; padding-top:12px}
+tbody th{font-weight:700}
+tbody th small, td small{display:block; font-weight:500; color:var(--ink-3); font-size:13px}
+td.chg{font-weight:600}
+.same{color:var(--ink-3); font-weight:500}
+.later{color:var(--alert)} .earlier{color:var(--ok)} .moved{color:var(--watch)}
+tr.hl th, tr.hl td{background:var(--watch-soft)}
+.chip{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:2px 8px; border-radius:999px; border:1.5px solid currentColor; line-height:1.3; white-space:normal}
+.chip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; flex:none}
+.chip[data-level="ok"]{color:var(--ok)} .chip[data-level="watch"]{color:var(--watch)} .chip[data-level="alert"]{color:var(--alert)} .chip[data-level="none"]{color:var(--ink-3)}
+.badge{font-size:12px; font-weight:600; padding:2px 6px; border-radius:3px; white-space:nowrap}
+.badge[data-b="live"]{background:var(--ok-soft); color:var(--ok)}
+.badge[data-b="fallback"]{background:var(--watch-soft); color:var(--watch)}
+.badge[data-b="verified"]{background:var(--panel-2); color:var(--ink-2); border:1px solid var(--rule)}
+.sim-grid{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:20px; align-items:start}
+.sim-grid > *{min-width:0}
+.map-wrap{padding:8px; overflow:hidden}
+.chart{display:block; width:100%; height:auto; border-radius:4px}
+.chart text{font-family:var(--f-body)}
+.scrub{margin-top:12px}
+.scrub-top{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap}
+.tlabel{font-size:18px; font-variant-numeric:tabular-nums}
+.tlabel small{font-size:13px; color:var(--ink-3)}
+#tSlider{display:block; width:100%; margin:10px 0 0; height:28px; accent-color:var(--focus); cursor:pointer}
+.legend{list-style:none; padding:0; margin-top:12px; display:flex; flex-wrap:wrap; gap:6px 18px; font-size:14px; color:var(--ink-2)}
+.legend li{display:inline-flex; align-items:center; gap:7px}
+.sw{display:inline-block; width:22px; height:0; border-top:3px solid var(--ink)}
+.sw.jma{border-color:var(--alert)} .sw.cwa{border-color:var(--backup); border-top-style:dashed}
+.sw.old{opacity:.4}
+.sw.dot{width:10px; height:10px; border:0; border-radius:50%; background:var(--ink)}
+.sw.tydot{width:10px; height:10px; border:0; border-radius:50%; background:var(--alert)}
+.box{padding:16px 18px; display:grid; gap:12px}
+.box .when strong{font-size:22px; font-family:var(--f-display)}
+.box .when small{display:block; color:var(--ink-3); font-size:13px}
+.box h4{font-size:14px; color:var(--ink-2); margin:0 0 2px}
+.box .row{border-top:1px solid var(--rule); padding-top:10px; display:grid; gap:3px; font-size:15px}
+.box .row[data-ag="jma"] h4{color:var(--alert)} .box .row[data-ag="cwa"] h4{color:var(--backup)}
+.muted{color:var(--ink-3)}
+.notes{font-size:14.5px; color:var(--ink-2); display:grid; gap:6px; padding-left:1.15em; max-width:90ch}
+.empty{padding:18px}
+@media (max-width: 899px){ .sim-grid{grid-template-columns:minmax(0,1fr)} .pick{grid-template-columns:minmax(0,1fr)} }
+@media (max-width: 640px){
+  .tablewrap{padding:2px 12px 10px}
+  .stack table, .stack tbody, .stack tr, .stack th, .stack td{display:block; width:100%}
+  .stack thead{display:none}
+  .stack tr{border-top:1px solid var(--rule); padding:8px 0}
+  .stack tbody th, .stack td{border-top:0; padding:3px 4px}
+  .stack td[data-l]::before{content:attr(data-l); display:block; font-size:12.5px; color:var(--ink-3); font-weight:600}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="topbar">
+    <div class="langs" role="group" id="langbar" aria-label="Language">
+      <button type="button" data-lang="zh" lang="zh-Hant">繁中</button><button type="button" data-lang="ja" lang="ja">日本語</button><button type="button" data-lang="en" lang="en">English</button>
+    </div>
+    <a class="back" id="back" href="./"></a>
+  </div>
+  <header class="mast"><h1 id="title"></h1><p id="sub"></p></header>
+
+  <section aria-labelledby="pickH">
+    <div class="sec-head"><h2 id="pickH"></h2><p id="pickSub"></p></div>
+    <div class="panel pick">
+      <label><span id="labA"></span><select id="selA"></select></label>
+      <label><span id="labB"></span><select id="selB"></select></label>
+      <div class="quick"><button class="btn" type="button" id="qPrev"></button><button class="btn ghost" type="button" id="qFirst"></button></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="diffH">
+    <div class="sec-head"><h2 id="diffH"></h2><p id="diffSub"></p></div>
+    <div class="panel tablewrap stack" id="diff"></div>
+  </section>
+
+  <section aria-labelledby="fcH">
+    <div class="sec-head"><h2 id="fcH"></h2><p id="fcSub"></p></div>
+    <div class="panel tablewrap stack" id="fc"></div>
+  </section>
+
+  <section aria-labelledby="mapH">
+    <div class="sec-head"><h2 id="mapH"></h2><p id="mapSub"></p></div>
+    <div class="sim-grid">
+      <div>
+        <div class="panel map-wrap" id="chartWrap"><svg class="chart" id="chart" role="img"></svg></div>
+        <div class="scrub">
+          <div class="scrub-top"><button class="btn" id="playBtn" type="button"></button><span class="tlabel" id="tLabel"></span></div>
+          <input type="range" id="tSlider">
+        </div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+      <div class="panel box" id="box"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="allH">
+    <div class="sec-head"><h2 id="allH"></h2><p id="allSub"></p></div>
+    <div class="panel tablewrap stack" id="all"></div>
+  </section>
+
+  <section aria-labelledby="howH">
+    <div class="sec-head"><h2 id="howH"></h2></div>
+    <ul class="notes" id="how"></ul>
+  </section>
+</div>
+<script>
+(function(){
+  "use strict";
+  var LANGS = ["zh", "ja", "en"], lang = "zh", H = 3600e3;
+  var I = {
+    zh: {
+      title: "影子模擬紀錄", back: "← 回到船班追蹤",
+      sub: "每 8 小時自動備份一次（台灣時間約 05:50、13:50、21:50，GitHub 排程有時會晚幾十分鐘）：當下的颱風預報（氣象廳、氣象署）、陽明各港船期、AIS 船位，以及用它們算出的模擬劇本。任選兩筆比較差在哪裡。",
+      pickH: "選兩筆比較", pickSub: "B 是較新的那筆，變化都寫成「B 比 A」。", labA: "A：較早", labB: "B：較新", qPrev: "最新 vs 上一筆", qFirst: "最新 vs 第一筆（基準）",
+      diffH: "差異重點", diffSub: "日本各港是日本時間，其他是台灣時間。模擬照主頁的「貨輪避颱標準流程」規則，用當時的預報重算。",
+      cols: ["項目", "A", "B", "B 比 A"],
+      r: { taken: "備份時間", jma: "氣象廳預報版本", cwa: "氣象署預報版本", kee: "基隆到港（我們這班）", plant: "預估到龍潭廠（到港後第 2–3 個工作天）", simJ: "模擬：照氣象廳路徑", simC: "模擬：照氣象署路徑", ais: "AIS 船位", tyNow: "颱風中心（氣象廳分析）", port: function(p){ return p + " 到港／開船"; } },
+      same: "沒變", later: function(h){ return "晚 " + h; }, earlier: function(h){ return "早 " + h; }, hrs: function(h){ return h >= 24 && h % 24 === 0 ? (h / 24) + " 天" : h + " 小時"; },
+      moved: function(k, dir){ return "移動 " + k + " 公里" + (dir ? "（往" + dir + "）" : ""); }, newer: "較新", none: "—", noAis: "沒有船位",
+      arrDep: function(a, d){ return "到 " + a + "\n開 " + d; },
+      sim: function(kee, pl){ return "基隆 " + kee + "\n到廠 " + pl; }, worst: function(x){ return "（最壞 " + x + "）"; },
+      v: { ok: "趕得上 11/2", edge: "壓線", rush: "只剩第 1 個工作天", miss: "趕不上 11/2" },
+      fcH: "颱風預報改了多少", fcSub: "拿 B 的每個預報時間點，和 A 在同一時間的預測中心比較：中心差幾公里、往哪個方向。",
+      fcCols: ["預報時間（台灣）", "A 預測中心", "B 預測中心", "差距", "氣壓"],
+      jmaN: "氣象廳", cwaN: "氣象署", noCover: "A 的預報沒涵蓋這個時間",
+      mapH: "地圖疊圖：A 和 B 的颱風路徑、船的預測位置", mapSub: "深色實線是 B、淡色是 A。黑點連線是每次備份記下的 AIS 實際船位，紅點連線是每次備份時颱風的實際中心（氣象廳分析）。",
+      play: "播放", pause: "暫停", tw: "台灣時間",
+      legend: ["氣象廳路徑（B／A）", "氣象署路徑（B／A）", "船的實際位置（AIS）", "颱風實際中心"],
+      ship: "船（預測位置）", inPort: function(p){ return "停靠 " + p; }, atSea: function(a, b){ return "航行中 " + a + " → " + b; }, before: function(p){ return "還沒到 " + p; }, after: "已離開基隆",
+      shift: function(k){ return "A、B 相差 " + k + " 公里"; }, noFc: "沒有預報",
+      allH: "全部備份", allSub: "最新的在最上面。「官網即時」是那次真的抓到；「快照」是那次來源抓不到、沿用先前資料；「人工查證」是基準。",
+      allCols: ["備份時間", "氣象廳", "氣象署", "神戶開船", "基隆到港", "AIS"], kind: { baseline: "基準", auto: "自動" },
+      b: { live: "官網即時", fallback: "快照", verified: "人工查證" },
+      howH: "說明",
+      how: ["備份由 GitHub Actions 執行（repo 的 .github/workflows/shadow.yml），用和網站 /api/data 完全相同的程式重抓，存在 public/shadow/。每次備份後網站會自動重新部署，這一頁就會出現新的一筆。",
+        "預報是當時的版本，不會被之後的新預報蓋掉，所以可以回頭比較預報怎麼變。",
+        "模擬是規則推算，不是船公司公告；預報沒涵蓋的時段不計入。"],
+      loading: "讀取中…", noData: "還沒有備份資料。", loadErr: "讀不到備份資料，請稍後重新整理。", only1: "目前只有 1 筆備份，等下一次備份後就能比較。"
+    },
+    ja: {
+      title: "シャドー・シミュレーション記録", back: "← 船便トラッカーへ戻る",
+      sub: "8 時間ごとに自動保存（台湾時間 05:50、13:50、21:50 ごろ。GitHub のスケジュールは数十分遅れることがあります）：その時点の台風予報（気象庁・中央気象署）、Yang Ming の各港スケジュール、AIS 船位と、それで計算したシナリオ。2 つを選んで違いを比べられます。",
+      pickH: "比べる 2 つを選ぶ", pickSub: "B が新しい方で、変化は「A から B」で表示します。", labA: "A：古い方", labB: "B：新しい方", qPrev: "最新 vs ひとつ前", qFirst: "最新 vs 最初（基準）",
+      diffH: "主な違い", diffSub: "日本の各港は日本時間、その他は台湾時間。シミュレーションはトラッカーの「貨物船の台風避航の標準的な流れ」のルールで、当時の予報から計算し直しています。",
+      cols: ["項目", "A", "B", "A → B"],
+      r: { taken: "保存時刻", jma: "気象庁の予報（発表）", cwa: "中央気象署の予報（発表）", kee: "基隆着（当方の便）", plant: "龍潭工場着の見込み（着港後 2–3 営業日目）", simJ: "シミュレーション：気象庁の進路", simC: "シミュレーション：中央気象署の進路", ais: "AIS 船位", tyNow: "台風の中心（気象庁の解析）", port: function(p){ return p + " 入港／出港"; } },
+      same: "変化なし", later: function(h){ return h + " 遅れ"; }, earlier: function(h){ return h + " 早まり"; }, hrs: function(h){ return h >= 24 && h % 24 === 0 ? (h / 24) + " 日" : h + " 時間"; },
+      moved: function(k, dir){ return k + " km 移動" + (dir ? "（" + dir + "へ）" : ""); }, newer: "新しい方", none: "—", noAis: "船位なし",
+      arrDep: function(a, d){ return "入港 " + a + "\n出港 " + d; },
+      sim: function(kee, pl){ return "基隆 " + kee + "\n工場 " + pl; }, worst: function(x){ return "（最悪 " + x + "）"; },
+      v: { ok: "11/2 に間に合う", edge: "ぎりぎり", rush: "1 営業日目のみ", miss: "11/2 に間に合わない" },
+      fcH: "台風予報の変化", fcSub: "B の各予報時刻について、同じ時刻の A の予想中心と比べます：中心が何 km、どの方向にずれたか。",
+      fcCols: ["予報時刻（台湾）", "A の予想中心", "B の予想中心", "ずれ", "気圧"],
+      jmaN: "気象庁", cwaN: "中央気象署", noCover: "A の予報はこの時刻まで届いていません",
+      mapH: "地図の重ね合わせ：A と B の台風進路・船の予定位置", mapSub: "濃い実線が B、薄い線が A。黒い点の線は各保存時の AIS 実際船位、赤い点の線は各保存時の台風の実際の中心（気象庁の解析）。",
+      play: "再生", pause: "一時停止", tw: "台湾時間",
+      legend: ["気象庁の進路（B／A）", "中央気象署の進路（B／A）", "船の実際の位置（AIS）", "台風の実際の中心"],
+      ship: "船（予定位置）", inPort: function(p){ return p + " に寄港中"; }, atSea: function(a, b){ return "航行中 " + a + " → " + b; }, before: function(p){ return p + " 到着前"; }, after: "基隆を出港済み",
+      shift: function(k){ return "A と B の差 " + k + " km"; }, noFc: "予報なし",
+      allH: "すべての保存", allSub: "新しいものが上。「公式最新」はその回に実際に取得できたもの、「スナップショット」は取得できず前のデータを使ったもの、「手動確認」は基準。",
+      allCols: ["保存時刻", "気象庁", "中央気象署", "神戸出港", "基隆着", "AIS"], kind: { baseline: "基準", auto: "自動" },
+      b: { live: "公式最新", fallback: "スナップショット", verified: "手動確認" },
+      howH: "説明",
+      how: ["保存は GitHub Actions（リポジトリの .github/workflows/shadow.yml）で、サイトの /api/data とまったく同じプログラムで取り直し、public/shadow/ に保存します。保存のたびにサイトが自動で再デプロイされ、このページに新しい行が出ます。",
+        "予報はその時点の版のまま残り、後の新しい予報で上書きされないので、予報の変化をあとから比べられます。",
+        "シミュレーションはルールによる推定で、船会社の発表ではありません。予報がない時間帯は計算に入れていません。"],
+      loading: "読み込み中…", noData: "まだ保存がありません。", loadErr: "保存データを読み込めません。しばらくして再読み込みしてください。", only1: "保存はまだ 1 件です。次の保存後に比較できます。"
+    },
+    en: {
+      title: "Shadow simulation archive", back: "← Back to the tracker",
+      sub: "Saved automatically every 8 hours (about 05:50, 13:50 and 21:50 Taiwan time; GitHub's scheduler can run tens of minutes late): the typhoon forecasts at that moment (JMA and CWA), Yang Ming's port calls, the AIS position, and the scenario computed from them. Pick any two to compare.",
+      pickH: "Pick two to compare", pickSub: "B is the newer one; changes read \"from A to B\".", labA: "A: older", labB: "B: newer", qPrev: "Latest vs previous", qFirst: "Latest vs first (baseline)",
+      diffH: "What changed", diffSub: "Japanese ports in Japan time, everything else in Taiwan time. The scenario re-runs the tracker's standard typhoon-avoidance rules on the forecasts of that time.",
+      cols: ["Item", "A", "B", "A → B"],
+      r: { taken: "Saved at", jma: "JMA forecast issued", cwa: "CWA forecast issued", kee: "Keelung arrival (our sailing)", plant: "Est. at Longtan plant (2nd–3rd working day)", simJ: "Scenario on the JMA track", simC: "Scenario on the CWA track", ais: "AIS position", tyNow: "Typhoon centre (JMA analysis)", port: function(p){ return p + " arr / dep"; } },
+      same: "no change", later: function(h){ return h + " later"; }, earlier: function(h){ return h + " earlier"; }, hrs: function(h){ return h >= 24 && h % 24 === 0 ? (h / 24) + " d" : h + " h"; },
+      moved: function(k, dir){ return "moved " + k + " km" + (dir ? " (" + dir + ")" : ""); }, newer: "newer", none: "—", noAis: "no position",
+      arrDep: function(a, d){ return "arr " + a + "\ndep " + d; },
+      sim: function(kee, pl){ return "Keelung " + kee + "\nplant " + pl; }, worst: function(x){ return " (worst " + x + ")"; },
+      v: { ok: "makes 11/2", edge: "tight", rush: "1st working day only", miss: "misses 11/2" },
+      fcH: "How the typhoon forecast moved", fcSub: "For each forecast time in B, the predicted centre is compared with A's prediction for the same time: how far, and in which direction.",
+      fcCols: ["Forecast time (Taiwan)", "A centre", "B centre", "Shift", "Pressure"],
+      jmaN: "JMA", cwaN: "CWA", noCover: "A's forecast does not reach this time",
+      mapH: "Map overlay: A and B typhoon tracks and planned ship positions", mapSub: "Dark solid lines are B, faded lines A. The black dotted line joins the AIS positions logged at each save; the red dotted line joins the typhoon's actual centre at each save (JMA analysis).",
+      play: "Play", pause: "Pause", tw: "Taiwan time",
+      legend: ["JMA track (B / A)", "CWA track (B / A)", "Ship's actual positions (AIS)", "Typhoon's actual centre"],
+      ship: "Ship (planned position)", inPort: function(p){ return "At " + p; }, atSea: function(a, b){ return "At sea " + a + " → " + b; }, before: function(p){ return "Not yet at " + p; }, after: "Left Keelung",
+      shift: function(k){ return "A and B differ by " + k + " km"; }, noFc: "No forecast",
+      allH: "All saves", allSub: "Newest first. \"Live\" = fetched that time; \"Snapshot\" = the source failed and earlier data was reused; \"Verified\" = the baseline.",
+      allCols: ["Saved at", "JMA", "CWA", "Kobe departure", "Keelung arrival", "AIS"], kind: { baseline: "baseline", auto: "auto" },
+      b: { live: "Live", fallback: "Snapshot", verified: "Verified" },
+      howH: "Notes",
+      how: ["Saves run on GitHub Actions (.github/workflows/shadow.yml in the repo) with exactly the same code as the site's /api/data, into public/shadow/. After each save the site redeploys and a new row appears here.",
+        "Each forecast is kept as issued, never overwritten by later ones, so you can look back at how the forecast changed.",
+        "The scenario is a rule-based estimate, not a carrier notice; hours without a forecast are not counted."],
+      loading: "Loading…", noData: "No saves yet.", loadErr: "Couldn't load the saves; reload in a moment.", only1: "Only one save so far; comparison starts after the next one."
+    }
+  };
+  function T(k){ var d = I[lang]; return d[k] != null ? d[k] : I.zh[k]; }
+  var WK = { zh: ["日","一","二","三","四","五","六"], ja: ["日","月","火","水","木","金","土"], en: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"] };
+  var PNAME = { "神戶": ["神戸","Kobe"], "大阪": ["大阪","Osaka"], "東京": ["東京","Tokyo"], "基隆": ["基隆","Keelung"], "名古屋": ["名古屋","Nagoya"], "龍潭廠": ["龍潭工場","Longtan plant"] };
+  function pn(zh){ if (lang === "zh") return zh; var p = PNAME[zh]; return p ? p[lang === "ja" ? 0 : 1] : zh; }
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+  function br(s){ return esc(s).replace(/\n/g, "<br>"); }
+  function t(iso){ var n = Date.parse(iso); return isNaN(n) ? null : n; }
+  function dayNum(s){ var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(s || ""); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) / 864e5 : null; }
+  function ymd(dn){ return new Date(dn * 864e5).toISOString().slice(0, 10); }
+  function dayLabel(dn, wk){ var d = new Date(dn * 864e5), md = (d.getUTCMonth() + 1) + "/" + d.getUTCDate(); if (!wk) return md; var w = WK[lang][d.getUTCDay()]; return lang === "en" ? md + " (" + w + ")" : md + "（" + w + "）"; }
+  function twDay(ms){ var d = new Date(ms + 8 * H); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 864e5; }
+  function hm(d){ return String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0"); }
+  function twLabel(ms, wk){ if (ms == null) return "—"; var d = new Date(ms + 8 * H); return dayLabel(twDay(ms), wk !== false) + (lang === "en" || wk === false ? " " : "") + hm(d); }
+  function lt(iso, wk){ var m = /(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(iso || ""); if (!m) return "—"; return dayLabel(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 864e5, wk !== false) + (lang === "en" || wk === false ? " " : "") + m[4] + ":" + m[5]; }
+  function n0(x){ return Math.round(x).toLocaleString("en-US"); }
+  function badge(b){ return b ? "<span class=\"badge\" data-b=\"" + esc(b) + "\">" + esc(T("b")[b] || b) + "</span>" : ""; }
+  function issuedLabel(kind, s){
+    if (!s) return "—";
+    if (kind === "jma"){ var m = /-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s); return m ? (+m[1]) + "/" + (+m[2]) + " " + m[3] + ":" + m[4] + (lang === "en" ? " JST" : "（日本）") : s; }
+    var c = /(\d+)月(\d+)日(\d+)時/.exec(s); return c ? c[1] + "/" + c[2] + " " + String(c[3]).padStart(2, "0") + ":00" : s;
+  }
+
+  /* ---------- geography (same as the tracker) ---------- */
+  var LON0 = 118, LON1 = 141, LAT0 = 15, LAT1 = 37, K = Math.cos(26 * Math.PI / 180);
+  var SX = 1000 / ((LON1 - LON0) * K), MAPH = Math.round((LAT1 - LAT0) * SX);
+  function P(lon, lat){ return [(lon - LON0) * K * SX, (LAT1 - lat) * SX]; }
+  function inMap(lon, lat){ return typeof lon === "number" && typeof lat === "number" && lon >= LON0 && lon <= LON1 && lat >= LAT0 && lat <= LAT1; }
+  function path(pts, open){ return pts.map(function(p, i){ var q = P(p[0], p[1]); return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + (open ? "" : " Z"); }
+  var LAND = [
+    [[118,37],[122.4,37],[122.5,36.85],[121.5,36.7],[120.7,36.3],[120.2,35.9],[119.5,35.4],[119.25,34.9],[120.3,34.35],[120.85,33.1],[121,32.3],[121.85,31.75],[121.9,31.05],[121.6,30.7],[122,29.95],[121.95,29.2],[121.6,28.6],[121,28],[120.5,27.35],[120.1,26.75],[119.65,26.2],[119.55,25.5],[119.05,25.05],[118.6,24.6],[118.1,24.45],[118,24.4]],
+    [[121.3,25.25],[121.6,25.3],[121.95,25.05],[121.85,24.6],[121.6,23.95],[121.45,23.15],[121.15,22.6],[120.85,21.9],[120.7,22.15],[120.35,22.55],[120.15,22.95],[120.1,23.5],[120.25,24],[120.55,24.55],[120.85,24.95],[121.05,25.1]],
+    [[126.55,37],[126.35,36.5],[126.55,36],[126.45,35.4],[126.3,34.75],[126.55,34.3],[127.1,34.55],[127.75,34.7],[128.35,34.85],[129.05,35.1],[129.4,35.45],[129.55,36],[129.4,36.6],[129.35,37]],
+    [[126.15,33.35],[126.55,33.2],[126.95,33.4],[126.85,33.55],[126.45,33.55]],
+    [[130.95,33.95],[130.4,33.65],[129.95,33.5],[129.6,33.2],[129.8,32.75],[130.15,32.6],[130.1,32.15],[130.35,31.6],[130.2,31.25],[130.65,31],[131.05,31.35],[131.4,31.65],[131.55,32.3],[131.85,32.9],[131.7,33.3],[131.65,33.65],[131.3,33.6],[131.1,33.9]],
+    [[132,33.35],[132.6,33.75],[132.75,33.95],[133.35,34.05],[134.05,34.35],[134.6,34.2],[134.75,33.9],[134.3,33.6],[134.15,33.25],[133.75,33.5],[133.25,33.35],[133,32.72],[132.6,32.9],[132.5,33.2]],
+    [[130.9,34],[131.2,33.95],[131.8,34],[132.4,34.25],[133,34.4],[133.9,34.55],[134.6,34.75],[135.2,34.68],[135.42,34.62],[135.2,34.3],[135.15,33.95],[135.35,33.55],[135.75,33.45],[136,33.6],[136.25,33.95],[136.85,34.3],[136.55,34.55],[136.65,34.85],[136.85,35.05],[137.05,34.75],[137.3,34.65],[137.9,34.65],[138.3,34.6],[138.75,34.65],[138.95,34.6],[139.15,35.25],[139.65,35.15],[139.7,35.45],[139.85,35.65],[140.1,35.55],[139.85,35],[139.95,34.9],[140.4,35.15],[140.85,35.7],[140.7,36.4],[140.65,37],[136.8,37],[136.65,36.6],[136.15,36.2],[135.95,35.75],[135.45,35.55],[134.9,35.65],[134.25,35.55],[133.6,35.5],[133.05,35.55],[132.6,35.4],[132.1,35],[131.7,34.7],[131.3,34.45],[130.95,34.35]],
+    [[127.65,26.1],[127.95,26.4],[128.3,26.85],[128.1,26.75],[127.75,26.45]],
+    [[120.6,18.55],[121.25,18.6],[121.9,18.3],[122.25,18.45],[122.15,17.5],[122.5,17.05],[122.2,16.25],[121.6,15.85],[121.55,15.3],[121.4,14.9],[120.95,14.95],[120.6,14.75],[120.35,15.1],[119.95,15.4],[119.8,16.1],[120.2,16.05],[120.35,16.6],[120.4,17.5]]
+  ];
+  var ISLETS = [[129.45,28.3,.22],[128.95,27.8,.1],[125.3,24.75,.12],[124.15,24.4,.14],[123.8,24.33,.14],[130.5,30.35,.15],[130.95,30.6,.12],[129.3,34.4,.16],[134.85,34.4,.09],[119.6,23.6,.08],[123,24.45,.07],[121.95,20.45,.07],[121.95,19.53,.06],[121.45,19.3,.07],[121.9,18.9,.06],[131.25,25.85,.06],[139.4,34.75,.06],[139.8,33.1,.06],[126.8,26.35,.05]];
+  var GEO = { "基隆": [121.74,25.15], "東京": [139.82,35.6], "名古屋": [136.84,35.03], "大阪": [135.43,34.65], "神戶": [135.2,34.68], "龍潭廠": [121.21,24.86] };
+  var KOBE_KEE = [[135.2,34.68],[135.05,34.2],[135,33.6],[133.6,32.8],[132.2,32.1],[131.5,31],[130.2,29.6],[127.2,27.3],[124.2,25.8],[121.74,25.15]];
+  var LANES = {
+    "基隆>東京": [[121.74,25.15],[124.2,25.8],[127.2,27.3],[130.2,29.6],[131.5,31],[132.2,32.1],[133.6,32.8],[135.8,33.3],[137,33.9],[138.3,34.4],[138.9,34.45],[139.5,34.85],[139.75,35.15],[139.82,35.6]],
+    "東京>名古屋": [[139.82,35.6],[139.75,35.15],[139.5,34.85],[138.9,34.45],[138.3,34.4],[137.1,34.4],[136.85,34.6],[136.84,35.03]],
+    "名古屋>大阪": [[136.84,35.03],[136.85,34.6],[137.1,34.4],[136.6,33.85],[135.8,33.3],[135,33.65],[135.05,34.2],[135.3,34.5],[135.43,34.65]],
+    "大阪>神戶": [[135.43,34.65],[135.3,34.63],[135.2,34.68]],
+    "神戶>基隆": KOBE_KEE
+  };
+  var D2R = Math.PI / 180;
+  function km(a, b){ var dlat = (b[1] - a[1]) * D2R, dlon = (b[0] - a[0]) * D2R, la1 = a[1] * D2R, la2 = b[1] * D2R; var h = Math.sin(dlat / 2) * Math.sin(dlat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dlon / 2) * Math.sin(dlon / 2); return 12742 * Math.asin(Math.min(1, Math.sqrt(h))); }
+  function bearing(from, to){ var y = (to[0] - from[0]) * Math.cos(((from[1] + to[1]) / 2) * D2R), x = to[1] - from[1]; return ((Math.atan2(y, x) / D2R) + 360) % 360; }
+  var CMP = { zh: ["北","東北","東","東南","南","西南","西","西北"], ja: ["北","北東","東","南東","南","南西","西","北西"], en: ["N","NE","E","SE","S","SW","W","NW"] };
+  function compass(b){ return CMP[lang][Math.round(b / 45) % 8]; }
+  function along(pts, f){
+    var seg = [], tot = 0;
+    for (var i = 1; i < pts.length; i++){ var d = km(pts[i - 1], pts[i]); seg.push(d); tot += d; }
+    var goal = Math.max(0, Math.min(1, f)) * tot, acc = 0;
+    for (var j = 0; j < seg.length; j++){ if (acc + seg[j] >= goal || j === seg.length - 1){ var g = seg[j] ? Math.max(0, Math.min(1, (goal - acc) / seg[j])) : 0; return [pts[j][0] + (pts[j + 1][0] - pts[j][0]) * g, pts[j][1] + (pts[j + 1][1] - pts[j][1]) * g]; } acc += seg[j]; }
+    return pts[pts.length - 1];
+  }
+  function lane(a, b){ return LANES[a + ">" + b] || [GEO[a], GEO[b]]; }
+
+  /* ---------- per-snapshot model (same rules as the tracker's simulate()) ---------- */
+  function shipPlan(s){ return ((s.ship && s.ship.portCalls) || []).map(function(c){ return { c: c, port: c.port, a: t(c.arr), d: t(c.dep) }; }).filter(function(x){ return x.a != null && x.d != null && GEO[x.port]; }); }
+  function shipAt(ms, plan, shift){
+    if (!plan.length) return null; shift = shift || 0;
+    if (ms < plan[0].a + shift) return { k: "before", p: GEO[plan[0].port], port: plan[0].port };
+    for (var i = 0; i < plan.length; i++){
+      var a = plan[i].a + shift, d = plan[i].d + shift;
+      if (ms >= a && ms <= d) return { k: "port", p: GEO[plan[i].port], port: plan[i].port };
+      if (i + 1 < plan.length){ var a2 = plan[i + 1].a + shift; if (ms > d && ms < a2) return { k: "sea", p: along(lane(plan[i].port, plan[i + 1].port), (ms - d) / (a2 - d)), from: plan[i].port, to: plan[i + 1].port }; }
+    }
+    return { k: "after", p: GEO[plan[plan.length - 1].port], port: plan[plan.length - 1].port };
+  }
+  function dirKm(list, b){ if (!list || !list.length) return null; if (list.length === 1 || list[0].dir == null) return list[0].km; var best = null, bd = 999; list.forEach(function(w){ var d = Math.abs(((b - (w.dir || 0)) % 360 + 540) % 360 - 180); if (d < bd){ bd = d; best = w; } }); return best ? best.km : null; }
+  var BRG = []; for (var bi = 0; bi < 36; bi++) BRG.push(bi * 10);
+  function track(s, kind){
+    var src = s.ty && s.ty[kind] && s.ty[kind].points; if (!src || !src.length) return null;
+    var pts = src.map(function(p){
+      var ms = t(p.time), prob = typeof p.radiusKm === "number" ? p.radiusKm : 0, A, B;
+      if (kind === "jma"){ A = p.storm && p.storm.length ? BRG.map(function(b){ return dirKm(p.storm, b) || 0; }) : null; B = p.gale && p.gale.length ? BRG.map(function(b){ return (dirKm(p.gale, b) || 0) + prob; }) : null; }
+      else { A = typeof p.stormKm === "number" ? BRG.map(function(){ return p.stormKm + prob; }) : BRG.map(function(){ return 0; }); B = typeof p.galeKm === "number" ? BRG.map(function(){ return p.galeKm + prob; }) : null; }
+      return { ms: ms, c: [p.lon, p.lat], prob: prob, A: A, B: B, raw: p };
+    }).filter(function(p){ return p.ms != null && typeof p.c[0] === "number"; }).sort(function(a, b){ return a.ms - b.ms; });
+    return pts.length ? { kind: kind, pts: pts, t0: pts[0].ms, t1: pts[pts.length - 1].ms } : null;
+  }
+  function lerpArr(a, b, f){ if (!a && !b) return null; a = a || BRG.map(function(){ return 0; }); b = b || BRG.map(function(){ return 0; }); return a.map(function(x, i){ return x + (b[i] - x) * f; }); }
+  function tyAt(tr, ms){
+    if (!tr || ms > tr.t1 || ms < tr.t0 - 6 * H) return null;
+    var p = tr.pts; if (ms <= p[0].ms) return { c: p[0].c, A: p[0].A, B: p[0].B, raw: p[0].raw };
+    for (var i = 1; i < p.length; i++) if (ms <= p[i].ms){ var f = (ms - p[i - 1].ms) / (p[i].ms - p[i - 1].ms);
+      return { c: [p[i - 1].c[0] + (p[i].c[0] - p[i - 1].c[0]) * f, p[i - 1].c[1] + (p[i].c[1] - p[i - 1].c[1]) * f], A: lerpArr(p[i - 1].A, p[i].A, f), B: (p[i - 1].B && p[i].B) ? lerpArr(p[i - 1].B, p[i].B, f) : (i === 1 && p[0].B && ms - p[0].ms <= 3 * H ? p[0].B : null), raw: f < .5 ? p[i - 1].raw : p[i].raw }; }
+    return null;
+  }
+  function rAt(arr, b){ if (!arr) return null; return arr[Math.round(((b % 360) + 360) % 360 / 10) % 36]; }
+  function zoneAt(s, q){ var d = km(s.c, q), b = bearing(s.c, q), ra = rAt(s.A, b), rb = rAt(s.B, b); return { d: d, z: ra && d <= ra ? "A" : (rb && d <= rb ? "B" : "") }; }
+  function simulate(tr, plan, now){
+    if (!tr || !plan.length) return null;
+    var smin = 0, smax = 0, beyond = false;
+    function chk(ms, q){ var s = tyAt(tr, ms); return s ? zoneAt(s, q) : null; }
+    for (var i = 0; i < plan.length; i++){
+      if (i > 0){
+        var d0 = plan[i - 1].d + smin, a = plan[i].a + smin, hA = 0, hB = 0;
+        if (a > now){ for (var ms = Math.max(d0, now); ms <= a; ms += H){ if (ms > tr.t1){ beyond = true; break; } var sp = shipAt(ms, plan, smin); if (!sp || sp.k !== "sea") continue; var r = chk(ms, sp.p); if (!r) continue; if (r.z === "A") hA++; else if (r.z === "B") hB++; }
+          smin += hA * H; smax += hA * H + hB * H; }
+      }
+      var a1 = plan[i].a + smin, d1 = plan[i].d + smin; if (d1 < now) continue;
+      var q = GEO[plan[i].port], firstA = null, lastA = null, anyB = false;
+      for (var m2 = Math.max(a1 - 24 * H, now); m2 <= d1; m2 += H){ if (m2 > tr.t1){ beyond = true; break; } var r2 = chk(m2, q); if (!r2) continue; if (r2.z === "A"){ if (firstA == null) firstA = m2; lastA = m2; } else if (r2.z === "B") anyB = true; }
+      if (firstA != null){ var ex = lastA; while (ex <= tr.t1){ var r3 = chk(ex, q); if (!r3 || (r3.z !== "A" && r3.z !== "B")) break; ex += H; } var dl = Math.max(0, ex + 6 * H - (firstA <= a1 ? a1 : firstA)); smin += dl; smax += dl; }
+      else if (anyB) smax += 12 * H;
+    }
+    var last = plan[plan.length - 1];
+    return { kee: [last.a + smin, last.a + smax], beyond: beyond };
+  }
+  function model(s){
+    if (s._m) return s._m;
+    var hol = s.holidays || [], dl = dayNum(s.deadline);
+    function isWork(dn){ var w = new Date(dn * 864e5).getUTCDay(); return w !== 0 && w !== 6 && hol.indexOf(ymd(dn)) < 0; }
+    function addWork(dn, n){ for (var i = 0; i < n; i++){ dn++; while (!isWork(dn)) dn++; } return dn; }
+    function plantOf(ms){ var a = twDay(ms); return { rush: addWork(a, 1), from: addWork(a, 2), to: addWork(a, 3) }; }
+    function verdict(p){ if (dl == null) return "none"; if (p.to <= dl) return "ok"; if (p.from <= dl) return "edge"; if (p.rush <= dl) return "rush"; return "miss"; }
+    var plan = shipPlan(s), now = t(s.takenAt), jma = track(s, "jma"), cwa = track(s, "cwa");
+    var kee = plan.length ? plan[plan.length - 1].a : (s.ship && s.ship.twEta && t(s.ship.twEta.iso));
+    s._m = { plan: plan, jma: jma, cwa: cwa, kee: kee, plantOf: plantOf, verdict: verdict, simJ: simulate(jma, plan, now), simC: simulate(cwa, plan, now) };
+    return s._m;
+  }
+
+  /* ---------- data ---------- */
+  var S = { index: [], snaps: {}, a: null, b: null, ms: null, t0: 0, t1: 0, playing: null };
+  function store(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){} }
+  function load(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function getSnap(id){
+    if (S.snaps[id]) return Promise.resolve(S.snaps[id]);
+    var row = S.index.filter(function(r){ return r.id === id; })[0]; if (!row) return Promise.resolve(null);
+    return fetch("shadow/" + row.file + "?v=" + encodeURIComponent(row.takenAt), { cache: "no-cache" }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){ if (j) S.snaps[id] = j; return j; });
+  }
+
+  /* ---------- render ---------- */
+  function setText(id, s){ var el = document.getElementById(id); if (el) el.textContent = s; }
+  function chrome(){
+    document.documentElement.lang = { zh: "zh-Hant", ja: "ja", en: "en" }[lang];
+    Array.prototype.forEach.call(document.querySelectorAll("#langbar button"), function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang ? "true" : "false"); });
+    document.title = T("title");
+    ["title", "sub", "back", "pickH", "pickSub", "labA", "labB", "qPrev", "qFirst", "diffH", "diffSub", "fcH", "fcSub", "mapH", "mapSub", "allH", "allSub", "howH"].forEach(function(k){ setText(k, T(k)); });
+    document.getElementById("how").innerHTML = T("how").map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("");
+    var lg = T("legend");
+    document.getElementById("legend").innerHTML = "<li><span class=\"sw jma\"></span><span class=\"sw jma old\"></span>" + esc(lg[0]) + "</li><li><span class=\"sw cwa\"></span><span class=\"sw cwa old\"></span>" + esc(lg[1]) + "</li><li><span class=\"sw dot\"></span>" + esc(lg[2]) + "</li><li><span class=\"sw tydot\"></span>" + esc(lg[3]) + "</li>";
+    document.getElementById("playBtn").textContent = S.playing ? "❚❚ " + T("pause") : "▶ " + T("play");
+    document.getElementById("back").href = "./?lang=" + lang;
+  }
+  function optLabel(r){ return twLabel(t(r.takenAt)) + "・" + T("kind")[r.kind] + (r.kind === "auto" ? "" : ""); }
+  function selects(){
+    ["selA", "selB"].forEach(function(id){
+      var el = document.getElementById(id);
+      el.innerHTML = S.index.slice().reverse().map(function(r){ return "<option value=\"" + esc(r.id) + "\">" + esc(optLabel(r)) + "</option>"; }).join("");
+      el.value = id === "selA" ? (S.a || "") : (S.b || "");
+    });
+  }
+  function hoursDiff(a, b){ return Math.round((b - a) / H); }
+  function chgTime(a, b){
+    if (a == null || b == null) return "<span class=\"same\">—</span>";
+    var h = hoursDiff(a, b); if (!h) return "<span class=\"same\">" + esc(T("same")) + "</span>";
+    return h > 0 ? "<span class=\"later\">" + esc(T("later")(T("hrs")(h))) + "</span>" : "<span class=\"earlier\">" + esc(T("earlier")(T("hrs")(-h))) + "</span>";
+  }
+  function plantStr(p){ return dayLabel(p.from, true) + "–" + dayLabel(p.to, true); }
+  function simCell(m, sim){
+    if (!sim) return "—";
+    var a = sim.kee[0], b = sim.kee[1], pa = m.plantOf(a), pb = m.plantOf(b), vb = m.verdict(pb);
+    var L = vb === "ok" ? "ok" : (vb === "edge" ? "watch" : "alert");
+    return br(T("sim")(twLabel(a) + (b > a ? T("worst")(twLabel(b)) : ""), plantStr(pa) + (b > a && pb.from !== pa.from ? T("worst")(plantStr(pb)) : ""))) + "<br><span class=\"chip\" data-level=\"" + L + "\">" + esc(T("v")[vb]) + "</span>";
+  }
+  function simKey(m, sim){ if (!sim) return ""; var pb = m.plantOf(sim.kee[1]); return sim.kee.join("|") + "|" + m.verdict(pb); }
+  function renderDiff(A, B){
+    var el = document.getElementById("diff"), C = T("cols"), R = T("r"), ma = model(A), mb = model(B), rows = [];
+    function row(label, va, vb, chg, hl){ rows.push("<tr" + (hl ? " class=\"hl\"" : "") + "><th scope=\"row\">" + label + "</th><td data-l=\"" + esc(C[1]) + "\">" + va + "</td><td data-l=\"" + esc(C[2]) + "\">" + vb + "</td><td class=\"chg\" data-l=\"" + esc(C[3]) + "\">" + chg + "</td></tr>"); }
+    row(esc(R.taken), esc(twLabel(t(A.takenAt))) + "<small>" + esc(T("kind")[A.kind]) + "</small>", esc(twLabel(t(B.takenAt))) + "<small>" + esc(T("kind")[B.kind]) + "</small>", "");
+    [["jma", R.jma], ["cwa", R.cwa]].forEach(function(x){ var ia = A.ty[x[0]], ib = B.ty[x[0]]; row(esc(x[1]), esc(issuedLabel(x[0], ia.issued)) + " " + badge(ia.badge), esc(issuedLabel(x[0], ib.issued)) + " " + badge(ib.badge), ia.issued === ib.issued ? "<span class=\"same\">" + esc(T("same")) + "</span>" : "<span class=\"moved\">" + esc(T("newer")) + "</span>"); });
+    // port calls, matched by port + voyage
+    (B.ship.portCalls || []).forEach(function(cb){
+      var ca = (A.ship.portCalls || []).filter(function(x){ return x.port === cb.port && x.voyage === cb.voyage; })[0];
+      var ours = cb.load || cb.discharge || cb.port === "神戶" || (cb.port === "基隆" && /S$/.test(cb.voyage || ""));
+      var chA = ca ? hoursDiff(t(ca.arr), t(cb.arr)) : 0, chD = ca ? hoursDiff(t(ca.dep), t(cb.dep)) : 0;
+      var chg = !ca ? "—" : (!chA && !chD ? "<span class=\"same\">" + esc(T("same")) + "</span>" : chgTime(t(ca.arr), t(cb.arr)) + " / " + chgTime(t(ca.dep), t(cb.dep)));
+      row(esc(R.port(pn(cb.port))) + "<small class=\"num\">" + esc(cb.voyage || "") + "</small>", ca ? br(T("arrDep")(lt(ca.arr), lt(ca.dep))) + " " + badge(ca.badge) : "—", br(T("arrDep")(lt(cb.arr), lt(cb.dep))) + " " + badge(cb.badge), chg, ours && (chA || chD));
+    });
+    var pa = ma.kee != null ? ma.plantOf(ma.kee) : null, pb = mb.kee != null ? mb.plantOf(mb.kee) : null;
+    row(esc(R.plant), pa ? esc(plantStr(pa)) : "—", pb ? esc(plantStr(pb)) + " <span class=\"chip\" data-level=\"" + ({ ok: "ok", edge: "watch" }[mb.verdict(pb)] || "alert") + "\">" + esc(T("v")[mb.verdict(pb)]) + "</span>" : "—", pa && pb ? (pa.from === pb.from && pa.to === pb.to ? "<span class=\"same\">" + esc(T("same")) + "</span>" : chgTime(pa.from * 864e5, pb.from * 864e5)) : "—", pa && pb && pa.from !== pb.from);
+    [["simJ", R.simJ], ["simC", R.simC]].forEach(function(x){ var sa = ma[x[0]], sb = mb[x[0]], changed = simKey(ma, sa) !== simKey(mb, sb);
+      row(esc(x[1]), simCell(ma, sa), simCell(mb, sb), !sa || !sb ? "—" : (changed ? chgTime(sa.kee[1], sb.kee[1]) : "<span class=\"same\">" + esc(T("same")) + "</span>"), changed); });
+    var aa = A.ship.ais, ab = B.ship.ais;
+    function aisTxt(x){ return x ? esc(twLabel(t(x.at))) + "<small class=\"num\">" + x.lat.toFixed(2) + "°N " + x.lon.toFixed(2) + "°E" + (typeof x.sog === "number" ? " · " + x.sog + " kn" : "") + (x.src ? " · " + esc(x.src) : "") + "</small>" : esc(T("noAis")); }
+    row(esc(R.ais), aisTxt(aa), aisTxt(ab), aa && ab ? (aa.at === ab.at ? "<span class=\"same\">" + esc(T("same")) + "</span>" : esc(T("moved")(n0(km([aa.lon, aa.lat], [ab.lon, ab.lat])), compass(bearing([aa.lon, aa.lat], [ab.lon, ab.lat]))))) : "—");
+    var na = A.ty.jma.points && A.ty.jma.points[0], nb = B.ty.jma.points && B.ty.jma.points[0];
+    function tyTxt(p){ return p ? esc(twLabel(t(p.time))) + "<small class=\"num\">" + p.lat + "°N " + p.lon + "°E" + (p.pressure ? " · " + esc(p.pressure) + " hPa" : "") + "</small>" : "—"; }
+    row(esc(R.tyNow), tyTxt(na), tyTxt(nb), na && nb ? (na.time === nb.time ? "<span class=\"same\">" + esc(T("same")) + "</span>" : esc(T("moved")(n0(km([na.lon, na.lat], [nb.lon, nb.lat])), compass(bearing([na.lon, na.lat], [nb.lon, nb.lat]))))) : "—");
+    el.innerHTML = "<table><thead><tr>" + C.map(function(c){ return "<th scope=\"col\">" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.join("") + "</tbody></table>";
+  }
+  function renderFc(A, B){
+    var el = document.getElementById("fc"), C = T("fcCols"), ma = model(A), mb = model(B), out = [];
+    [["jma", T("jmaN"), "var(--alert)"], ["cwa", T("cwaN"), "var(--backup)"]].forEach(function(x){
+      var ta = ma[x[0]], tb = mb[x[0]]; if (!tb) return;
+      var rows = tb.pts.filter(function(p){ return p.ms > t(B.takenAt) - 6 * H; }).map(function(p){
+        var sa = tyAt(ta, p.ms), pos = function(c){ return c[1].toFixed(1) + "°N " + c[0].toFixed(1) + "°E"; };
+        var shift = sa ? km(sa.c, p.c) : null, dir = sa && shift > 20 ? compass(bearing(sa.c, p.c)) : "";
+        var pa = sa && sa.raw && sa.raw.pressure, pb = p.raw.pressure;
+        return "<tr><th scope=\"row\" class=\"num\">" + esc(twLabel(p.ms)) + "</th><td data-l=\"" + esc(C[1]) + "\" class=\"num\">" + (sa ? esc(pos(sa.c)) : "<span class=\"muted\">" + esc(T("noCover")) + "</span>") + "</td><td data-l=\"" + esc(C[2]) + "\" class=\"num\">" + esc(pos(p.c)) + "</td><td class=\"chg\" data-l=\"" + esc(C[3]) + "\">" + (shift == null ? "—" : (shift < 20 ? "<span class=\"same\">" + esc(T("same")) + "</span>" : "<span class=\"moved\">" + esc(n0(shift)) + " km" + (dir ? " · " + esc(dir) : "") + "</span>")) + "</td><td data-l=\"" + esc(C[4]) + "\" class=\"num\">" + (pa && pa !== pb ? esc(pa) + " → " : "") + esc(pb || "—") + (pb ? " hPa" : "") + "</td></tr>";
+      }).join("");
+      out.push("<h3 style=\"margin:14px 0 4px;font-size:16px;color:" + x[2] + "\">" + esc(x[1]) + " <small class=\"muted\" style=\"font-weight:500\">" + esc(issuedLabel(x[0], A.ty[x[0]].issued)) + " → " + esc(issuedLabel(x[0], B.ty[x[0]].issued)) + "</small></h3><table><thead><tr>" + C.map(function(c){ return "<th scope=\"col\">" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table>");
+    });
+    el.innerHTML = out.join("") || "<p class=\"empty\">—</p>";
+  }
+  function renderAll2(){
+    var el = document.getElementById("all"), C = T("allCols");
+    el.innerHTML = "<table><thead><tr>" + C.map(function(c){ return "<th scope=\"col\">" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + S.index.slice().reverse().map(function(r){
+      return "<tr" + (r.id === S.b || r.id === S.a ? " class=\"hl\"" : "") + "><th scope=\"row\" class=\"num\">" + (r.id === S.b ? "<span class=\"tag b\">B</span>" : (r.id === S.a ? "<span class=\"tag a\">A</span>" : "")) + esc(twLabel(t(r.takenAt))) + "<small>" + esc(lang === "zh" && r.note ? r.note : T("kind")[r.kind]) + "</small></th>" +
+        "<td data-l=\"" + esc(C[1]) + "\">" + esc(issuedLabel("jma", r.jma)) + " " + badge(r.jmaBadge) + "</td><td data-l=\"" + esc(C[2]) + "\">" + esc(issuedLabel("cwa", r.cwa)) + " " + badge(r.cwaBadge) + "</td>" +
+        "<td data-l=\"" + esc(C[3]) + "\" class=\"num\">" + esc(lt(r.kobeDep)) + "</td><td data-l=\"" + esc(C[4]) + "\" class=\"num\">" + esc(lt(r.keeArr)) + "</td><td data-l=\"" + esc(C[5]) + "\" class=\"num\">" + esc(r.aisAt ? twLabel(t(r.aisAt)) : "—") + "</td></tr>";
+    }).join("") + "</tbody></table>";
+  }
+
+  /* ---------- map ---------- */
+  var FS = 1;
+  function drawStatic(A, B){
+    var svg = document.getElementById("chart"), cw = document.getElementById("chartWrap").clientWidth || 1000;
+    FS = Math.min(2.6, Math.max(1, 765 / cw));
+    function f(n){ return (n * FS).toFixed(1); }
+    svg.setAttribute("viewBox", "0 0 1000 " + MAPH);
+    var o = ["<rect width=\"1000\" height=\"" + MAPH + "\" fill=\"var(--sea)\"/>"];
+    for (var lo = 120; lo <= 140; lo += 2){ var a = P(lo, LAT1); o.push("<line x1=\"" + a[0].toFixed(1) + "\" y1=\"0\" x2=\"" + a[0].toFixed(1) + "\" y2=\"" + MAPH + "\" stroke=\"var(--grid)\"/>"); }
+    for (var la = 16; la <= 36; la += 2){ var c = P(LON0, la); o.push("<line x1=\"0\" y1=\"" + c[1].toFixed(1) + "\" x2=\"1000\" y2=\"" + c[1].toFixed(1) + "\" stroke=\"var(--grid)\"/>"); }
+    LAND.forEach(function(poly){ o.push("<path d=\"" + path(poly) + "\" fill=\"var(--land)\" stroke=\"var(--land-edge)\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/>"); });
+    ISLETS.forEach(function(s){ var q = P(s[0], s[1]); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + Math.max(2, s[2] * SX * K).toFixed(1) + "\" fill=\"var(--land)\" stroke=\"var(--land-edge)\"/>"); });
+    var mb = model(B), ma = model(A);
+    for (var i = 0; i + 1 < mb.plan.length; i++) o.push("<path d=\"" + path(lane(mb.plan[i].port, mb.plan[i + 1].port), true) + "\" fill=\"none\" stroke=\"var(--route)\" stroke-width=\"" + f(2) + "\" stroke-dasharray=\"7 6\"/>");
+    // forecast tracks: A faded, B solid
+    [[ma, .38, 1.4], [mb, 1, 2.4]].forEach(function(x){
+      [["jma", "var(--alert)", ""], ["cwa", "var(--backup)", "6 5"]].forEach(function(y){ var tr = x[0][y[0]]; if (!tr) return;
+        o.push("<path d=\"" + path(tr.pts.map(function(p){ return p.c; }), true) + "\" fill=\"none\" stroke=\"" + y[1] + "\" stroke-width=\"" + f(x[2]) + "\" opacity=\"" + x[1] + "\"" + (y[2] ? " stroke-dasharray=\"" + y[2] + "\"" : "") + "/>");
+        tr.pts.forEach(function(p){ var q = P(p.c[0], p.c[1]); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(2.6) + "\" fill=\"" + y[1] + "\" opacity=\"" + x[1] + "\"/>"); });
+      });
+    });
+    // history across all saves: typhoon analysis centres and AIS positions
+    var tyHist = [], aisHist = [];
+    S.index.forEach(function(r){ var s = S.snaps[r.id]; if (!s) return; var p = s.ty.jma.points && s.ty.jma.points[0]; if (p && !(p.hours > 0) && inMap(p.lon, p.lat)) tyHist.push([p.lon, p.lat]); var a = s.ship.ais; if (a && inMap(a.lon, a.lat)) aisHist.push([a.lon, a.lat]); });
+    if (tyHist.length > 1) o.push("<path d=\"" + path(tyHist, true) + "\" fill=\"none\" stroke=\"var(--alert)\" stroke-width=\"" + f(1.4) + "\" stroke-dasharray=\"1 4\" stroke-linecap=\"round\"/>");
+    tyHist.forEach(function(p){ var q = P(p[0], p[1]); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(3.4) + "\" fill=\"var(--alert)\" stroke=\"var(--panel)\"/>"); });
+    if (aisHist.length > 1) o.push("<path d=\"" + path(aisHist, true) + "\" fill=\"none\" stroke=\"var(--ink)\" stroke-width=\"" + f(1.4) + "\" stroke-dasharray=\"1 4\" stroke-linecap=\"round\"/>");
+    aisHist.forEach(function(p){ var q = P(p[0], p[1]); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(3.4) + "\" fill=\"var(--ink)\" stroke=\"var(--panel)\"/>"); });
+    Object.keys(GEO).forEach(function(k){ var q = P(GEO[k][0], GEO[k][1]); o.push((k === "龍潭廠" ? "<rect x=\"" + (q[0] - 4 * FS).toFixed(1) + "\" y=\"" + (q[1] - 4 * FS).toFixed(1) + "\" width=\"" + f(8) + "\" height=\"" + f(8) + "\" fill=\"var(--watch)\"/>" : "<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(4) + "\" fill=\"var(--ink)\"/>") +
+      (FS > 1.4 && (k === "大阪" || k === "名古屋") ? "" : "<text x=\"" + (q[0] + (k === "神戶" || k === "龍潭廠" ? -8 : 8) * FS).toFixed(1) + "\" y=\"" + (q[1] + (k === "神戶" ? 16 : -6) * FS).toFixed(1) + "\" text-anchor=\"" + (k === "神戶" || k === "龍潭廠" ? "end" : "start") + "\" font-size=\"" + f(14) + "\" font-weight=\"600\" fill=\"var(--ink)\" stroke=\"var(--sea)\" stroke-width=\"4\" paint-order=\"stroke\">" + esc(pn(k)) + "</text>")); });
+    svg.innerHTML = o.join("") + "<g id=\"dyn\"></g>";
+  }
+  function drawAt(ms){
+    var A = S.snaps[S.a], B = S.snaps[S.b], g = document.getElementById("dyn"); if (!A || !B || !g) return;
+    function f(n){ return (n * FS).toFixed(1); }
+    var ma = model(A), mb = model(B), o = [], box = [];
+    box.push("<p class=\"when\"><strong class=\"num\">" + esc(twLabel(ms)) + "</strong><small>" + esc(T("tw")) + "</small></p>");
+    // typhoon centres
+    [["jma", "var(--alert)", T("jmaN")], ["cwa", "var(--backup)", T("cwaN")]].forEach(function(x){
+      var sa = tyAt(ma[x[0]], ms), sb = tyAt(mb[x[0]], ms), lines = [];
+      [[sa, .4, "A"], [sb, 1, "B"]].forEach(function(y){ if (!y[0] || !inMap(y[0].c[0], y[0].c[1])) return; var q = P(y[0].c[0], y[0].c[1]);
+        o.push("<g transform=\"translate(" + q[0].toFixed(1) + " " + q[1].toFixed(1) + ") scale(" + (FS * .85).toFixed(2) + ")\" opacity=\"" + y[1] + "\"><circle r=\"15\" fill=\"var(--panel)\" opacity=\".8\"/><path d=\"M0 -11 C11 -11 11 3 3 4.5 M0 11 C-11 11 -11 -3 -3 -4.5\" fill=\"none\" stroke=\"" + x[1] + "\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><circle r=\"3.2\" fill=\"" + x[1] + "\"/></g>");
+        o.push("<text x=\"" + (q[0] + 15 * FS).toFixed(1) + "\" y=\"" + (q[1] + 5 * FS).toFixed(1) + "\" font-size=\"" + f(13) + "\" font-weight=\"700\" fill=\"" + x[1] + "\" opacity=\"" + y[1] + "\" stroke=\"var(--sea)\" stroke-width=\"3.5\" paint-order=\"stroke\">" + y[2] + "</text>");
+      });
+      lines.push("<span class=\"tag b\">B</span>" + (sb ? esc(sb.c[1].toFixed(1) + "°N " + sb.c[0].toFixed(1) + "°E") : "<span class=\"muted\">" + esc(T("noFc")) + "</span>"));
+      lines.push("<span class=\"tag a\">A</span>" + (sa ? esc(sa.c[1].toFixed(1) + "°N " + sa.c[0].toFixed(1) + "°E") : "<span class=\"muted\">" + esc(T("noFc")) + "</span>"));
+      if (sa && sb) lines.push(esc(T("shift")(n0(km(sa.c, sb.c)))));
+      box.push("<div class=\"row\" data-ag=\"" + x[0] + "\"><h4>" + esc(x[2]) + "</h4>" + lines.map(function(l){ return "<div class=\"num\">" + l + "</div>"; }).join("") + "</div>");
+    });
+    // ship planned positions
+    var lines2 = [];
+    [[ma, .45, "A"], [mb, 1, "B"]].forEach(function(y){ var sp = shipAt(ms, y[0].plan, 0); if (!sp) return;
+      var where = sp.k === "port" ? T("inPort")(pn(sp.port)) : (sp.k === "sea" ? T("atSea")(pn(sp.from), pn(sp.to)) : (sp.k === "before" ? T("before")(pn(sp.port)) : T("after")));
+      lines2.unshift("<span class=\"tag " + y[2].toLowerCase() + "\">" + y[2] + "</span>" + esc(where));
+      if (sp.k === "after") return; var q = P(sp.p[0], sp.p[1]);
+      o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(y[2] === "B" ? 8 : 7) + "\" fill=\"" + (y[2] === "B" ? "var(--ok)" : "var(--panel)") + "\" stroke=\"" + (y[2] === "B" ? "var(--panel)" : "var(--ok)") + "\" stroke-width=\"" + f(2.2) + "\" opacity=\"" + (y[2] === "B" ? 1 : .8) + "\"/>");
+      o.push("<text x=\"" + (q[0] + (y[2] === "B" ? 12 : -12) * FS).toFixed(1) + "\" y=\"" + (q[1] + 5 * FS).toFixed(1) + "\" text-anchor=\"" + (y[2] === "B" ? "start" : "end") + "\" font-size=\"" + f(13) + "\" font-weight=\"700\" fill=\"var(--ok)\" stroke=\"var(--sea)\" stroke-width=\"3.5\" paint-order=\"stroke\">" + y[2] + "</text>");
+    });
+    box.splice(1, 0, "<div class=\"row\"><h4>" + esc(T("ship")) + "</h4>" + lines2.map(function(l){ return "<div>" + l + "</div>"; }).join("") + "</div>");
+    g.innerHTML = o.join("");
+    document.getElementById("box").innerHTML = box.join("");
+    document.getElementById("tLabel").innerHTML = "<strong>" + esc(twLabel(ms)) + "</strong> <small>" + esc(T("tw")) + "</small>";
+  }
+  function setRange(){
+    var A = S.snaps[S.a], B = S.snaps[S.b]; if (!A || !B) return;
+    var t0 = Math.floor(Math.min(t(A.takenAt), t(B.takenAt)) / H) * H, dl = dayNum(B.deadline);
+    var t1 = dl != null ? (dl + 2) * 864e5 - 9 * H : t0 + 14 * 24 * H;
+    S.t0 = t0; S.t1 = Math.max(t1, t0 + 24 * H);
+    if (S.ms == null || S.ms < S.t0 || S.ms > S.t1) S.ms = Math.max(S.t0, Math.floor(Date.now() / H) * H);
+    S.ms = Math.min(S.ms, S.t1);
+    var sl = document.getElementById("tSlider"); sl.min = String(S.t0); sl.max = String(S.t1); sl.step = String(H); sl.value = String(S.ms); sl.setAttribute("aria-label", T("mapH"));
+  }
+  function render(){
+    chrome();
+    if (!S.index.length){ document.getElementById("diff").innerHTML = "<p class=\"empty\">" + esc(T("noData")) + "</p>"; return; }
+    selects(); renderAll2();
+    var A = S.snaps[S.a], B = S.snaps[S.b];
+    if (!A || !B){ document.getElementById("diff").innerHTML = "<p class=\"empty\">" + esc(T("loading")) + "</p>"; return; }
+    if (S.index.length === 1) document.getElementById("diffSub").textContent = T("only1");
+    renderDiff(A, B); renderFc(A, B); setRange(); drawStatic(A, B); drawAt(S.ms);
+  }
+  function choose(a, b){
+    // keep A older than B
+    var ia = S.index.map(function(r){ return r.id; }).indexOf(a), ib = S.index.map(function(r){ return r.id; }).indexOf(b);
+    if (ia > ib){ var x = a; a = b; b = x; }
+    S.a = a; S.b = b; render();
+    Promise.all(S.index.map(function(r){ return getSnap(r.id); })).then(render);
+  }
+  function quick(which){ var n = S.index.length; if (!n) return; var b = S.index[n - 1].id, a = which === "first" ? S.index[0].id : S.index[Math.max(0, n - 2)].id; choose(a, b); }
+
+  /* ---------- events ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll("#langbar button"), function(b){ b.addEventListener("click", function(){ lang = b.getAttribute("data-lang"); store("ship-tracker-lang", lang); try { var u = new URL(location.href); u.searchParams.set("lang", lang); history.replaceState(null, "", u.toString()); } catch(e){} render(); }); });
+  document.getElementById("selA").addEventListener("change", function(){ choose(this.value, S.b); });
+  document.getElementById("selB").addEventListener("change", function(){ choose(S.a, this.value); });
+  document.getElementById("qPrev").addEventListener("click", function(){ quick("prev"); });
+  document.getElementById("qFirst").addEventListener("click", function(){ quick("first"); });
+  document.getElementById("tSlider").addEventListener("input", function(){ if (S.playing){ clearInterval(S.playing); S.playing = null; chrome(); } S.ms = +this.value; drawAt(S.ms); });
+  document.getElementById("playBtn").addEventListener("click", function(){
+    if (S.playing){ clearInterval(S.playing); S.playing = null; chrome(); return; }
+    if (S.ms >= S.t1) S.ms = S.t0;
+    S.playing = setInterval(function(){ if (S.ms + H > S.t1){ clearInterval(S.playing); S.playing = null; chrome(); return; } S.ms += H; document.getElementById("tSlider").value = String(S.ms); drawAt(S.ms); }, 70);
+    chrome();
+  });
+  var rz = null, lastW = window.innerWidth;
+  window.addEventListener("resize", function(){ if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(rz); rz = setTimeout(function(){ if (S.snaps[S.a] && S.snaps[S.b]){ drawStatic(S.snaps[S.a], S.snaps[S.b]); drawAt(S.ms); } }, 150); });
+
+  (function(){ var q = null; try { q = new URLSearchParams(location.search).get("lang"); } catch(e){} var s = load("ship-tracker-lang"); var nav = (navigator.language || "").toLowerCase();
+    lang = LANGS.indexOf(q) >= 0 ? q : (LANGS.indexOf(s) >= 0 ? s : (nav.indexOf("ja") === 0 ? "ja" : (nav.indexOf("zh") === 0 || !nav ? "zh" : "en"))); })();
+  chrome();
+  document.getElementById("diff").innerHTML = "<p class=\"empty\">" + esc(T("loading")) + "</p>";
+  fetch("shadow/index.json?t=" + Date.now(), { cache: "no-store" }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(idx){
+    S.index = (Array.isArray(idx) ? idx : []).sort(function(a, b){ return t(a.takenAt) - t(b.takenAt); });
+    if (!S.index.length){ render(); return; }
+    quick("prev");
+  }).catch(function(){ document.getElementById("diff").innerHTML = "<p class=\"empty\">" + esc(T("loadErr")) + "</p>"; });
+})();
+</script>
+</body>
+</html>

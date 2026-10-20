@@ -56,6 +56,7 @@ const snap = {
     ais: live && live.best ? { at: live.best.at, lat: live.best.lat, lon: live.best.lon, sog: live.best.sog, cog: live.best.cog, src: live.best.src } : (args.baseline && v.live ? { at: v.live.at, lat: v.live.lat, lon: v.live.lon, sog: v.live.sog, cog: v.live.cog, src: v.live.src } : null),
     aisErrors: live && live.errors ? live.errors.slice(0, 5) : [],
     liveError: v.liveError || null,
+    portErrors: v.portErrors || [],
   },
   ty: {
     name: ty.name, nameJa: ty.name_ja, nameEn: ty.name_en || ty.nameEn,
