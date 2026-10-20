@@ -79,6 +79,7 @@ tr.hl th, tr.hl td{background:var(--watch-soft)}
 .badge{font-size:12px; font-weight:600; padding:2px 6px; border-radius:3px; white-space:nowrap}
 .badge[data-b="live"]{background:var(--ok-soft); color:var(--ok)}
 .badge[data-b="fallback"]{background:var(--watch-soft); color:var(--watch)}
+.badge[data-b="estimated"]{background:var(--watch-soft); color:var(--watch); border:1px dashed var(--watch)}
 .badge[data-b="verified"]{background:var(--panel-2); color:var(--ink-2); border:1px solid var(--rule)}
 .sim-grid{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:20px; align-items:start}
 .sim-grid > *{min-width:0}
@@ -198,7 +199,7 @@ tr.hl th, tr.hl td{background:var(--watch-soft)}
       shift: function(k){ return "A、B 相差 " + k + " 公里"; }, noFc: "沒有預報",
       allH: "全部備份", allSub: "最新的在最上面。「官網即時」是那次真的抓到；「快照」是那次來源抓不到、沿用先前資料；「人工查證」是基準。",
       allCols: ["備份時間", "氣象廳", "氣象署", "神戶開船", "基隆到港", "AIS"], kind: { baseline: "基準", auto: "自動" },
-      b: { live: "官網即時", fallback: "快照", verified: "人工查證" },
+      b: { live: "官網即時", fallback: "快照", verified: "人工查證", estimated: "依神戶推估" },
       howH: "說明",
       how: ["備份由 GitHub Actions 執行（repo 的 .github/workflows/shadow.yml），用和網站 /api/data 完全相同的程式重抓，存在 public/shadow/。每次備份後網站會自動重新部署，這一頁就會出現新的一筆。",
         "預報是當時的版本，不會被之後的新預報蓋掉，所以可以回頭比較預報怎麼變。",
@@ -227,7 +228,7 @@ tr.hl th, tr.hl td{background:var(--watch-soft)}
       shift: function(k){ return "A と B の差 " + k + " km"; }, noFc: "予報なし",
       allH: "すべての保存", allSub: "新しいものが上。「公式最新」はその回に実際に取得できたもの、「スナップショット」は取得できず前のデータを使ったもの、「手動確認」は基準。",
       allCols: ["保存時刻", "気象庁", "中央気象署", "神戸出港", "基隆着", "AIS"], kind: { baseline: "基準", auto: "自動" },
-      b: { live: "公式最新", fallback: "スナップショット", verified: "手動確認" },
+      b: { live: "公式最新", fallback: "スナップショット", verified: "手動確認", estimated: "神戸から推定" },
       howH: "説明",
       how: ["保存は GitHub Actions（リポジトリの .github/workflows/shadow.yml）で、サイトの /api/data とまったく同じプログラムで取り直し、public/shadow/ に保存します。保存のたびにサイトが自動で再デプロイされ、このページに新しい行が出ます。",
         "予報はその時点の版のまま残り、後の新しい予報で上書きされないので、予報の変化をあとから比べられます。",
@@ -256,7 +257,7 @@ tr.hl th, tr.hl td{background:var(--watch-soft)}
       shift: function(k){ return "A and B differ by " + k + " km"; }, noFc: "No forecast",
       allH: "All saves", allSub: "Newest first. \"Live\" = fetched that time; \"Snapshot\" = the source failed and earlier data was reused; \"Verified\" = the baseline.",
       allCols: ["Saved at", "JMA", "CWA", "Kobe departure", "Keelung arrival", "AIS"], kind: { baseline: "baseline", auto: "auto" },
-      b: { live: "Live", fallback: "Snapshot", verified: "Verified" },
+      b: { live: "Live", fallback: "Snapshot", verified: "Verified", estimated: "Est. from Kobe" },
       howH: "Notes",
       how: ["Saves run on GitHub Actions (.github/workflows/shadow.yml in the repo) with exactly the same code as the site's /api/data, into public/shadow/. After each save the site redeploys and a new row appears here.",
         "Each forecast is kept as issued, never overwritten by later ones, so you can look back at how the forecast changed.",

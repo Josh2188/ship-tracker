@@ -55,12 +55,25 @@ export function mergeVessel(v, L) {
   out.liveAt = L && L.fetchedAt;
   out.portErrors = (L && L.fields && L.fields.portErrors) || [];
   const snap = (k) => localize({ text: v[k] && v[k].text, src: v[k] && v[k].src, note: v[k] && v[k].note }, ["text", "src"]);
+  const vd = v.dates || {};
+  // 基隆靠泊表抓不到（海外伺服器常被導到別的頁面）但神戶開船時間有變：神戶→基隆航程不變，基隆到港跟著平移（標「推估」）
+  let keeShift = 0;
+  if (!(f.twEta && f.twEta.iso) && f.kobeEtd && f.kobeEtd.iso && vd.etd && vd.etaFrom) {
+    keeShift = Date.parse(f.kobeEtd.iso) - Date.parse(vd.etd);
+    if (keeShift) {
+      const est = new Date(Date.parse(vd.etaFrom) + keeShift + 8 * 3600e3).toISOString().slice(0, 16) + ":00+08:00";
+      f.twEta = { iso: est, port: v.twPort || "基隆", ...{ note: "依神戶最新開船時間推估（神戶→基隆航程不變）", note_ja: "神戸の最新出港時刻から推定（神戸→基隆の航海時間は同じ）", note_en: "Estimated from the latest Kobe departure (same Kobe → Keelung passage time)" },
+        src: "依陽明日本代理推估", src_ja: "Yang Ming 日本代理店から推定", src_en: "Estimated from Yang Ming Japan agent", estimated: true };
+      fAll.twEta = f.twEta;
+      ch(`基隆到港：神戶開船改了 ${Math.round(keeShift / 3600e3)} 小時，基隆跟著推估為 ${taipeiHM(est)}`, `基隆着：神戸出港が ${Math.round(keeShift / 3600e3)} 時間変わったため ${taipeiHM(est)} と推定`, `Keelung arrival: Kobe departure moved ${Math.round(keeShift / 3600e3)} h, so Keelung is estimated at ${taipeiHM(est)}`);
+    }
+  }
   for (const k of ["cyCut", "kobeEtd", "twEta"]) {
     const x = fAll[k];
     if (!x) { out[k] = { ...v[k], badge: "fallback" }; continue; }
     const state = k === "cyCut" && x.iso ? (Date.parse(x.iso) < Date.now() ? "passed" : "open") : v[k] && v[k].state;
     const port = x.port || v.twPort;
-    out[k] = { srcUrl: x.srcUrl, badge: "live", iso: x.iso, state, snapshot: snap(k) };
+    out[k] = { srcUrl: x.srcUrl, badge: x.estimated ? "estimated" : "live", iso: x.iso, state, snapshot: snap(k) };
     for (const l of L3) {
       let text = x.iso ? (k === "twEta" ? `${tr(port, l)} ` : "") + fmtLocal(x.iso, x.dateOnly, l) : tr(x.text || "未列", l);
       if (k === "cyCut" && x.iso && state === "passed") text += { zh: " 已過", ja: " 経過", en: " (passed)" }[l];
@@ -104,7 +117,7 @@ export function mergeVessel(v, L) {
     out.dates.plantFrom = dayStr(p1); out.dates.plantTo = dayStr(p2);
     const a = new Date(p1), b = new Date(p2);
     const text = `${a.getUTCMonth() + 1}/${a.getUTCDate()}–${b.getUTCMonth() === a.getUTCMonth() ? b.getUTCDate() : (b.getUTCMonth() + 1) + "/" + b.getUTCDate()}`;
-    out.plant = { text, text_ja: text, text_en: text, note: ["依官網到港日推算：到港後約 2–3 個工作天（週末、假日不算），會加急處理"], note_ja: ["公式の着港日から推定：着港後 約 2–3 営業日（週末・祝日は数えない）、急ぎで対応"], note_en: ["From the official arrival: about 2–3 working days after arrival (weekends and holidays don't count), rushed"], badge: "live", snapshot: { text: v.plant && v.plant.text, note: v.plant && v.plant.note } };
+    out.plant = { text, text_ja: text, text_en: text, note: ["依官網到港日推算：到港後約 2–3 個工作天（週末、假日不算），會加急處理"], note_ja: ["公式の着港日から推定：着港後 約 2–3 営業日（週末・祝日は数えない）、急ぎで対応"], note_en: ["From the official arrival: about 2–3 working days after arrival (weekends and holidays don't count), rushed"], badge: f.twEta.estimated ? "estimated" : "live", snapshot: { text: v.plant && v.plant.text, note: v.plant && v.plant.note } };
     if (v.plant && v.plant.text && v.plant.text !== text) ch(`預估到廠：快照 ${v.plant.text} → ${text}`, `工場着予定：スナップショット ${v.plant.text} → ${text}`, `Est. factory arrival: snapshot ${v.plant.text} → ${text}`);
   } else out.plant = { ...v.plant, badge: "fallback" };
   // 各港靠港時間（表定 vs 最新）：官網抓到的那港用即時值，其餘用快照
@@ -112,7 +125,10 @@ export function mergeVessel(v, L) {
     const lp = Array.isArray(fAll.portCalls) ? fAll.portCalls : [];
     out.portCalls = v.portCalls.map((s) => {
       const l = lp.find((x) => x.port === s.port && (x.voyage === s.voyage || String(x.voyage).split("/").includes(String(s.voyage).split("/").pop())));
-      if (!l) return { ...s, badge: "fallback" };
+      if (!l) {
+        if (keeShift && s.port === "基隆" && s.discharge) return { ...s, arr: new Date(Date.parse(s.arr) + keeShift + 8 * 3600e3).toISOString().slice(0, 16) + ":00+08:00", dep: new Date(Date.parse(s.dep) + keeShift + 8 * 3600e3).toISOString().slice(0, 16) + ":00+08:00", badge: "estimated" };
+        return { ...s, badge: "fallback" };
+      }
       const m = { ...s, arr: l.arr || s.arr, berth: l.berth || s.berth, dep: l.dep || s.dep, origArr: l.origArr || s.origArr, origDep: l.origDep || s.origDep, updated: l.updated || s.updated, srcUrl: l.srcUrl || s.srcUrl, badge: "live" };
       if (s.arr && l.arr && Date.parse(s.arr) !== Date.parse(l.arr)) ch(`${s.port} 到港：快照 ${taipeiHM(s.arr)} → 官網 ${taipeiHM(l.arr)}（台北時間）`, `${tr(s.port, "ja")} 入港：スナップショット ${taipeiHM(s.arr)} → 公式 ${taipeiHM(l.arr)}（台湾時間）`, `${tr(s.port, "en")} arrival: snapshot ${taipeiHM(s.arr)} → official ${taipeiHM(l.arr)} (Taipei time)`);
       return m;
