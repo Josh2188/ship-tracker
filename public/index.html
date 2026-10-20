@@ -219,6 +219,9 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
 .offmap{margin-top:10px; font-size:14px; color:var(--ink-2)}
 /* typhoon vs ship simulation */
 .shadow-link{margin:-4px 0 14px; font-weight:600}
+.shadow-link a{display:inline-block; padding:8px 12px; border:1.5px solid var(--focus); border-radius:6px; color:var(--focus); text-decoration:none; background:var(--panel)}
+.shadow-link a:hover{background:var(--panel-2)}
+.btn.shadow-top{display:inline-flex; align-items:center; text-decoration:none; font-size:14px; padding:10px 14px; min-height:40px; border-color:var(--focus); color:var(--focus)}
 .sim-grid{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:20px; align-items:start}
 .sim-grid > *{min-width:0}
 .sim-side{display:grid; gap:16px}
@@ -405,6 +408,7 @@ body{font-size:17px; line-height:1.65}
       <button type="button" data-lang="zh" lang="zh-Hant">繁中</button><button type="button" data-lang="ja" lang="ja">日本語</button><button type="button" data-lang="en" lang="en">English</button>
     </div>
     <div class="topright">
+    <a class="btn ghost shadow-top" id="shadowTop" href="shadow.html"></a>
     <div class="langs themes" role="group" id="viewbar" aria-label="View">
       <button type="button" data-view="simple"></button><button type="button" data-view="full"></button>
     </div>
@@ -1721,6 +1725,7 @@ body{font-size:17px; line-height:1.65}
     setText("mapH", Q("mapH")); setText("mapSub", Q("mapSub"));
     var pb = document.getElementById("playBtn"); if (pb){ pb.textContent = SIM.playing ? "❚❚ " + Q("pause") : "▶ " + Q("play"); pb.setAttribute("aria-pressed", SIM.playing ? "true" : "false"); }
     setText("nowBtn", Q("now"));
+    var st2 = document.getElementById("shadowTop"); if (st2){ st2.textContent = { zh: "影子模擬紀錄", ja: "シャドー記録", en: "Shadow archive" }[lang]; st2.href = "shadow.html?lang=" + lang; st2.title = { zh: "每 8 小時備份的模擬，可比較預報和船期怎麼變", ja: "8 時間ごとの保存。予報とスケジュールの変化を比較", en: "Saved every 8 hours; compare how the forecast and schedule changed" }[lang]; }
     var sl2 = document.getElementById("shadowLink"); if (sl2){ sl2.textContent = { zh: "影子模擬紀錄：每 8 小時自動備份，可以比較颱風預報和船期怎麼變 →", ja: "シャドー・シミュレーション記録：8 時間ごとに自動保存、台風予報とスケジュールの変化を比較 →", en: "Shadow simulation archive: saved every 8 hours, compare how the forecast and schedule changed →" }[lang]; sl2.href = "shadow.html?lang=" + lang; }
     var sl = document.getElementById("tSlider"); if (sl) sl.setAttribute("aria-label", Q("mapH"));
     var lg = Q("legend");
