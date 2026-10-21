@@ -1,0 +1,370 @@
+{
+ "v": 1,
+ "id": "20261022-0217",
+ "takenAt": "2026-10-21T18:17:14.309Z",
+ "kind": "auto",
+ "note": "",
+ "deadline": "2026-11-02",
+ "deadlineTime": "下班前",
+ "holidays": [
+  "2026-10-26"
+ ],
+ "ship": {
+  "name": "YM INCEPTION",
+  "voyage": "251S",
+  "portCalls": [
+   {
+    "port": "基隆",
+    "voyage": "250N",
+    "arr": "2026-10-20T12:15:00+08:00",
+    "berth": null,
+    "dep": "2026-10-21T00:15:00+08:00",
+    "origArr": null,
+    "origDep": null,
+    "north": true,
+    "load": false,
+    "discharge": false,
+    "badge": "fallback",
+    "updated": null
+   },
+   {
+    "port": "東京",
+    "voyage": "250N/251S",
+    "arr": "2026-10-24T12:00:00+09:00",
+    "berth": "2026-10-24T13:00:00+09:00",
+    "dep": "2026-10-24T23:00:00+09:00",
+    "origArr": "2026-10-22",
+    "origDep": "2026-10-22",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "10/22 03:08"
+   },
+   {
+    "port": "名古屋",
+    "voyage": "250N/251S",
+    "arr": "2026-10-26T07:00:00+09:00",
+    "berth": "2026-10-26T08:00:00+09:00",
+    "dep": "2026-10-26T17:00:00+09:00",
+    "origArr": "2026-10-24",
+    "origDep": "2026-10-24",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "10/22 03:08"
+   },
+   {
+    "port": "大阪",
+    "voyage": "250N/251S",
+    "arr": "2026-10-27T07:00:00+09:00",
+    "berth": "2026-10-27T08:00:00+09:00",
+    "dep": "2026-10-27T15:00:00+09:00",
+    "origArr": "2026-10-25",
+    "origDep": "2026-10-25",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "10/22 03:08"
+   },
+   {
+    "port": "神戶",
+    "voyage": "250N/251S",
+    "arr": "2026-10-27T16:00:00+09:00",
+    "berth": "2026-10-27T17:00:00+09:00",
+    "dep": "2026-10-27T23:00:00+09:00",
+    "origArr": "2026-10-25",
+    "origDep": "2026-10-25",
+    "north": false,
+    "load": true,
+    "discharge": false,
+    "badge": "live",
+    "updated": "10/22 03:08"
+   },
+   {
+    "port": "基隆",
+    "voyage": "251S",
+    "arr": "2026-10-30T01:00:00+08:00",
+    "berth": null,
+    "dep": "2026-10-30T10:00:00+08:00",
+    "origArr": null,
+    "origDep": null,
+    "north": false,
+    "load": false,
+    "discharge": true,
+    "badge": "estimated",
+    "updated": null
+   }
+  ],
+  "kobeEtd": {
+   "iso": "2026-10-27T23:00:00+09:00",
+   "badge": "live"
+  },
+  "twEta": {
+   "iso": "2026-10-30T01:00:00+08:00",
+   "badge": "estimated"
+  },
+  "plant": {
+   "from": "2026-11-03",
+   "to": "2026-11-04"
+  },
+  "ais": {
+   "at": "2026-10-21T16:10:28.000Z",
+   "lat": 26.916756666666668,
+   "lon": 123.85966666666667,
+   "sog": 13,
+   "cog": 47,
+   "src": "VesselFinder"
+  },
+  "aisErrors": [],
+  "liveError": null,
+  "portErrors": [
+   "基隆: This operation was aborted"
+  ]
+ },
+ "ty": {
+  "name": "薔琵",
+  "nameJa": "チャンパー",
+  "nameEn": "CHAMPI",
+  "now": {
+   "lat": 19.5,
+   "lon": 127.4,
+   "at": "2026-10-21T15:00:00Z"
+  },
+  "jma": {
+   "issued": "2026-10-22T00:45:00+09:00",
+   "badge": "live",
+   "points": [
+    {
+     "hours": 0,
+     "time": "2026-10-21T15:00:00Z",
+     "lat": 19.5,
+     "lon": 127.4,
+     "pressure": "900",
+     "windMs": "60",
+     "course": "西北西",
+     "speedKmh": "20",
+     "storm": [
+      {
+       "dir": 45,
+       "km": 280
+      },
+      {
+       "dir": 225,
+       "km": 220
+      }
+     ],
+     "gale": [
+      {
+       "dir": 45,
+       "km": 650
+      },
+      {
+       "dir": 225,
+       "km": 500
+      }
+     ],
+     "intensity": "猛烈な"
+    },
+    {
+     "hours": 12,
+     "time": "2026-10-22T03:00:00Z",
+     "lat": 20.4,
+     "lon": 125.9,
+     "pressure": "915",
+     "windMs": "55",
+     "course": "西北西",
+     "speedKmh": "15",
+     "radiusKm": 45,
+     "storm": [
+      {
+       "dir": 45,
+       "km": 320
+      },
+      {
+       "dir": 225,
+       "km": 270
+      }
+     ],
+     "intensity": "猛烈な"
+    },
+    {
+     "hours": 24,
+     "time": "2026-10-22T15:00:00Z",
+     "lat": 21.2,
+     "lon": 124.6,
+     "pressure": "935",
+     "windMs": "50",
+     "course": "西北西",
+     "speedKmh": "15",
+     "radiusKm": 95,
+     "storm": [
+      {
+       "dir": 45,
+       "km": 370
+      },
+      {
+       "dir": 225,
+       "km": 310
+      }
+     ],
+     "intensity": "非常に強い"
+    },
+    {
+     "hours": 45,
+     "time": "2026-10-23T12:00:00Z",
+     "lat": 23.5,
+     "lon": 122,
+     "pressure": "955",
+     "windMs": "40",
+     "course": "北西",
+     "speedKmh": "15",
+     "radiusKm": 210,
+     "storm": [
+      {
+       "dir": 90,
+       "km": 450
+      },
+      {
+       "dir": 270,
+       "km": 400
+      }
+     ],
+     "intensity": "強い"
+    },
+    {
+     "hours": 69,
+     "time": "2026-10-24T12:00:00Z",
+     "lat": 27,
+     "lon": 122.7,
+     "pressure": "980",
+     "windMs": "30",
+     "course": "北",
+     "speedKmh": "15",
+     "radiusKm": 300,
+     "storm": [
+      {
+       "dir": 90,
+       "km": 460
+      },
+      {
+       "dir": 270,
+       "km": 410
+      }
+     ],
+     "intensity": "-"
+    },
+    {
+     "hours": 93,
+     "time": "2026-10-25T12:00:00Z",
+     "lat": 31.6,
+     "lon": 125.6,
+     "pressure": "992",
+     "windMs": "23",
+     "course": "北北東",
+     "speedKmh": "25",
+     "radiusKm": 370,
+     "intensity": "-"
+    },
+    {
+     "hours": 117,
+     "time": "2026-10-26T12:00:00Z",
+     "lat": 36.6,
+     "lon": 133.5,
+     "pressure": "1002",
+     "windMs": "0",
+     "course": "北東",
+     "speedKmh": "40",
+     "radiusKm": 460,
+     "intensity": "-"
+    }
+   ]
+  },
+  "cwa": {
+   "issued": "民國115年10月21日20時",
+   "badge": "live",
+   "points": [
+    {
+     "hours": 0,
+     "time": "2026-10-21T12:00:00.000Z",
+     "lat": 19.3,
+     "lon": 127.9,
+     "galeKm": 280,
+     "stormKm": 140
+    },
+    {
+     "hours": 6,
+     "time": "2026-10-21T18:00:00.000Z",
+     "lat": 19.9,
+     "lon": 127,
+     "radiusKm": 40,
+     "galeKm": 280,
+     "stormKm": 140
+    },
+    {
+     "hours": 12,
+     "time": "2026-10-22T00:00:00.000Z",
+     "lat": 20.4,
+     "lon": 126.2,
+     "radiusKm": 40,
+     "galeKm": 300,
+     "stormKm": 140
+    },
+    {
+     "hours": 18,
+     "time": "2026-10-22T06:00:00.000Z",
+     "lat": 20.8,
+     "lon": 125.6,
+     "radiusKm": 80,
+     "galeKm": 300,
+     "stormKm": 140
+    },
+    {
+     "hours": 24,
+     "time": "2026-10-22T12:00:00.000Z",
+     "lat": 21.3,
+     "lon": 125.1,
+     "radiusKm": 90,
+     "galeKm": 300,
+     "stormKm": 140
+    },
+    {
+     "hours": 36,
+     "time": "2026-10-23T00:00:00.000Z",
+     "lat": 22.7,
+     "lon": 124.1,
+     "radiusKm": 100,
+     "galeKm": 300,
+     "stormKm": 140
+    },
+    {
+     "hours": 48,
+     "time": "2026-10-23T12:00:00.000Z",
+     "lat": 24.7,
+     "lon": 122.9,
+     "radiusKm": 150,
+     "galeKm": 280,
+     "stormKm": 120
+    },
+    {
+     "hours": 72,
+     "time": "2026-10-24T12:00:00.000Z",
+     "lat": 28.1,
+     "lon": 123.6,
+     "radiusKm": 210,
+     "galeKm": 220,
+     "stormKm": 90
+    },
+    {
+     "hours": 96,
+     "time": "2026-10-25T12:00:00.000Z",
+     "lat": 32.3,
+     "lon": 129.2,
+     "radiusKm": 360
+    }
+   ]
+  }
+ }
+}
