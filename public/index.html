@@ -501,6 +501,12 @@ body{font-size:17px; line-height:1.65}
     <div class="panel proc"><h3 id="rulesH"></h3><ol class="proc-steps" id="rulesList"></ol><p class="ty-src" id="rulesSrc"></p></div>
   </section>
 
+  <section class="booked" id="roundSec" aria-labelledby="roundH" hidden>
+    <div class="sec-head"><h2 id="roundH"></h2><p id="roundSub"></p></div>
+    <div class="panel tablewrap" id="roundTable"></div>
+    <div class="panel proc"><h3 id="roundAsH"></h3><ol class="proc-steps" id="roundAs"></ol><h3 id="roundSrcH"></h3><ul id="roundSrc"></ul><p class="ty-src" id="roundNote"></p></div>
+  </section>
+
   <section data-simple aria-label="Typhoon and other sailings">
     <p class="mode-note" id="simpleTy"></p>
   </section>
@@ -2062,7 +2068,30 @@ body{font-size:17px; line-height:1.65}
     try { var u = new URL(location.href); u.searchParams.set("mode", md); history.replaceState(null, "", u.toString()); } catch(e){}
     renderAll();
   }
-  function renderAll(){ renderSimple(); renderChrome(); renderHeader(); renderLead(); renderYim(); renderModebar(); renderRuler(); renderShips(); renderMapChrome(); renderChart(); renderPorts(); renderSimResult(); renderTyphoon(); renderNoGo(); applyTheme(); }
+
+  function renderRound(){
+    var m = state.meta, r = m && m.forecastRound, sec = document.getElementById("roundSec");
+    if (!sec) return; sec.hidden = !r; if (!r) return;
+    var L = { zh: { sub: "計算時間 ", h: ["情境", "神戶開（台灣時間）", "航行", "基隆到（台灣時間）", "最快到廠", "一般到廠", "11/2 下班前"], ok: { fast: "趕得上（要走最快那條路）", hard: "很難（理論上可以，要週末加班）", no: "趕不上" }, as: "假設與時間推算", src: "資料來源（抓取時間，台灣時間）", hr: " 小時" },
+      ja: { sub: "計算時刻 ", h: ["シナリオ", "神戸発（台湾時間）", "航海", "基隆着（台湾時間）", "最短搬入", "通常搬入", "11/2 終業まで"], ok: { fast: "間に合う（最短ルートが必要）", hard: "厳しい（理論上可能、週末作業が必要）", no: "間に合わない" }, as: "前提と時間の計算", src: "データ出所（取得時刻・台湾時間）", hr: " 時間" },
+      en: { sub: "Computed ", h: ["Scenario", "Kobe dep. (Taiwan time)", "Sea time", "Keelung arr. (Taiwan time)", "Fastest to plant", "Normal to plant", "By 11/2 close"], ok: { fast: "Yes (fastest path needed)", hard: "Hard (possible only with weekend work)", no: "No" }, as: "Assumptions and time calculation", src: "Sources (retrieved, Taiwan time)", hr: " h" } }[lang];
+    setText("roundH", pick(r, "title"));
+    setText("roundSub", L.sub + fmt(r.at));
+    var th = "<thead><tr>" + L.h.map(function(x){ return "<th>" + esc(x) + "</th>"; }).join("") + "</tr></thead>";
+    var dw = function(x){ x = String(x || ""); if (lang === "zh") return x; return x.replace(/（(.)）/g, function(_, d){ var i = "日一二三四五六".indexOf(d); return i < 0 ? "" : (lang === "ja" ? "（" + "日月火水木金土".charAt(i) + "）" : " (" + ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][i] + ")"); }); };
+    var tb = r.scenarios.map(function(c){
+      var name = lang === "zh" ? c.zh : lang === "ja" ? c.ja : c.en;
+      return "<tr" + (c.ok === "no" ? " class=\"dim\"" : "") + "><th>" + esc(name[0]) + "<small style=\"display:block\">" + esc(name[1]) + "</small></th>" +
+        "<td data-l=\"" + esc(L.h[1]) + "\">" + esc(dw(c.kobe)) + "</td><td data-l=\"" + esc(L.h[2]) + "\">" + esc(c.sea + L.hr) + "</td><td data-l=\"" + esc(L.h[3]) + "\">" + esc(dw(c.kee)) + "</td>" +
+        "<td data-l=\"" + esc(L.h[4]) + "\">" + esc(dw(c.first)) + "</td><td data-l=\"" + esc(L.h[5]) + "\">" + esc(dw(c.std)) + "</td><td data-l=\"" + esc(L.h[6]) + "\"><strong>" + esc(L.ok[c.ok]) + "</strong></td></tr>";
+    }).join("");
+    document.getElementById("roundTable").innerHTML = "<table>" + th + "<tbody>" + tb + "</tbody></table>";
+    setText("roundAsH", L.as); setText("roundSrcH", L.src);
+    document.getElementById("roundAs").innerHTML = items(pick(r, "assumptions")).map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("");
+    document.getElementById("roundSrc").innerHTML = (r.sources || []).map(function(x){ return "<li><a href=\"" + esc(x.url) + "\" target=\"_blank\" rel=\"noopener\">" + esc(pick(x, "label")) + "</a>（" + esc(x.at) + "）</li>"; }).join("");
+    setText("roundNote", pick(r, "note"));
+  }
+  function renderAll(){ renderSimple(); renderChrome(); renderHeader(); renderLead(); renderYim(); renderModebar(); renderRuler(); renderShips(); renderMapChrome(); renderChart(); renderPorts(); renderSimResult(); renderRound(); renderTyphoon(); renderNoGo(); applyTheme(); }
 
   /* ---------- data ---------- */
   function setBanner(k, arg){

@@ -13,132 +13,266 @@
 export const PLAN = {
   "meta": {
     "deadline": "2026-11-02",
-    "lastRunAt": "2026-10-20T18:40:00+08:00",
+    "lastRunAt": "2026-10-22T22:21:00+08:00",
     "level": "watch",
     "summary": [
-      "只能搭陽明 YM INCEPTION 251S。神戶 10/27（二）05:00 開（表定 10/25），基隆 10/29（四）07:00 到；照到港後第 2–3 個工作天，預估 11/2（一）–11/3（二）到龍潭廠，剛好壓在 11/2 下班前的期限上，沒有緩衝。",
-      "要趕上 11/2：船最晚 10/29（四）要到基隆，而且要在到港後第 2 個工作天（11/2）當天送進工廠；能爭取到港後第 1 個工作天（10/30 五）最保險。基隆晚 1 天（10/30）就只剩「到港後第 1 個工作天」這條路。",
-      "颱風薔琵：氣象廳、氣象署都預測 10/23–24 經過台灣東北方海面，這時船在往東京的路上和東京，距離很遠。",
-      "要盯的是 10/25–27：氣象署 10/20 14 時預報 10/25 14 時颱風中心到四國西方，正是船停靠名古屋、大阪、神戶的時候；氣象廳 10/20 18:45 預報偏西、轉向較慢（10/25 在東海）。兩家差很多，10/25 以後都還沒有預報。",
-      "颱風會不會讓船延誤：網頁照貨輪避颱的標準流程（航行中避開強風範圍＋預報誤差、日本港口第一／第二警戒、颱風過後恢復作業）每次打開都用最新預報重算，結果看下方「模擬劇本」。",
+      "陽明 YM INCEPTION 251S 又延後：神戶 10/27（二）23:00 開，基隆 10/30（五）07:00 到。照到港後第 2–3 個工作天是 11/3（二）–11/4（三），趕不上 11/2；只有爭取到「到港後第 1 個工作天」11/2（一）當天清關、送廠，才趕得上。",
+      "要做的事：請報關行在船到港前就備好報關文件，10/30（五）到港當天或週末完成拆櫃和放行準備，11/2（一）一早放行、當天卡車送龍潭。",
+      "颱風薔琵：10/23–24 最接近台灣東方近海，之後轉往日本；10/26 已減弱的颱風在名古屋、大阪附近，可能讓船在名古屋、大阪再晚 0–12 小時。神戶→基隆這段預報沒有颱風。",
+      "到貨預測（10/22 22:21 第 3 輪）：照現在船期最快 11/2；日本港口再晚 12–48 小時，因為碰到週末，最快仍是 11/2 但更難做到；晚 72 小時以上（11/2 才到基隆）就一定趕不上。細節見下方「到貨預測第 3 輪」。",
       "網頁每次打開、每次按「立即更新」都會重抓陽明、氣象廳、氣象署和 AIS 的最新資料。"
     ],
     "typhoon": {
-      "at": "10/20 18:45",
-      "lat": 16.7,
-      "lon": 133.8,
+      "at": "10/22 22:45",
+      "lat": 21.3,
+      "lon": 124.8,
       "name": "薔琵",
-      "posAt": "2026-10-20T09:00:00Z",
+      "posAt": "2026-10-22T13:00:00Z",
       "src": "日本氣象廳、氣象署",
       "srcUrl": "https://www.jma.go.jp/bosai/map.html#contents=typhoon",
       "text": [
-        "日本氣象廳 10/20 18:45 發布：18 時中心在北緯 16.7、東經 133.8 度，935 百帕，近中心最大風速每秒 55 公尺，以每小時 20 公里向西北西。預測（台灣時間）10/23 14 時北緯 23.2、東經 123.8 度，10/24 14 時北緯 26.2、東經 122.3 度（台灣東北方海面），10/25 14 時北緯 29.7、東經 124.2 度，轉向北北東。",
-        "氣象署 10/20 14 時：中心北緯 16.4、東經 134.3 度，910 百帕，近中心最大風速每秒 55 公尺，以每小時 23 公里向西北西；七級風半徑平均 250 公里、十級風 120 公里。預測 10/23 14 時北緯 24.0、東經 124.6 度，10/24 14 時北緯 28.5、東經 125.1 度，10/25 14 時北緯 33.8、東經 132.1 度（四國西方）。",
-        "兩家都預測 10/23–24 經過台灣東北方海面；之後氣象署偏東、轉向快（10/25 到四國附近），氣象廳偏西、轉向慢（10/25 在東海）。",
-        "兩家預報都只到 10/25 下午；船 10/27–29 神戶到基隆這段還沒有官方預報。"
+        "日本氣象廳 10/22 22:45（日本時間）發布：22 時中心在北緯 21.3、東經 124.8 度，940 百帕，近中心最大風速每秒 45 公尺，向西北。預測 10/23 21 時（日本時間）到與那國島西方約 60 公里（北緯 24.5、東經 122.4 度），10/24 21 時東海（北緯 27.8、東經 123.4 度，980 百帕），10/25 21 時九州西方（992 百帕），10/26 21 時東海地方（北緯 34.6、東經 136.6 度，998 百帕、每秒 18 公尺，已減弱）。",
+        "中度颱風 薔琵 編號第 29 號 國際命名 CHAMPI 22日20時的中心位置在北緯 21.2 度，東經 124.9 度，以每小時17公里速度，向北北西進行。",
+        "中心氣壓 940 百帕 ， 近中心最大風速每秒 45 公尺 ，瞬間最大陣風每秒 55 公尺，七級風平均暴風半徑 320 公里(西北側 350 公里、東北側 350 公里、西南側 290 公里、東南側 300 公里)，十級風平均暴風半徑 140 公里(西北側 140 公里、東北側 140 公里、西南側 140 公里、東南側 140 公里)。",
+        "氣象署 10/22 20 時預測：10/23 20 時北緯 24.4、東經 122.8 度（台灣東方近海），10/24 20 時北緯 27.6、東經 123.4 度，10/25 20 時北緯 31.7、東經 127.2 度，10/26 20 時北緯 33.6、東經 132.3 度（四國西方附近）。",
+        "兩家都預測 10/23–24 最接近台灣（東方近海），之後轉向東北往日本；10/26 颱風（已減弱）在名古屋、大阪附近，正好是船停名古屋（10/26）、大阪（10/27）的時候。船 10/27 晚上神戶開到 10/30 基隆這段，颱風已遠離，預報沒顯示新的颱風。"
       ],
       "name_ja": "チャンパー",
       "name_en": "CHAMPI",
       "text_ja": [
-        "気象庁 10/20 18:45 発表：18 時の中心は北緯 16.7 度・東経 133.8 度、935 hPa、最大風速 55 m/s、西北西へ時速 20 km。予報（日本時間）10/23 15 時 北緯 23.2 度・東経 123.8 度、10/24 15 時 北緯 26.2 度・東経 122.3 度（台湾の北東の海上）、10/25 15 時 北緯 29.7 度・東経 124.2 度で、北北東へ向きを変える見込み。",
-        "中央気象署 10/20 14 時（台湾時間）：中心は北緯 16.4 度・東経 134.3 度、910 hPa、最大風速 55 m/s、西北西へ時速 23 km。風力 7 の半径は平均 250 km、風力 10 は 120 km。予報 10/23 14 時 北緯 24.0 度・東経 124.6 度、10/24 14 時 北緯 28.5 度・東経 125.1 度、10/25 14 時 北緯 33.8 度・東経 132.1 度（四国の西）。",
-        "両者とも 10/23–24 に台湾北東の海上を通る予想。その後、中央気象署は東寄りで転向が早く（10/25 に四国付近）、気象庁は西寄りで転向が遅い（10/25 は東シナ海）。",
-        "どちらの予報も 10/25 午後までで、船の神戸→基隆（10/27–29）の区間はまだ公式予報がありません。"
+        "気象庁 10/22 22:45 発表：22 時 北緯 21.3 度・東経 124.8 度、940 hPa、最大風速 45 m/s、北西へ。予報 10/23 21 時 与那国島の西約 60 km（北緯 24.5・東経 122.4）、10/24 21 時 東シナ海（980 hPa）、10/25 21 時 九州の西（992 hPa）、10/26 21 時 東海地方（北緯 34.6・東経 136.6、998 hPa、18 m/s に弱まる）。",
+        "中央気象署 10/22 20 時（台湾時間）：中心 北緯 21.2 度・東経 124.9 度、940 hPa、最大風速 45 m/s、北北西へ時速 17 km。風力 7 の半径 平均 320 km、風力 10 は 140 km。予報 10/23 20 時 北緯 24.4・東経 122.8（台湾東方近海）、10/26 20 時 北緯 33.6・東経 132.3。",
+        "両者とも 10/23–24 に台湾へ最接近し、その後北東へ転向。10/26 には弱まった台風が名古屋・大阪付近にあり、船の名古屋（10/26）・大阪（10/27）寄港と重なる。神戸発（10/27 夜）→基隆（10/30）の区間は台風が遠ざかり、新しい台風の予報はない。"
       ],
       "text_en": [
-        "JMA, issued 10/20 18:45 JST: at 18:00 the centre was at 16.7N 133.8E, 935 hPa, max sustained wind 55 m/s, moving WNW at 20 km/h. Forecast (Taiwan time): 23.2N 123.8E at 14:00 on 10/23, 26.2N 122.3E (sea northeast of Taiwan) at 14:00 on 10/24, 29.7N 124.2E at 14:00 on 10/25, turning NNE.",
-        "Taiwan CWA, 10/20 14:00: centre at 16.4N 134.3E, 910 hPa, max wind 55 m/s, moving WNW at 23 km/h; Beaufort-7 radius about 250 km, Beaufort-10 about 120 km. Forecast 24.0N 124.6E at 14:00 on 10/23, 28.5N 125.1E at 14:00 on 10/24, 33.8N 132.1E (west of Shikoku) at 14:00 on 10/25.",
-        "Both forecast it to cross the sea northeast of Taiwan on 10/23–24. After that CWA is further east and turns faster (near Shikoku on 10/25); JMA is further west and turns later (East China Sea on 10/25).",
-        "Both forecasts end on the afternoon of 10/25; there is no official forecast yet for the ship's Kobe → Keelung leg (10/27–29)."
+        "JMA, issued 10/22 22:45 JST: at 22:00 the centre was at 21.3N 124.8E, 940 hPa, max wind 45 m/s, moving NW. Forecast: ~60 km W of Yonaguni at 21:00 10/23 (24.5N 122.4E), East China Sea 21:00 10/24 (980 hPa), W of Kyushu 21:00 10/25 (992 hPa), Tokai region 21:00 10/26 (34.6N 136.6E, 998 hPa, 18 m/s, weakened).",
+        "Taiwan CWA, 20:00 10/22 (Taiwan time): centre 21.2N 124.9E, 940 hPa, max wind 45 m/s, moving NNW at 17 km/h; gale radius avg 320 km, storm radius 140 km. Forecast 24.4N 122.8E at 20:00 10/23 (off eastern Taiwan), 33.6N 132.3E at 20:00 10/26.",
+        "Both agencies: closest to Taiwan 10/23–24, then recurving NE toward Japan. On 10/26 the weakened storm is near Nagoya/Osaka, exactly when the ship calls Nagoya (10/26) and Osaka (10/27). On Kobe (night 10/27) → Keelung (10/30) the storm has moved away; no new typhoon is in the forecasts."
       ],
-      "jmaIssued": "2026-10-20T09:45:00Z",
-      "jmaIssuedJst": "2026-10-20T18:45:00+09:00",
+      "jmaIssued": "2026-10-22T13:45:00Z",
+      "jmaIssuedJst": "2026-10-22T22:45:00+09:00",
       "forecast": [
         {
           "hours": 0,
-          "time": "2026-10-20T09:00:00Z",
-          "lat": 16.7,
-          "lon": 133.8,
-          "pressure": "935",
-          "windMs": "55",
-          "course": "西北西",
-          "speedKmh": "20",
-          "radiusKm": null,
+          "lat": 21.3,
+          "lon": 124.8,
+          "pressure": "940",
+          "windMs": "45",
+          "gustMs": "65",
+          "course": "北西",
+          "speedKmh": "15",
           "storm": [
             {
-              "dir": 45,
-              "km": 220
+              "dir": 315,
+              "km": 390
             },
             {
-              "dir": 225,
-              "km": 165
+              "dir": 135,
+              "km": 280
             }
           ],
           "gale": [
             {
-              "dir": 45,
+              "dir": null,
               "km": 650
-            },
-            {
-              "dir": 225,
-              "km": 500
             }
-          ]
+          ],
+          "intensity": "非常に強い",
+          "location": "沖縄の南",
+          "time": "2026-10-22T13:00:00Z"
         },
         {
-          "hours": 12,
-          "time": "2026-10-20T21:00:00Z",
-          "lat": 17.8,
-          "lon": 131.1,
-          "pressure": "925",
-          "windMs": "55",
-          "course": "西北西",
-          "speedKmh": "25",
+          "hours": 1,
+          "lat": 21.4,
+          "lon": 124.7,
+          "pressure": "940",
+          "windMs": "45",
+          "gustMs": "65",
+          "course": "北西",
+          "speedKmh": "15",
+          "storm": [
+            {
+              "dir": 315,
+              "km": 390
+            },
+            {
+              "dir": 135,
+              "km": 280
+            }
+          ],
+          "gale": [
+            {
+              "dir": null,
+              "km": 650
+            }
+          ],
+          "intensity": "非常に強い",
+          "location": "沖縄の南",
+          "time": "2026-10-22T14:00:00Z"
+        },
+        {
+          "hours": 2,
+          "lat": 21.5,
+          "lon": 124.7,
+          "pressure": "950",
+          "windMs": "45",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "15",
+          "radiusKm": 30,
+          "storm": [
+            {
+              "dir": 315,
+              "km": 360
+            },
+            {
+              "dir": 135,
+              "km": 310
+            }
+          ],
+          "gale": null,
+          "intensity": "非常に強い",
+          "time": "2026-10-22T15:00:00Z"
+        },
+        {
+          "hours": 5,
+          "lat": 21.9,
+          "lon": 124.4,
+          "pressure": "950",
+          "windMs": "45",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "20",
+          "radiusKm": 35,
+          "storm": [
+            {
+              "dir": 315,
+              "km": 370
+            },
+            {
+              "dir": 135,
+              "km": 310
+            }
+          ],
+          "gale": null,
+          "intensity": "非常に強い",
+          "time": "2026-10-22T18:00:00Z"
+        },
+        {
+          "hours": 8,
+          "lat": 22.4,
+          "lon": 124.1,
+          "pressure": "950",
+          "windMs": "45",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "20",
+          "radiusKm": 40,
+          "storm": [
+            {
+              "dir": 315,
+              "km": 370
+            },
+            {
+              "dir": 135,
+              "km": 310
+            }
+          ],
+          "gale": null,
+          "intensity": "非常に強い",
+          "time": "2026-10-22T21:00:00Z"
+        },
+        {
+          "hours": 11,
+          "lat": 22.9,
+          "lon": 123.8,
+          "pressure": "955",
+          "windMs": "40",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "20",
           "radiusKm": 45,
           "storm": [
             {
-              "dir": 45,
-              "km": 270
-            },
-            {
-              "dir": 225,
-              "km": 210
+              "dir": null,
+              "km": 320
             }
           ],
-          "gale": null
+          "gale": null,
+          "intensity": "強い",
+          "location": "西表島の南約160km",
+          "time": "2026-10-23T00:00:00Z"
         },
         {
-          "hours": 24,
-          "time": "2026-10-21T09:00:00Z",
-          "lat": 19.2,
-          "lon": 128.7,
-          "pressure": "935",
-          "windMs": "55",
-          "course": "西北西",
-          "speedKmh": "25",
-          "radiusKm": 65,
+          "hours": 14,
+          "lat": 23.4,
+          "lon": 123.5,
+          "pressure": "955",
+          "windMs": "40",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "20",
+          "radiusKm": 50,
           "storm": [
             {
-              "dir": 45,
-              "km": 290
-            },
-            {
-              "dir": 225,
-              "km": 250
+              "dir": null,
+              "km": 320
             }
           ],
-          "gale": null
+          "gale": null,
+          "intensity": "強い",
+          "time": "2026-10-23T03:00:00Z"
         },
         {
-          "hours": 45,
-          "time": "2026-10-22T06:00:00Z",
-          "lat": 20.9,
-          "lon": 125.9,
-          "pressure": "935",
-          "windMs": "50",
-          "course": "西北西",
-          "speedKmh": "15",
-          "radiusKm": 100,
+          "hours": 17,
+          "lat": 23.9,
+          "lon": 123.2,
+          "pressure": "955",
+          "windMs": "40",
+          "gustMs": "60",
+          "course": "北北西",
+          "speedKmh": "20",
+          "radiusKm": 55,
+          "storm": [
+            {
+              "dir": null,
+              "km": 330
+            }
+          ],
+          "gale": null,
+          "intensity": "強い",
+          "time": "2026-10-23T06:00:00Z"
+        },
+        {
+          "hours": 20,
+          "lat": 24.3,
+          "lon": 122.8,
+          "pressure": "955",
+          "windMs": "40",
+          "gustMs": "60",
+          "course": "北西",
+          "speedKmh": "20",
+          "radiusKm": 60,
+          "storm": [
+            {
+              "dir": null,
+              "km": 330
+            }
+          ],
+          "gale": null,
+          "intensity": "強い",
+          "time": "2026-10-23T09:00:00Z"
+        },
+        {
+          "hours": 23,
+          "lat": 24.5,
+          "lon": 122.4,
+          "pressure": "965",
+          "windMs": "40",
+          "gustMs": "55",
+          "course": "北西",
+          "speedKmh": "20",
+          "radiusKm": 65,
           "storm": [
             {
               "dir": 90,
@@ -146,168 +280,153 @@ export const PLAN = {
             },
             {
               "dir": 270,
-              "km": 290
+              "km": 230
             }
           ],
-          "gale": null
+          "gale": null,
+          "intensity": "強い",
+          "location": "与那国島の西約60km",
+          "time": "2026-10-23T12:00:00Z"
         },
         {
-          "hours": 69,
-          "time": "2026-10-23T06:00:00Z",
-          "lat": 23.2,
-          "lon": 123.8,
-          "pressure": "940",
-          "windMs": "45",
-          "course": "北西",
-          "speedKmh": "15",
-          "radiusKm": 220,
-          "storm": [
-            {
-              "dir": 90,
-              "km": 460
-            },
-            {
-              "dir": 270,
-              "km": 370
-            }
-          ],
-          "gale": null
-        },
-        {
-          "hours": 93,
-          "time": "2026-10-24T06:00:00Z",
-          "lat": 26.2,
-          "lon": 122.3,
-          "pressure": "965",
-          "windMs": "40",
-          "course": "北北西",
-          "speedKmh": "15",
-          "radiusKm": 370,
-          "storm": [
-            {
-              "dir": 90,
-              "km": 590
-            },
-            {
-              "dir": 270,
-              "km": 520
-            }
-          ],
-          "gale": null
-        },
-        {
-          "hours": 117,
-          "time": "2026-10-25T06:00:00Z",
-          "lat": 29.7,
-          "lon": 124.2,
-          "pressure": "985",
+          "hours": 47,
+          "lat": 27.8,
+          "lon": 123.4,
+          "pressure": "980",
           "windMs": "30",
+          "gustMs": "45",
           "course": "北北東",
-          "speedKmh": "20",
-          "radiusKm": 460,
+          "speedKmh": "15",
+          "radiusKm": 155,
           "storm": [
             {
               "dir": 90,
-              "km": 570
+              "km": 310
             },
             {
               "dir": 270,
-              "km": 520
+              "km": 230
             }
           ],
-          "gale": null
+          "gale": null,
+          "intensity": "-",
+          "location": "東シナ海",
+          "time": "2026-10-24T12:00:00Z"
+        },
+        {
+          "hours": 71,
+          "lat": 31.8,
+          "lon": 127.3,
+          "pressure": "992",
+          "windMs": "23",
+          "gustMs": "35",
+          "course": "北東",
+          "speedKmh": "25",
+          "radiusKm": 300,
+          "storm": null,
+          "gale": null,
+          "intensity": "-",
+          "location": "九州の西",
+          "time": "2026-10-25T12:00:00Z"
+        },
+        {
+          "hours": 95,
+          "lat": 34.6,
+          "lon": 136.6,
+          "pressure": "998",
+          "windMs": "18",
+          "gustMs": "25",
+          "course": "東北東",
+          "speedKmh": "40",
+          "radiusKm": 370,
+          "storm": null,
+          "gale": null,
+          "intensity": "-",
+          "location": "東海地方",
+          "time": "2026-10-26T12:00:00Z"
         }
       ],
-      "cwaTrackTime": "民國115年10月20日14時",
+      "cwaTrackTime": "民國115年10月22日20時",
       "cwaTrack": [
         {
           "hours": 0,
-          "time": "2026-10-20T06:00:00Z",
-          "lat": 16.4,
-          "lon": 134.3,
-          "galeKm": 250,
-          "stormKm": 120
-        },
-        {
-          "hours": 6,
-          "time": "2026-10-20T12:00:00Z",
-          "lat": 16.8,
-          "lon": 133.1,
-          "radiusKm": 40,
-          "galeKm": 280,
-          "stormKm": 120
-        },
-        {
-          "hours": 12,
-          "time": "2026-10-20T18:00:00Z",
-          "lat": 17.3,
-          "lon": 131.8,
-          "radiusKm": 50,
-          "galeKm": 280,
-          "stormKm": 120
-        },
-        {
-          "hours": 18,
-          "time": "2026-10-21T00:00:00Z",
-          "lat": 17.9,
-          "lon": 130.6,
-          "radiusKm": 80,
-          "galeKm": 280,
-          "stormKm": 120
-        },
-        {
-          "hours": 24,
-          "time": "2026-10-21T06:00:00Z",
-          "lat": 18.8,
-          "lon": 129.5,
-          "radiusKm": 90,
-          "galeKm": 280,
-          "stormKm": 120
-        },
-        {
-          "hours": 36,
-          "time": "2026-10-21T18:00:00Z",
-          "lat": 20.2,
-          "lon": 127.7,
-          "radiusKm": 110,
-          "galeKm": 300,
-          "stormKm": 120
-        },
-        {
-          "hours": 48,
-          "time": "2026-10-22T06:00:00Z",
+          "time": "2026-10-22T12:00:00.000Z",
           "lat": 21.2,
-          "lon": 126.3,
-          "radiusKm": 140,
+          "lon": 124.9,
+          "galeKm": 320,
+          "stormKm": 140
+        },
+        {
+          "time": "2026-10-22T18:00:00.000Z",
+          "lat": 22,
+          "lon": 124.4,
+          "radiusKm": 30,
+          "galeKm": 320,
+          "stormKm": 140,
+          "hours": 6
+        },
+        {
+          "time": "2026-10-23T00:00:00.000Z",
+          "lat": 22.8,
+          "lon": 123.8,
+          "radiusKm": 50,
+          "galeKm": 320,
+          "stormKm": 140,
+          "hours": 12
+        },
+        {
+          "time": "2026-10-23T06:00:00.000Z",
+          "lat": 23.7,
+          "lon": 123.2,
+          "radiusKm": 80,
+          "galeKm": 320,
+          "stormKm": 120,
+          "hours": 18
+        },
+        {
+          "time": "2026-10-23T12:00:00.000Z",
+          "lat": 24.4,
+          "lon": 122.8,
+          "radiusKm": 90,
+          "galeKm": 320,
+          "stormKm": 120,
+          "hours": 24
+        },
+        {
+          "time": "2026-10-24T00:00:00.000Z",
+          "lat": 25.7,
+          "lon": 122.6,
+          "radiusKm": 100,
           "galeKm": 300,
-          "stormKm": 120
+          "stormKm": 100,
+          "hours": 36
         },
         {
-          "hours": 72,
-          "time": "2026-10-23T06:00:00Z",
-          "lat": 24,
-          "lon": 124.6,
-          "radiusKm": 210,
+          "time": "2026-10-24T12:00:00.000Z",
+          "lat": 27.6,
+          "lon": 123.4,
+          "radiusKm": 130,
           "galeKm": 280,
-          "stormKm": 90
+          "stormKm": 90,
+          "hours": 48
         },
         {
-          "hours": 96,
-          "time": "2026-10-24T06:00:00Z",
-          "lat": 28.5,
-          "lon": 125.1,
-          "radiusKm": 360,
-          "galeKm": 250,
-          "stormKm": 80
-        },
-        {
-          "hours": 120,
-          "time": "2026-10-25T06:00:00Z",
-          "lat": 33.8,
-          "lon": 132.1,
-          "radiusKm": 390,
+          "time": "2026-10-25T12:00:00.000Z",
+          "lat": 31.7,
+          "lon": 127.2,
+          "radiusKm": 210,
           "galeKm": 180,
-          "stormKm": null
+          "stormKm": null,
+          "hours": 72
+        },
+        {
+          "time": "2026-10-26T12:00:00.000Z",
+          "lat": 33.6,
+          "lon": 132.3,
+          "radiusKm": 360,
+          "galeKm": null,
+          "stormKm": null,
+          "hours": 96
         }
       ]
     },
@@ -321,20 +440,18 @@ export const PLAN = {
     "subtitle_ja": "日本の工場 → 神戸 → 基隆 → 龍潭工場。生産ラインの期限：11/2（月）終業までに龍潭工場着。",
     "subtitle_en": "Japan factory → Kobe → Keelung → Longtan plant. Production deadline: at the Longtan plant by end of business Mon 11/2.",
     "summary_ja": [
-      "利用できるのは Yang Ming の YM INCEPTION 251S のみ。神戸 10/27（火）05:00 発（当初予定 10/25）、基隆 10/29（木）07:00 着。着港後 2–3 営業日の目安で龍潭工場着は 11/2（月）–11/3（火）の見込みで、11/2 終業までの期限ぎりぎり、余裕はありません。",
-      "11/2 に間に合わせるには、基隆着が 10/29（木）までで、着港後 2 営業日目（11/2）当日に工場へ搬入する必要があります。着港後 1 営業日目（10/30 金）にできれば最も安全。基隆着が 1 日遅れ（10/30）ると、「着港後 1 営業日目」しか手がありません。",
-      "台風チャンパー：気象庁・中央気象署とも 10/23–24 に台湾北東の海上を通る予想。この間、船は東京へ向かう途中と東京にいて、距離は十分あります。",
-      "注意すべきは 10/25–27：中央気象署 10/20 14 時の予報では 10/25 14 時に台風の中心が四国の西に達し、船が名古屋・大阪・神戸に寄港する時期と重なります。気象庁 10/20 18:45 の予報は西寄りで転向が遅い（10/25 は東シナ海）。両者の差が大きく、10/25 以降はどちらもまだ予報がありません。",
-      "台風で船が遅れるか：貨物船の台風避航の標準的な流れ（航行中は強風域＋予報誤差を避ける、日本の港の第一／第二警戒体制、通過後の作業再開）に沿って、ページを開くたびに最新予報で計算し直します。結果は下の「シミュレーション」をご覧ください。",
-      "このページは開くたび・「今すぐ更新」を押すたびに、Yang Ming・気象庁・中央気象署・AIS の最新データを取り直します。"
+      "Yang Ming YM INCEPTION 251S がさらに遅れ：神戸 10/27（火）23:00 発、基隆 10/30（金）07:00 着。着港後 2–3 営業日なら 11/3（火）–11/4（水）で 11/2 に間に合わない。「着港後 1 営業日目」の 11/2（月）に通関・搬入できた場合のみ間に合う。",
+      "やること：通関業者に着港前から書類を準備してもらい、10/30（金）着港当日または週末にコンテナの荷降ろしと許可の準備、11/2（月）朝に許可、当日トラックで龍潭へ。",
+      "台風チャンパー：10/23–24 に台湾東方近海へ最接近、その後日本へ。10/26 には弱まった台風が名古屋・大阪付近にあり、名古屋・大阪でさらに 0–12 時間遅れる可能性。神戸→基隆の区間に台風の予報はない。",
+      "到着予測（10/22 22:21 第 3 回）：現行スケジュールで最短 11/2。日本の港でさらに 12–48 時間遅れても週末を挟むため最短は 11/2 のままだが難しくなる。72 時間以上遅れ（基隆着 11/2）なら間に合わない。詳細は下の「到着予測 第 3 回」。",
+      "ページを開くたび・「今すぐ更新」を押すたびに Yang Ming、気象庁、中央気象署、AIS の最新データを取り直します。"
     ],
     "summary_en": [
-      "Only Yang Ming's YM INCEPTION 251S is possible. Kobe departure Tue 10/27 05:00 (original schedule 10/25), Keelung arrival Thu 10/29 07:00. At 2–3 working days after arrival, it reaches the Longtan plant Mon 11/2 – Tue 11/3: right on the end-of-business 11/2 deadline, with no margin.",
-      "To make 11/2: the ship must reach Keelung by Thu 10/29 and the cargo must be at the plant on the 2nd working day after arrival (11/2). The 1st working day (Fri 10/30) is the safe target. If Keelung slips one day (10/30), only the 1st-working-day route still works.",
-      "Typhoon CHAMPI: JMA and CWA both forecast it to pass over the sea northeast of Taiwan on 10/23–24, while the ship is on its way to and at Tokyo, far away.",
-      "The window to watch is 10/25–27: CWA's 14:00 forecast on 10/20 puts the centre west of Shikoku at 14:00 on 10/25, just as the ship calls at Nagoya, Osaka and Kobe. JMA's 18:45 forecast on 10/20 is further west and turns later (East China Sea on 10/25). The two differ a lot, and neither forecasts beyond 10/25 yet.",
-      "Will the typhoon delay the ship: every time the page opens it re-runs the standard typhoon-avoidance steps for cargo ships (keep out of the gale area plus forecast error at sea, Japanese port alert levels 1 and 2, resuming work after the typhoon) on the latest forecasts; see the scenario section below.",
-      "Every time the page is opened or 'Update now' is pressed, it re-fetches the latest Yang Ming, JMA, CWA and AIS data."
+      "YM INCEPTION 251S has slipped again: departs Kobe Tue 10/27 23:00, arrives Keelung Fri 10/30 07:00. At 2–3 working days after arrival that is 11/3–11/4, missing 11/2; only clearing and delivering on the first working day after arrival (Mon 11/2) makes it.",
+      "To do: have the customs broker prepare the paperwork before arrival, get the container unloaded and release prepared on 10/30 or over the weekend, release first thing Mon 11/2 and truck to Longtan the same day.",
+      "Typhoon CHAMPI: closest to Taiwan's east coast 10/23–24, then heads to Japan. On 10/26 the weakened storm is near Nagoya/Osaka, which may add 0–12 hours at those ports. No typhoon is forecast on the Kobe → Keelung leg.",
+      "Arrival forecast (round 3, 10/22 22:21): earliest 11/2 on the current schedule; a further 12–48 h delay in Japan still gives 11/2 at best because of the weekend, but it gets harder; 72 h or more (Keelung on 11/2) misses the deadline. See 'Arrival forecast round 3' below.",
+      "Every page load and every 'Refresh now' re-fetches the latest Yang Ming, JMA, CWA and AIS data."
     ],
     "mode": "LCL",
     "modeNote": "貨物和其他人的貨拼同一個貨櫃（併櫃）運送，已訂陽明 YM INCEPTION 251S。",
@@ -345,7 +462,187 @@ export const PLAN = {
     ],
     "deadlineTime": "下班前",
     "deadlineTime_ja": "終業まで",
-    "deadlineTime_en": "by end of business"
+    "deadlineTime_en": "by end of business",
+    "forecastRound": {
+      "at": "2026-10-22T22:21:00+08:00",
+      "round": 3,
+      "title": "到貨預測第 3 輪（颱風、避颱、延誤情境）",
+      "title_ja": "到着予測 第 3 回（台風・避難・遅延シナリオ）",
+      "title_en": "Arrival forecast round 3 (typhoon, sheltering and delay scenarios)",
+      "scenarios": [
+        {
+          "kobe": "10/27（二）22:00",
+          "kee": "10/30（五）07:00",
+          "sea": "57",
+          "first": "11/2（一）",
+          "std": "11/3–11/4",
+          "ok": "fast",
+          "zh": [
+            "A. 照現在船期（颱風不再造成延誤）",
+            "陽明 10/22 最新船期。"
+          ],
+          "ja": [
+            "A. 現行スケジュール（台風による追加遅れなし）",
+            "Yang Ming 10/22 最新。"
+          ],
+          "en": [
+            "A. Current schedule (no further typhoon delay)",
+            "Yang Ming latest as of 10/22."
+          ]
+        },
+        {
+          "kobe": "10/28（三）10:00",
+          "kee": "10/30（五）19:00",
+          "sea": "57",
+          "first": "11/2（一）",
+          "std": "11/3–11/4",
+          "ok": "fast",
+          "zh": [
+            "B. 颱風讓名古屋、大阪停工 12 小時",
+            "10/26 減弱的颱風在東海地方；日本港口第一警戒，算 0–12 小時，取上限。"
+          ],
+          "ja": [
+            "B. 台風で名古屋・大阪が 12 時間止まる",
+            "10/26 弱まった台風が東海地方。港の第一警戒体制として 0–12 時間の上限。"
+          ],
+          "en": [
+            "B. Typhoon halts Nagoya/Osaka work 12 h",
+            "Weakened storm over Tokai on 10/26; first-level port alert, 0–12 h, upper end."
+          ]
+        },
+        {
+          "kobe": "10/28（三）22:00",
+          "kee": "10/31（六）07:00",
+          "sea": "57",
+          "first": "11/2（一）",
+          "std": "11/3–11/4",
+          "ok": "hard",
+          "zh": [
+            "C. 船出港避颱、延誤 24 小時",
+            "颱風路徑偏北或偏強，港口第二警戒，船出港避難再回來排隊。週六到港，拆櫃和放行準備要靠週末加班。"
+          ],
+          "ja": [
+            "C. 港外避難で 24 時間遅れ",
+            "台風が北寄り・強めの場合、第二警戒体制で港外へ避難し再入港。土曜着、週末の作業が必要。"
+          ],
+          "en": [
+            "C. Ship leaves port to shelter, 24 h delay",
+            "Track further north or stronger: second-level port alert, ship shelters outside and re-queues. Saturday arrival; needs weekend work."
+          ]
+        },
+        {
+          "kobe": "10/29（四）22:00",
+          "kee": "11/1（日）07:00",
+          "sea": "57",
+          "first": "11/2（一）",
+          "std": "11/3–11/4",
+          "ok": "hard",
+          "zh": [
+            "D. 延誤 48 小時（避颱＋排隊靠碼頭）",
+            "避颱後港口塞船，再多等一天。週日到港，11/2 當天要完成拆櫃、放行、送廠，幾乎沒有餘地。"
+          ],
+          "ja": [
+            "D. 48 時間遅れ（避難＋着岸待ち）",
+            "避難後の混雑でさらに 1 日。日曜着、11/2 当日に荷降ろし・許可・搬入まで必要で余地はほぼない。"
+          ],
+          "en": [
+            "D. 48 h delay (shelter + berth queue)",
+            "Port congestion after the storm adds a day. Sunday arrival; unloading, release and delivery all on 11/2 — almost no room."
+          ]
+        },
+        {
+          "kobe": "10/30（五）22:00",
+          "kee": "11/2（一）07:00",
+          "sea": "57",
+          "first": "11/3（二）",
+          "std": "11/4–11/5",
+          "ok": "no",
+          "zh": [
+            "E. 延誤 72 小時以上（目前預報沒有這種情況）",
+            "例如另有新颱風或基隆港管制。11/2 當天才到港，趕不上。"
+          ],
+          "ja": [
+            "E. 72 時間以上の遅れ（現在の予報にはない）",
+            "新たな台風や基隆港の規制など。11/2 着港では間に合わない。"
+          ],
+          "en": [
+            "E. 72 h+ delay (not in current forecasts)",
+            "E.g. a new typhoon or Keelung port closure. Arriving on 11/2 itself misses the deadline."
+          ]
+        }
+      ],
+      "assumptions": [
+        "船公司官網的最新時間為準；港與港之間的航行時間照陽明船期（神戶開→基隆到 57 小時，台灣時間計），延誤時航行時間不變、整段往後推。",
+        "到港後送廠：照網站規則，到港後第 2–3 個工作天（一般），最快第 1 個工作天（要報關行事先備好文件、到港後儘快拆櫃放行、當天派車）。週六、週日不算工作天；10/26 是台灣休假日，已不影響這班。",
+        "這班貨和別人的貨拼同一個貨櫃，到港後要先卸櫃、拆櫃才能放行，所以「到港當天」不算第 1 個工作天。",
+        "基隆到龍潭廠卡車約 1.5–2 小時；11/2 當天放行就能在下班前送到。",
+        "颱風延誤照網站「貨輪避颱的標準流程」：日本港口第一警戒 0–12 小時、第二警戒船出港避難（本輪假設 24–48 小時）；颱風過後加 6 小時恢復作業。預報只到 10/26 晚上，之後沒有預報，不外推。",
+        "台灣海上／陸上颱風警報：薔琵 10/23–24 最接近台灣，這時船在東京附近，不影響航程；警報狀態以氣象署公告為準（本次自動抓取無法讀到警報頁的即時狀態）。"
+      ],
+      "assumptions_ja": [
+        "船会社サイトの最新時刻を基準。神戸発→基隆着は 57 時間（台湾時間）で、遅れても航海時間は変えず全体を後ろへずらす。",
+        "着港後の搬入：通常 2–3 営業日目、最短 1 営業日目（通関業者が事前に書類準備、着港後すぐ荷降ろし・許可、当日配車）。土日は営業日に含めない。10/26 の台湾休日はこの便に影響しない。",
+        "混載貨物のため、着港後にコンテナの荷降ろしが必要で、着港当日は 1 営業日目に数えない。",
+        "基隆→龍潭のトラックは約 1.5–2 時間。11/2 当日に許可が出れば終業前に搬入可能。",
+        "台風遅延はサイトの「台風避難の標準手順」に従う：第一警戒 0–12 時間、第二警戒で港外避難（今回 24–48 時間と仮定）、通過後 6 時間で作業再開。予報は 10/26 夜までで、外挿しない。",
+        "台湾の海上・陸上台風警報：10/23–24 の最接近時、船は東京付近で航路に影響なし。警報状況は中央気象署の発表に従う（今回の自動取得では警報ページの状況を読めず）。"
+      ],
+      "assumptions_en": [
+        "Latest carrier times rule. Kobe departure → Keelung arrival is 57 h (Taiwan time); delays shift everything later, sea time unchanged.",
+        "Arrival → plant: normally the 2nd–3rd working day after arrival, fastest the 1st (broker prepares papers in advance, container unloaded and released quickly, truck same day). Weekends are not working days; Taiwan's 10/26 holiday no longer affects this sailing.",
+        "The cargo shares a container, which must be unloaded and unpacked first, so the arrival day itself does not count as the 1st working day.",
+        "Keelung → Longtan by truck is about 1.5–2 h, so release on 11/2 still allows delivery before close of business.",
+        "Typhoon delays follow the site's 'standard typhoon procedure': first-level port alert 0–12 h, second-level alert ship shelters outside (assumed 24–48 h this round), +6 h to resume work. Forecasts end on the evening of 10/26 and are not extrapolated.",
+        "Taiwan sea/land typhoon warnings: CHAMPI is closest to Taiwan on 10/23–24 while the ship is near Tokyo, so the voyage is unaffected; warning status per CWA (the automated fetch could not read the live warning page this time)."
+      ],
+      "sources": [
+        {
+          "label": "陽明日本代理 神戶船期（Voyage Detail）",
+          "label_ja": "Yang Ming 日本代理店 神戸",
+          "label_en": "Yang Ming Japan agent, Kobe",
+          "url": "https://www.toyoshingo.com/yangming/certificate.php?portcode=41&id=10381411",
+          "at": "10/22 22:21"
+        },
+        {
+          "label": "陽明日本代理 東京／名古屋／大阪",
+          "label_ja": "同 東京・名古屋・大阪",
+          "label_en": "Same, Tokyo / Nagoya / Osaka",
+          "url": "https://www.toyoshingo.com/yangming/index.php?port=41&week=4",
+          "at": "10/22 22:21"
+        },
+        {
+          "label": "陽明基隆靠泊表",
+          "label_ja": "Yang Ming 基隆着岸予定表",
+          "label_en": "Yang Ming Keelung berth list",
+          "url": "https://ymkeeweb.yangming.com/YMKEE/vslterm",
+          "at": "10/22 22:21"
+        },
+        {
+          "label": "日本氣象廳 颱風資訊（10/22 22:45 日本時間發布）",
+          "label_ja": "気象庁 台風情報（10/22 22:45 発表）",
+          "label_en": "JMA typhoon info (issued 10/22 22:45 JST)",
+          "url": "https://www.jma.go.jp/bosai/map.html#contents=typhoon",
+          "at": "10/22 22:21"
+        },
+        {
+          "label": "中央氣象署 颱風消息（10/22 20 時）",
+          "label_ja": "中央気象署 台風情報（10/22 20 時）",
+          "label_en": "Taiwan CWA typhoon news (10/22 20:00)",
+          "url": "https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_NEWS.html",
+          "at": "10/22 22:21"
+        },
+        {
+          "label": "中央氣象署 颱風警報頁（自動抓取讀不到即時狀態）",
+          "label_ja": "中央気象署 台風警報（自動取得では状況を読めず）",
+          "label_en": "Taiwan CWA typhoon warnings (live status not readable by the automated fetch)",
+          "url": "https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_WARN.html",
+          "at": "10/22 22:21"
+        }
+      ],
+      "note": "規則推算，不是船公司或報關行的承諾；船期以陽明公告為準。",
+      "note_ja": "ルールに基づく推計で、船会社・通関業者の確約ではありません。",
+      "note_en": "A rule-based estimate, not a commitment by the carrier or broker."
+    }
   },
   "vessels": [
     {
@@ -1026,20 +1323,20 @@ export const PLAN = {
         "text": [
           "已訂艙，貨物和其他人的貨拼同一個貨櫃（併櫃）。",
           "10/21 卡車到日本工廠取貨，10/22 送到神戶收貨倉庫（倉庫已同意延後收貨）。",
-          "到基隆後約 2–3 個工作天送進龍潭廠，會加急處理；預估 11/2–11/3，期限是 11/2 下班前，沒有緩衝。",
-          "船期比表定晚約 1–1.5 天（神戶表定 10/25，現在 10/27 05:00 開）。"
+          "到基隆後約 2–3 個工作天送進龍潭廠，會加急處理；船到港改成 10/30（五），照 2–3 個工作天是 11/3–11/4，要趕 11/2 只剩「到港後第 1 個工作天」（11/2 一）這條路。",
+          "船期比表定晚約 2.5 天（神戶表定 10/25，現在 10/27 23:00 開，比 10/20 查的又晚 18 小時）。"
         ],
         "text_ja": [
           "予約済み。他の荷主の貨物と同じコンテナに積み合わせ（混載）。",
           "10/21 にトラックが日本の工場で集荷、10/22 に神戸の受け入れ倉庫へ搬入（倉庫は遅れ搬入を了承済み）。",
-          "基隆着後 約 2–3 営業日で龍潭工場へ（急ぎで対応）。11/2–11/3 の見込みで、期限は 11/2 終業まで、余裕なし。",
-          "当初予定より約 1–1.5 日遅れ（神戸の当初予定 10/25 → 現在 10/27 05:00 発）。"
+          "基隆着後 約 2–3 営業日で龍潭工場へ（急ぎ対応）。着港が 10/30（金）に遅れ、2–3 営業日なら 11/3–11/4。11/2 に間に合うのは「着港後 1 営業日目」（11/2 月）のみ。",
+          "当初予定より約 2.5 日遅れ（神戸の当初予定 10/25 → 現在 10/27 23:00 発。10/20 時点よりさらに 18 時間遅れ）。"
         ],
         "text_en": [
           "Booked; the cargo shares a container with other shipments.",
           "Truck pickup at the Japan factory on 10/21, delivered to the Kobe receiving warehouse on 10/22 (the warehouse agreed to take it late).",
-          "About 2–3 working days from Keelung to the Longtan plant, rushed: est. 11/2–11/3 against an end-of-business 11/2 deadline, no margin.",
-          "About 1–1.5 days behind the original schedule (Kobe originally 10/25, now departing 10/27 05:00)."
+          "About 2–3 working days from Keelung to the Longtan plant, rushed. Arrival has slipped to Fri 10/30, so 2–3 working days means 11/3–11/4; only the 'first working day after arrival' path (Mon 11/2) meets the deadline.",
+          "About 2.5 days behind the original schedule (Kobe originally 10/25, now departing 10/27 23:00 — another 18 hours later than on 10/20)."
         ]
       },
       "carrier": "陽明 Yang Ming",
@@ -1056,28 +1353,28 @@ export const PLAN = {
         "note_en": ""
       },
       "dates": {
-        "etd": "2026-10-27T05:00:00+09:00",
-        "etaFrom": "2026-10-29T07:00:00+08:00",
+        "etd": "2026-10-27T23:00:00+09:00",
+        "etaFrom": "2026-10-30T07:00:00+08:00",
         "etaTo": null,
-        "plantFrom": "2026-11-02",
-        "plantTo": "2026-11-03"
+        "plantFrom": "2026-11-03",
+        "plantTo": "2026-11-04"
       },
       "imo": "9319155",
       "kobeEtd": {
-        "text": "10/27（二）05:00",
-        "text_ja": "10/27（火）05:00",
-        "text_en": "10/27 (Tue) 05:00",
+        "text": "10/27（二）23:00",
+        "text_ja": "10/27（火）23:00",
+        "text_en": "10/27 (Tue) 23:00",
         "src": "陽明日本代理",
         "src_ja": "Yang Ming 日本代理店",
         "src_en": "Yang Ming Japan agent",
         "note": [
-          "神戶 10/26 22:00 到、23:00 靠碼頭；表定 10/25（日）"
+          "台北時間 10/27 22:00；神戶 10/27 16:00 到、17:00 靠碼頭；表定 10/25（日）"
         ],
         "note_ja": [
-          "神戸 10/26 22:00 着・23:00 着岸、当初予定 10/25（日）"
+          "台湾時間 10/27 22:00、神戸 10/27 16:00 着・17:00 着岸、当初予定 10/25（日）"
         ],
         "note_en": [
-          "Kobe arr 10/26 22:00, berth 23:00; original schedule Sun 10/25"
+          "Taipei time 10/27 22:00; Kobe arr 10/27 16:00, berth 17:00; original schedule Sun 10/25"
         ],
         "badge": "fallback"
       },
@@ -1121,15 +1418,15 @@ export const PLAN = {
       "name": "YM INCEPTION",
       "order": 1,
       "plant": {
-        "text": "11/2–3",
+        "text": "11/3–4",
         "note": [
-          "到港後約 2–3 個工作天，會加急處理"
+          "到港後約 2–3 個工作天；最快第 1 個工作天＝11/2（一）"
         ],
         "note_ja": [
-          "着港後 約 2–3 営業日、急ぎで対応"
+          "着港後 約 2–3 営業日、最短 1 営業日目＝11/2（月）"
         ],
         "note_en": [
-          "About 2–3 working days after arrival, rushed"
+          "About 2–3 working days after arrival; fastest (1st working day) = Mon 11/2"
         ]
       },
       "role": "已訂艙",
@@ -1142,7 +1439,7 @@ export const PLAN = {
         }
       ],
       "twEta": {
-        "text": "基隆 10/29（四）07:00",
+        "text": "基隆 10/30（五）07:00",
         "src": "陽明基隆靠泊表",
         "note": [
           "陽明基隆靠泊表（基隆聯興碼頭）"
@@ -1153,13 +1450,13 @@ export const PLAN = {
         "note_en": [
           "Yang Ming Keelung berth list"
         ],
-        "text_ja": "基隆 10/29（木）07:00",
-        "text_en": "Keelung 10/29 (Thu) 07:00",
+        "text_ja": "基隆 10/30（金）07:00",
+        "text_en": "Keelung 10/30 (Fri) 07:00",
         "src_ja": "Yang Ming 基隆着岸予定表",
         "src_en": "Yang Ming Keelung berth list"
       },
       "twPort": "基隆",
-      "updatedAt": "2026-10-20T18:40:00+08:00",
+      "updatedAt": "2026-10-22T22:21:00+08:00",
       "voyage": "251S",
       "id": "ym-inception",
       "role_ja": "予約済み",
@@ -1215,57 +1512,57 @@ export const PLAN = {
         {
           "port": "東京",
           "voyage": "250N/251S",
-          "arr": "2026-10-23T13:00:00+09:00",
-          "berth": "2026-10-23T14:00:00+09:00",
-          "dep": "2026-10-24T00:01:00+09:00",
+          "arr": "2026-10-24T12:00:00+09:00",
+          "berth": "2026-10-24T13:00:00+09:00",
+          "dep": "2026-10-24T23:00:00+09:00",
           "origArr": "2026-10-22",
           "origDep": "2026-10-22",
           "terminal": "青海 A0/A1/A2",
-          "updated": "10/20 18:38",
+          "updated": "10/22 23:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=13&id=10381408"
         },
         {
           "port": "名古屋",
           "voyage": "250N/251S",
-          "arr": "2026-10-25T13:00:00+09:00",
-          "berth": "2026-10-25T14:00:00+09:00",
-          "dep": "2026-10-25T23:00:00+09:00",
+          "arr": "2026-10-26T07:00:00+09:00",
+          "berth": "2026-10-26T08:00:00+09:00",
+          "dep": "2026-10-26T17:00:00+09:00",
           "origArr": "2026-10-24",
           "origDep": "2026-10-24",
           "terminal": "鍋田ふ頭 NUCT",
-          "updated": "10/20 18:38",
+          "updated": "10/22 23:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=35&id=10381410"
         },
         {
           "port": "大阪",
           "voyage": "250N/251S",
-          "arr": "2026-10-26T13:00:00+09:00",
-          "berth": "2026-10-26T14:00:00+09:00",
-          "dep": "2026-10-26T21:00:00+09:00",
+          "arr": "2026-10-27T07:00:00+09:00",
+          "berth": "2026-10-27T08:00:00+09:00",
+          "dep": "2026-10-27T15:00:00+09:00",
           "origArr": "2026-10-25",
           "origDep": "2026-10-25",
           "terminal": "南港 C-9",
-          "updated": "10/20 18:38",
+          "updated": "10/22 23:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=40&id=10381412"
         },
         {
           "port": "神戶",
           "voyage": "250N/251S",
-          "arr": "2026-10-26T22:00:00+09:00",
-          "berth": "2026-10-26T23:00:00+09:00",
-          "dep": "2026-10-27T05:00:00+09:00",
+          "arr": "2026-10-27T16:00:00+09:00",
+          "berth": "2026-10-27T17:00:00+09:00",
+          "dep": "2026-10-27T23:00:00+09:00",
           "origArr": "2026-10-25",
           "origDep": "2026-10-25",
           "terminal": "六甲アイランド RC-1/2",
-          "updated": "10/20 18:38",
+          "updated": "10/22 23:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=41&id=10381411",
           "load": true
         },
         {
           "port": "基隆",
           "voyage": "251S",
-          "arr": "2026-10-29T07:00:00+08:00",
-          "dep": "2026-10-29T16:00:00+08:00",
+          "arr": "2026-10-30T07:00:00+08:00",
+          "dep": "2026-10-30T16:00:00+08:00",
           "terminal": "基隆聯興碼頭",
           "origArr": null,
           "origDep": null,
