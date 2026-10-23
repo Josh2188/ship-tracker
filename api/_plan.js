@@ -477,6 +477,7 @@ export const PLAN = {
           "first": "11/2（一）",
           "std": "11/3–11/4",
           "ok": "fast",
+          "ok3": "yes",
           "zh": [
             "A. 照現在船期（颱風不再造成延誤）",
             "陽明 10/22 最新船期。"
@@ -497,6 +498,7 @@ export const PLAN = {
           "first": "11/2（一）",
           "std": "11/3–11/4",
           "ok": "fast",
+          "ok3": "yes",
           "zh": [
             "B. 颱風讓名古屋、大阪停工 12 小時",
             "10/26 減弱的颱風在東海地方；日本港口第一警戒，算 0–12 小時，取上限。"
@@ -517,6 +519,7 @@ export const PLAN = {
           "first": "11/2（一）",
           "std": "11/3–11/4",
           "ok": "hard",
+          "ok3": "buffer",
           "zh": [
             "C. 船出港避颱、延誤 24 小時",
             "颱風路徑偏北或偏強，港口第二警戒，船出港避難再回來排隊。週六到港，拆櫃和放行準備要靠週末加班。"
@@ -537,6 +540,7 @@ export const PLAN = {
           "first": "11/2（一）",
           "std": "11/3–11/4",
           "ok": "hard",
+          "ok3": "buffer",
           "zh": [
             "D. 延誤 48 小時（避颱＋排隊靠碼頭）",
             "避颱後港口塞船，再多等一天。週日到港，11/2 當天要完成拆櫃、放行、送廠，幾乎沒有餘地。"
@@ -557,6 +561,7 @@ export const PLAN = {
           "first": "11/3（二）",
           "std": "11/4–11/5",
           "ok": "no",
+          "ok3": "tight",
           "zh": [
             "E. 延誤 72 小時以上（目前預報沒有這種情況）",
             "例如另有新颱風或基隆港管制。11/2 當天才到港，趕不上。"
@@ -571,6 +576,18 @@ export const PLAN = {
           ]
         }
       ],
+      "watch": {
+        "level": "緊盯",
+        "from": "2026-10-26T00:00:00+08:00",
+        "to": "2026-10-28T12:00:00+08:00",
+        "title": "重點監控：神戶／大阪港可能因颱風管制",
+        "title_ja": "重点監視：台風で神戸・大阪港が規制される可能性",
+        "title_en": "Close watch: Kobe / Osaka port controls from the typhoon",
+        "text": "薔琵 10/26–27 減弱後，會從神戶南方的海上往東走。如果神戶或大阪港因此管制（停止作業或船要出港避難），YM INCEPTION 251S 原定 10/27 22:00 離開神戶、10/30 07:00 到基隆，可能再延後。這段時間每天盯港口公告和船期，有變動就更新預測表（對應情境 B–D）。",
+        "text_ja": "CHAMPI は 10/26–27 に弱まった後、神戸南方の海上を東へ進む見込み。神戸港・大阪港が規制（荷役停止や港外避難）になれば、YM INCEPTION 251S（神戸発 10/27 22:00、基隆着 10/30 07:00 予定、台湾時間）はさらに遅れる可能性。この期間は毎日、港の発表と船期を確認し、変更があれば予測表（シナリオ B–D）を更新。",
+        "text_en": "After weakening on 10/26–27, CHAMPI is expected to move east over the sea south of Kobe. If Kobe or Osaka ports impose controls (work halted or ships sent out to shelter), YM INCEPTION 251S (planned to leave Kobe 10/27 22:00, reach Keelung 10/30 07:00, Taiwan time) could be delayed further. Check port notices and the schedule daily in this window; the forecast table (scenarios B–D) will be updated on any change.",
+        "track": [[134.2,32.6],[135.0,33.0],[136.0,33.3],[137.2,33.6],[138.6,34.0]]
+      },
       "assumptions": [
         "船公司官網的最新時間為準；港與港之間的航行時間照陽明船期（神戶開→基隆到 57 小時，台灣時間計），延誤時航行時間不變、整段往後推。",
         "到港後送廠：照網站規則，到港後第 2–3 個工作天（一般），最快第 1 個工作天（要報關行事先備好文件、到港後儘快拆櫃放行、當天派車）。週六、週日不算工作天；10/26 是台灣休假日，已不影響這班。",

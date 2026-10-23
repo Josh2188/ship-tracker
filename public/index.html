@@ -225,6 +225,13 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
 .sim-grid{display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:20px; align-items:start}
 .sim-grid > *{min-width:0}
 .sim-side{display:grid; gap:16px}
+@media (min-width: 900px){ .sim-side{position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto} .simbox .sim-row p{font-size:16px} }
+.watchbox{padding:14px 16px; border:2px solid var(--alert); border-radius:8px; background:var(--panel)}
+.watchbox h4{margin:0 0 6px; font-size:16px; color:var(--alert); display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.watchbox p{margin:0; font-size:15px; line-height:1.6}
+.watchbox[data-on="1"]{background:var(--watch-soft)}
+.offlinks h4{margin:0; font-size:15px} .offlinks ul{margin:0; padding-left:1.1em; display:grid; gap:4px; font-size:14.5px} .offlinks p{margin:0; font-size:13.5px; color:var(--ink-3)}
+.watchbox .wtag{font-size:12.5px; padding:2px 8px; border-radius:99px; background:var(--alert); color:#fff}
 .scrub{margin-top:12px}
 .scrub-top{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap}
 .tlabel{font-size:18px; font-variant-numeric:tabular-nums}
@@ -275,7 +282,7 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
 .proc .proc-steps p{margin:0; font-size:15px; color:var(--ink-2)}
 .proc .proc-steps p.sim-how{margin-top:6px; color:var(--ink); background:var(--panel-2); border-radius:4px; padding:6px 10px; font-size:14.5px}
 .proc .ty-src a{white-space:normal}
-@media (max-width: 899px){ .sim-grid{grid-template-columns:minmax(0,1fr)} }
+@media (max-width: 899px){ .sim-grid{grid-template-columns:minmax(0,1fr)} .sim-map, .sim-side{display:contents} #chartWrap{order:1} #simBox{order:2} #watchMap{order:3} #offLinks{order:3} #scrub{order:4} #mapLegend{order:5} #offmap{order:6} .sim-side > .typhoon{order:7} }
 @media (max-width: 640px){
   .tablewrap{padding:2px 12px 10px}
   .tablewrap table, .tablewrap tbody, .tablewrap tr, .tablewrap th, .tablewrap td{display:block; width:100%}
@@ -479,6 +486,8 @@ body{font-size:17px; line-height:1.65}
       </div>
       <div class="sim-side">
         <div class="panel simbox" id="simBox"></div>
+        <div class="watchbox" id="watchMap" hidden></div>
+        <div class="panel simbox offlinks" id="offLinks"></div>
         <section class="panel typhoon" data-full aria-labelledby="tyTitle">
           <h2 id="tyTitle"></h2>
           <div id="tyText"></div>
@@ -503,6 +512,7 @@ body{font-size:17px; line-height:1.65}
 
   <section class="booked" id="roundSec" aria-labelledby="roundH" hidden>
     <div class="sec-head"><h2 id="roundH"></h2><p id="roundSub"></p></div>
+    <div class="watchbox" id="watchRound" hidden style="margin-bottom:14px"></div>
     <div class="panel tablewrap" id="roundTable"></div>
     <div class="panel proc"><h3 id="roundAsH"></h3><ol class="proc-steps" id="roundAs"></ol><h3 id="roundSrcH"></h3><ul id="roundSrc"></ul><p class="ty-src" id="roundNote"></p></div>
   </section>
@@ -1325,7 +1335,7 @@ body{font-size:17px; line-height:1.65}
       chainBeyond: "（預報沒涵蓋的時段未計入）", worst: function(x){ return "（最壞 " + x + "）"; }, ifNone: function(v){ return "沒延誤時：" + v; },
       v: { ok: "趕得上 11/2", edge: "壓線：要在到港後第 2 個工作天送到", rush: "只有到港後第 1 個工作天送到才趕得上", miss: "趕不上 11/2" },
       scenH: "基隆晚到幾天，龍潭廠哪天到", scenSub: "照到港後第 2–3 個工作天送廠（週末、10/26 補假不算）；最快是到港後第 1 個工作天。期限：11/2（一）下班前。",
-      scenCols: ["情況", "基隆到港", "最快（第 1 個工作天）", "一般（第 2–3 個工作天）", "11/2 下班前"],
+      scenCols: ["情況", "基隆到港", "最快（第 1 個工作天）", "一般（第 2–3 個工作天）", "11/2 下班前", "11/3 下班前"],
       scenRows: ["照目前船期", "晚 12 小時", "晚 1 天", "晚 2 天", "晚 3 天", "晚 4 天"],
       rulesH: "貨輪避颱的標準流程（模擬照這套規則判斷）", rules: [
         ["① 航行中：船長、船公司", "每次有新預報就重新檢查航線，避開颱風「強風（34 節，約七級風）範圍＋預報誤差」。這是航海界的 1-2-3 避颱原則：24／48／72 小時的預報誤差各抓 100／200／300 浬。航線會碰到時，做法有：提早開船搶先通過、減速在安全海域等颱風過去、繞航，必要時跳港或調換靠港順序。", "模擬：船的預測位置進入暴風範圍，一定延誤（延誤時數＝在範圍內的時數）；只進入強風範圍，可能延誤。範圍用氣象單位公布的值：氣象署是七級風／十級風半徑加 70% 機率半徑，氣象廳是暴風警戒範圍。"],
@@ -1367,7 +1377,7 @@ body{font-size:17px; line-height:1.65}
       chainBeyond: "（予報がない時間帯は計算に入れていません）", worst: function(x){ return "（最悪 " + x + "）"; }, ifNone: function(v){ return "遅れがなければ：" + v; },
       v: { ok: "11/2 に間に合う", edge: "ぎりぎり：着港後 2 営業日目に搬入が必要", rush: "着港後 1 営業日目に搬入した場合のみ間に合う", miss: "11/2 に間に合わない" },
       scenH: "基隆着が何日遅れると、龍潭工場着はいつか", scenSub: "着港後 2–3 営業日で工場へ（週末・10/26 振替休日は数えない）。最短は着港後 1 営業日目。期限：11/2（月）終業まで。",
-      scenCols: ["ケース", "基隆着", "最短（1 営業日目）", "通常（2–3 営業日目）", "11/2 終業まで"],
+      scenCols: ["ケース", "基隆着", "最短（1 営業日目）", "通常（2–3 営業日目）", "11/2 終業まで", "11/3 終業まで"],
       scenRows: ["現在のスケジュール", "12 時間遅れ", "1 日遅れ", "2 日遅れ", "3 日遅れ", "4 日遅れ"],
       rulesH: "貨物船の台風避航の標準的な流れ（シミュレーションはこのルールで判定）", rules: [
         ["① 航行中：船長・船会社", "新しい予報が出るたびに航路を見直し、台風の「強風域（34 ノット、風力 7 前後）＋予報誤差」を避けます。海運でいう 1-2-3 ルールで、24／48／72 時間後の予報誤差をそれぞれ 100／200／300 海里とみます。航路にかかる場合は、早めに出港して先に通過する、減速して安全な海域で通過を待つ、迂回する、必要なら抜港や寄港順の変更をします。", "シミュレーション：船の予定位置が暴風域に入れば必ず遅れる（遅れ＝範囲内にいる時間）、強風域だけなら遅れる可能性あり。範囲は各機関の発表値を使用：中央気象署は風力 7／10 の半径＋70 % 確率半径、気象庁は暴風警戒域。"],
@@ -1427,7 +1437,7 @@ body{font-size:17px; line-height:1.65}
     ["名古屋港における台風襲来時の対策基準（R8）", "https://www.kaiho.mlit.go.jp/04kanku/nagoya/pdf/R8%E5%90%8D%E5%8F%A4%E5%B1%8B%E6%B8%AF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E5%8F%B0%E9%A2%A8%E8%A5%B2%E6%9D%A5%E6%99%82%E3%81%AE%E5%AF%BE%E7%AD%96%E5%9F%BA%E6%BA%96%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.pdf"],
     ["NHC Tropical Cyclone Danger Graphic", "https://www.nhc.noaa.gov/experimental/danger/"],
     ["阪神港（大阪区・堺泉北区）及び阪南港の台風対策（2026/7）", "https://www.kaiho.mlit.go.jp/05kanku/osaka/12sea_safty_info/typhoon_20260721.pdf"],
-    ["阪神港（神戸区）勧告等措置区分", "https://www6.kaiho.mlit.go.jp/05kanku/info/taihu_taisaku/tih_kobe.pdf"],
+    ["阪神港（神戸区）勧告等措置区分", "https://www6.kaiho.mlit.go.jp/05kanku/kobe/"],
     ["川崎港コンテナターミナル 荷役機械利用基準", "https://www.city.kawasaki.jp/templates/outline/cmsfiles/contents/0000029/29897/ctkidour11.pdf"],
     ["颱風警報發布時機（NOWnews）", "https://www.nownews.com/news/6718450"],
     ["基隆港颱風期間貨櫃船出港避颱原則（中央社 2024/11/4）", "https://www.cna.com.tw/news/asoc/202411040342.aspx"]
@@ -1565,6 +1575,17 @@ body{font-size:17px; line-height:1.65}
       placed.push(best.bx);
       o.push("<text x=\"" + best.x.toFixed(1) + "\" y=\"" + best.y.toFixed(1) + "\" text-anchor=\"" + best.a + "\" font-size=\"" + f(L.fs) + "\" font-weight=\"" + (L.bold ? 700 : 600) + "\" fill=\"" + L.col + "\" stroke=\"var(--sea)\" stroke-width=\"4\" paint-order=\"stroke\"" + (L.text === "YM INCEPTION" ? " font-family=\"Barlow Condensed, Arial Narrow, sans-serif\"" : "") + ">" + esc(L.text) + "</text>");
     });
+    var W = state.meta && state.meta.forecastRound && state.meta.forecastRound.watch;
+    if (W && W.track){
+      var wf = Date.parse(W.from), wt = Date.parse(W.to), on = ms >= wf && ms <= wt;
+      o.push("<path d=\"" + path(W.track) + "\" fill=\"none\" stroke=\"var(--alert)\" stroke-width=\"" + f(on ? 3.2 : 2) + "\" stroke-dasharray=\"3 6\" stroke-linecap=\"round\" opacity=\"" + (on ? 1 : .55) + "\"/>");
+      var wl = W.track[W.track.length - 1], wq = P(wl[0], wl[1]);
+      o.push("<text x=\"" + (wq[0] + 6).toFixed(1) + "\" y=\"" + (wq[1] + 4).toFixed(1) + "\" font-size=\"" + f(12) + "\" font-weight=\"700\" fill=\"var(--alert)\" stroke=\"var(--sea)\" stroke-width=\"4\" paint-order=\"stroke\">" + esc({ zh: "10/26–27 減弱東移", ja: "10/26–27 弱まり東進", en: "10/26–27 weakening, east" }[lang]) + "</text>");
+      var kq = P((GEO["神戶"][0] + GEO["大阪"][0]) / 2, (GEO["神戶"][1] + GEO["大阪"][1]) / 2 + .35), r0 = 9 * FS;
+      o.push("<g opacity=\"" + (on ? 1 : .7) + "\"><path d=\"M" + kq[0].toFixed(1) + " " + (kq[1] - r0).toFixed(1) + " L" + (kq[0] + r0).toFixed(1) + " " + (kq[1] + r0 * .8).toFixed(1) + " L" + (kq[0] - r0).toFixed(1) + " " + (kq[1] + r0 * .8).toFixed(1) + " Z\" fill=\"" + (on ? "var(--alert)" : "var(--watch)") + "\" stroke=\"var(--sea)\" stroke-width=\"1.5\"/><text x=\"" + kq[0].toFixed(1) + "\" y=\"" + (kq[1] + r0 * .6).toFixed(1) + "\" text-anchor=\"middle\" font-size=\"" + f(11) + "\" font-weight=\"800\" fill=\"#fff\">!</text>" +
+        "<text x=\"" + kq[0].toFixed(1) + "\" y=\"" + (kq[1] - r0 - 4).toFixed(1) + "\" text-anchor=\"middle\" font-size=\"" + f(12) + "\" font-weight=\"700\" fill=\"var(--alert)\" stroke=\"var(--sea)\" stroke-width=\"4\" paint-order=\"stroke\">" + esc({ zh: "神戶/大阪 港口管制？緊盯", ja: "神戸/大阪 港規制？重点監視", en: "Kobe/Osaka port control? watch" }[lang]) + "</text></g>");
+    }
+    renderWatch(ms);
     g.innerHTML = o.join("") + marks.join("");
     // keep the label set stable for screen readers
     renderSimBox(ms, sp, states);
@@ -1572,6 +1593,33 @@ body{font-size:17px; line-height:1.65}
     var tl = document.getElementById("tLabel"); if (tl) tl.innerHTML = "<strong>" + esc(twLabel(ms)) + "</strong> <small>" + esc(Q("tw")) + "</small>";
   }
 
+  var OFFL = [
+    ["https://www6.kaiho.mlit.go.jp/05kanku/kobe/", "神戶海上保安部（港內規制、颱風避難勸告）", "神戸海上保安部（港内規制・台風時の勧告）", "Kobe Coast Guard Office (port rules, typhoon advisories)"],
+    ["https://www.kaiho.mlit.go.jp/05kanku/osaka/", "大阪海上保安監部（大阪港規制）", "大阪海上保安監部（大阪港の規制）", "Osaka Coast Guard Office (Osaka port rules)"],
+    ["https://www6.kaiho.mlit.go.jp/05kanku/", "第五管區海上保安本部（航行警報）", "第五管区海上保安本部（航行警報）", "5th Regional Coast Guard HQ (navigation warnings)"],
+    ["https://kobeko-bousai.jp/", "神戶港防災入口網（神戶市港灣局）", "神戸港防災ポータル（神戸市港湾局）", "Kobe Port disaster portal (City of Kobe)"],
+    ["https://www.city.osaka.lg.jp/port/", "大阪港灣局（大阪市）", "大阪港湾局（大阪市）", "Osaka Port and Harbor Bureau (City of Osaka)"],
+    ["https://www.jma.go.jp/bosai/map.html#contents=typhoon", "日本氣象廳 颱風資訊", "気象庁 台風情報", "JMA typhoon information"],
+    ["https://www.jma.go.jp/bosai/warning/#area_type=offices&area_code=280000", "日本氣象廳 兵庫縣警報・注意報", "気象庁 兵庫県の警報・注意報", "JMA warnings for Hyogo"],
+    ["https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_NEWS.html", "中央氣象署 颱風消息", "中央気象署 台風情報", "Taiwan CWA typhoon news"],
+    ["https://www.cwa.gov.tw/V8/C/P/Warning/FIFOWS.html", "中央氣象署 天氣警特報", "中央気象署 警報・特報", "Taiwan CWA warnings"],
+    ["https://kl.twport.com.tw/", "基隆港務分公司（臺灣港務）", "基隆港（台湾港務）", "Port of Keelung (TIPC)"]
+  ];
+  function renderOffLinks(){
+    var el = document.getElementById("offLinks"); if (!el) return; var i = LANGS.indexOf(lang);
+    var H4 = { zh: "官方即時港口資訊", ja: "公式のリアルタイム港湾情報", en: "Official live port info" }[lang];
+    var NB = { zh: "港口是否管制以官方公告為準，本站不自動抓取管制狀態，請點連結確認。", ja: "港の規制状況は公式発表が基準です。本サイトは自動取得していないため、リンク先で確認してください。", en: "Port control status is not auto-fetched here; always check the official source." }[lang];
+    el.innerHTML = "<h4>" + esc(H4) + "</h4><ul>" + OFFL.map(function(x){ return "<li><a href=\"" + esc(x[0]) + "\" target=\"_blank\" rel=\"noopener\">" + esc(x[1 + i]) + "</a></li>"; }).join("") + "</ul><p>" + esc(NB) + "</p>";
+  }
+  function renderWatch(ms){
+    renderOffLinks();
+    var W = state.meta && state.meta.forecastRound && state.meta.forecastRound.watch;
+    var tag = { zh: "緊盯", ja: "重点監視", en: "Close watch" }[lang], act = { zh: "（時間軸正在這段期間）", ja: "（タイムラインがこの期間内）", en: " (timeline is in this window)" }[lang];
+    ["watchMap", "watchRound"].forEach(function(id){ var el = document.getElementById(id); if (!el) return; el.hidden = !W; if (!W) return;
+      var on = id === "watchMap" && ms != null && ms >= Date.parse(W.from) && ms <= Date.parse(W.to);
+      el.setAttribute("data-on", on ? "1" : "0");
+      el.innerHTML = "<h4><span class=\"wtag\">⚠ " + esc(tag) + "</span>" + esc(pick(W, "title")) + (on ? "<small>" + esc(act) + "</small>" : "") + "</h4><p>" + esc(pick(W, "text")) + "</p>"; });
+  }
   /* ship status at ms against both tracks: worst zone decides the colour */
   function shipStatus(ms){
     var sp = shipAt(ms, SIM.plan, 0, 0), worst = "ok";
@@ -1744,7 +1792,7 @@ body{font-size:17px; line-height:1.65}
     if (SIM.playing){ clearInterval(SIM.playing); SIM.playing = null; renderMapChrome(); return; }
     if (SIM.ms >= SIM.t1) SIM.ms = SIM.t0;
     SIM.user = true;
-    SIM.playing = setInterval(function(){ var nx = SIM.ms + H; if (nx > SIM.t1){ clearInterval(SIM.playing); SIM.playing = null; renderMapChrome(); return; } setSim(nx, true); }, 70);
+    SIM.playing = setInterval(function(){ var nx = SIM.ms + H; if (nx > SIM.t1){ clearInterval(SIM.playing); SIM.playing = null; renderMapChrome(); return; } setSim(nx, true); }, 200);
     renderMapChrome();
   }
   // the typhoon days shown on the single-sailing calendar: days when either forecast centre is within 500 km of Keelung
@@ -2072,9 +2120,9 @@ body{font-size:17px; line-height:1.65}
   function renderRound(){
     var m = state.meta, r = m && m.forecastRound, sec = document.getElementById("roundSec");
     if (!sec) return; sec.hidden = !r; if (!r) return;
-    var L = { zh: { sub: "計算時間 ", h: ["情境", "神戶開（台灣時間）", "航行", "基隆到（台灣時間）", "最快到廠", "一般到廠", "11/2 下班前"], ok: { fast: "趕得上（要走最快那條路）", hard: "很難（理論上可以，要週末加班）", no: "趕不上" }, as: "假設與時間推算", src: "資料來源（抓取時間，台灣時間）", hr: " 小時" },
-      ja: { sub: "計算時刻 ", h: ["シナリオ", "神戸発（台湾時間）", "航海", "基隆着（台湾時間）", "最短搬入", "通常搬入", "11/2 終業まで"], ok: { fast: "間に合う（最短ルートが必要）", hard: "厳しい（理論上可能、週末作業が必要）", no: "間に合わない" }, as: "前提と時間の計算", src: "データ出所（取得時刻・台湾時間）", hr: " 時間" },
-      en: { sub: "Computed ", h: ["Scenario", "Kobe dep. (Taiwan time)", "Sea time", "Keelung arr. (Taiwan time)", "Fastest to plant", "Normal to plant", "By 11/2 close"], ok: { fast: "Yes (fastest path needed)", hard: "Hard (possible only with weekend work)", no: "No" }, as: "Assumptions and time calculation", src: "Sources (retrieved, Taiwan time)", hr: " h" } }[lang];
+    var L = { zh: { sub: "計算時間 ", h: ["情境", "神戶開（台灣時間）", "航行", "基隆到（台灣時間）", "最快到廠", "一般到廠", "11/2 下班前"], ok: { fast: "趕得上（要走最快那條路）", hard: "很難（理論上可以，要週末加班）", no: "趕不上" }, ok3: { yes: "應該趕得上（一般通關即可）", buffer: "趕得上，有約 1 天緩衝（週一放行要順）", tight: "很緊" }, as: "假設與時間推算", src: "資料來源（抓取時間，台灣時間）", hr: " 小時" },
+      ja: { sub: "計算時刻 ", h: ["シナリオ", "神戸発（台湾時間）", "航海", "基隆着（台湾時間）", "最短搬入", "通常搬入", "11/2 終業まで"], ok: { fast: "間に合う（最短ルートが必要）", hard: "厳しい（理論上可能、週末作業が必要）", no: "間に合わない" }, ok3: { yes: "間に合う見込み（通常通関で可）", buffer: "間に合う、約 1 日の余裕（月曜の許可が順調なら）", tight: "厳しい" }, as: "前提と時間の計算", src: "データ出所（取得時刻・台湾時間）", hr: " 時間" },
+      en: { sub: "Computed ", h: ["Scenario", "Kobe dep. (Taiwan time)", "Sea time", "Keelung arr. (Taiwan time)", "Fastest to plant", "Normal to plant", "By 11/2 close", "By 11/3 close"], ok: { fast: "Yes (fastest path needed)", hard: "Hard (possible only with weekend work)", no: "No" }, ok3: { yes: "Likely yes (normal clearance)", buffer: "Yes, ~1 day buffer (if Monday release goes smoothly)", tight: "Tight" }, as: "Assumptions and time calculation", src: "Sources (retrieved, Taiwan time)", hr: " h" } }[lang];
     setText("roundH", pick(r, "title"));
     setText("roundSub", L.sub + fmt(r.at));
     var th = "<thead><tr>" + L.h.map(function(x){ return "<th>" + esc(x) + "</th>"; }).join("") + "</tr></thead>";
@@ -2083,13 +2131,14 @@ body{font-size:17px; line-height:1.65}
       var name = lang === "zh" ? c.zh : lang === "ja" ? c.ja : c.en;
       return "<tr" + (c.ok === "no" ? " class=\"dim\"" : "") + "><th>" + esc(name[0]) + "<small style=\"display:block\">" + esc(name[1]) + "</small></th>" +
         "<td data-l=\"" + esc(L.h[1]) + "\">" + esc(dw(c.kobe)) + "</td><td data-l=\"" + esc(L.h[2]) + "\">" + esc(c.sea + L.hr) + "</td><td data-l=\"" + esc(L.h[3]) + "\">" + esc(dw(c.kee)) + "</td>" +
-        "<td data-l=\"" + esc(L.h[4]) + "\">" + esc(dw(c.first)) + "</td><td data-l=\"" + esc(L.h[5]) + "\">" + esc(dw(c.std)) + "</td><td data-l=\"" + esc(L.h[6]) + "\"><strong>" + esc(L.ok[c.ok]) + "</strong></td></tr>";
+        "<td data-l=\"" + esc(L.h[4]) + "\">" + esc(dw(c.first)) + "</td><td data-l=\"" + esc(L.h[5]) + "\">" + esc(dw(c.std)) + "</td><td data-l=\"" + esc(L.h[6]) + "\"><strong>" + esc(L.ok[c.ok]) + "</strong></td><td data-l=\"" + esc(L.h[7]) + "\"><strong>" + esc(L.ok3[c.ok3] || "") + "</strong></td></tr>";
     }).join("");
     document.getElementById("roundTable").innerHTML = "<table>" + th + "<tbody>" + tb + "</tbody></table>";
     setText("roundAsH", L.as); setText("roundSrcH", L.src);
     document.getElementById("roundAs").innerHTML = items(pick(r, "assumptions")).map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("");
     document.getElementById("roundSrc").innerHTML = (r.sources || []).map(function(x){ return "<li><a href=\"" + esc(x.url) + "\" target=\"_blank\" rel=\"noopener\">" + esc(pick(x, "label")) + "</a>（" + esc(x.at) + "）</li>"; }).join("");
     setText("roundNote", pick(r, "note"));
+    renderWatch(SIM.ms);
   }
   function renderAll(){ renderSimple(); renderChrome(); renderHeader(); renderLead(); renderYim(); renderModebar(); renderRuler(); renderShips(); renderMapChrome(); renderChart(); renderPorts(); renderSimResult(); renderRound(); renderTyphoon(); renderNoGo(); applyTheme(); }
 
