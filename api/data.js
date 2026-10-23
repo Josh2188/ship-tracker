@@ -148,7 +148,9 @@ export function mergeVessel(v, L) {
 
 function typhoonMeta(ty, snap) {
   if (!ty || (!ty.jma.length && !(ty.cwa && ty.cwa.text))) return localize({ ...snap, badge: "fallback" }, ["name", "text", "src"]);
-  const tc = ty.jma[0], cur = tc && tc.points && tc.points[0];
+  const rank = { TY: 4, STS: 3, TS: 2, TD: 1 };
+  // 多個系統同時存在時（例如 CHAMPI + 新的熱帶性低氣壓），優先抓 CHAMPI，否則抓最強的，不要只抓第一個
+  const tc = ty.jma.find((t) => /CHAMPI/i.test(t.nameEn || "")) || ty.jma.slice().sort((a, b) => (rank[b.category] || 0) - (rank[a.category] || 0))[0], cur = tc && tc.points && tc.points[0];
   const zh = ty.cwa && ty.cwa.names && ty.cwa.names[0] && ty.cwa.names[0].zh;
   const en = tc && tc.nameEn ? tc.nameEn.toUpperCase() : (ty.cwa && ty.cwa.names && ty.cwa.names[0] && ty.cwa.names[0].en) || "";
   const jmaLine = (l) => !cur ? "" : l === "en"

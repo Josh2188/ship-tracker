@@ -280,6 +280,7 @@ export async function liveTyphoon(force) {
           const spec = await (await get(`https://www.jma.go.jp/bosai/typhoon/data/${tc.tropicalCyclone}/specifications.json`)).json();
           const title = spec.find((p) => p.part === "title") || {};
           out.jma.push({
+            id: tc.tropicalCyclone, category: tc.category,
             nameEn: title.name && title.name.en, nameJp: title.name && title.name.jp, issued: title.issue && title.issue.UTC,
             issuedJst: title.issue && title.issue.JST,
             // 暴風警戒域／暴風域（stormWarning）與強風域（galeWarning）：[{ area: "北東"|"南西"|"東"|"西"|{jp:"全域"}, range:{km} }]
