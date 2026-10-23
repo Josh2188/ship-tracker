@@ -254,7 +254,11 @@ export function cwaTrack(js, nowText) {
     galeKm: num(/七級風平均暴風半徑\s*(\d+)/, nowText), stormKm: num(/十級風平均暴風半徑\s*(\d+)/, nowText) });
   const m2 = js.match(/TY_LIST_2\['C'\]\s*=\s*([\s\S]*?);\s*\n/);
   if (m2) {
-    const t = m2[1].replace(/'\s*\+\s*'/g, "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+    const all = m2[1].replace(/'\s*\+\s*'/g, "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+    // 氣象署同時發布多個系統時（例如 CHAMPI + TD34），每個系統各有一段「現況…預測…」；只取第一段（或含 CHAMPI 的那段），不能把別的系統的點接進來
+    const blocks = all.split(/(?=現況\s*\d{4}年)/).slice(1);
+    const pick = blocks.find((b, i) => /CHAMPI/i.test((blocks[i - 1] || all.slice(0, all.indexOf(b))).slice(-80))) || blocks[0] || all;
+    const t = pick;
     for (const seg of t.split(/預測\s*/).slice(1)) {
       const tm = seg.match(/^(\d+)月(\d+)日(\d+)時/), p = pos(seg);
       if (!tm || !p) continue;
