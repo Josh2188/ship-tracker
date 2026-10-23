@@ -1273,7 +1273,7 @@ body{font-size:17px; line-height:1.65}
           for (var ms = Math.max(d0, now); ms <= a; ms += H){
             if (ms > tr.t1){ legBeyond = true; break; }
             var sp = shipAt(ms, plan, shiftMin, 0); if (!sp || sp.k !== "sea") continue;
-            var r = check(ms, sp.p); if (!r) continue; if (r.ref) legRef = true;
+            var r = check(ms, sp.p); if (!r) continue; if (r.ref && (r.z || (r.mB != null && r.mB < 500))) legRef = true;
             if (!legMin || r.d < legMin.d) legMin = { d: r.d, ms: ms, z: r.z, mA: r.mA, mB: r.mB };
             if (r.z === "A") hA++; else if (r.z === "B") hB++;
           }
@@ -1289,7 +1289,7 @@ body{font-size:17px; line-height:1.65}
       var q = GEO[plan[i].port], firstA = null, lastA = null, anyB = false, pBeyond = false, pMin = null, pRef = false;
       for (var m2 = Math.max(a - 24 * H, now); m2 <= d; m2 += H){
         if (m2 > tr.t1){ pBeyond = true; break; }
-        var r2 = check(m2, q); if (!r2) continue; if (r2.ref) pRef = true;
+        var r2 = check(m2, q); if (!r2) continue; if (r2.ref && (r2.z || (r2.mB != null && r2.mB < 500))) pRef = true;
         if (!pMin || r2.d < pMin.d) pMin = { d: r2.d, ms: m2, z: r2.z, mA: r2.mA, mB: r2.mB };
         if (r2.z === "A"){ if (firstA == null) firstA = m2; lastA = m2; } else if (r2.z === "B") anyB = true;
       }
@@ -1645,7 +1645,7 @@ body{font-size:17px; line-height:1.65}
     var sp = shipAt(ms, SIM.plan, 0, 0), worst = "ok";
     if (!sp || sp.k === "after") return { k: "none", col: "var(--ink-2)", sp: sp };
     [SIM.jma, SIM.cwa].forEach(function(tr){ var s = tyAt(tr, ms); if (!s) return; var r = rel2(s, sp.p);
-      var z = r.z === "A" ? "A" : (r.z === "B" ? "B" : ((r.mA != null && r.mA < 300) || (r.mB != null && r.mB < 300) ? "near" : (r.ref ? "ref" : "ok")));
+      var z = r.z === "A" ? "A" : (r.z === "B" ? "B" : ((r.mA != null && r.mA < 300) || (r.mB != null && r.mB < 300) ? "near" : (r.ref && r.mB != null && r.mB < 500 ? "ref" : "ok")));
       var rank = { ok: 0, ref: 1, near: 2, B: 3, A: 4 }; if (rank[z] > rank[worst]) worst = z; });
     return { k: worst, col: worst === "A" ? "var(--alert)" : (worst === "B" || worst === "near" || worst === "ref" ? "var(--watch)" : "var(--ok)"), sp: sp };
   }
@@ -1679,7 +1679,7 @@ body{font-size:17px; line-height:1.65}
         if (sp && sp.k !== "after"){ var r = rel2(s, sp.p);
           var parts = [Q("dist")(n0(r.d))]; if (r.mA != null && (r.ra || 0) > 0) parts.push(Q("edgeA")(r.mA)); if (r.mB != null) parts.push(Q("edgeB")(r.mB));
           var z = r.z === "A" ? "A" : (r.z === "B" ? "B" : ((r.mA != null && (r.ra || 0) > 0 && r.mA < 300) || (r.mB != null && r.mB < 300) ? "near" : "ok"));
-          if (s.ref && z === "ok") z = "ref";
+          if (s.ref && z === "ok" && r.mB != null && r.mB < 500) z = "ref";
           h.push("<p>" + esc(parts.join(T("listSep") || "、")) + "</p><p>" + zoneChip(z) + "</p>"); }
       }
       h.push("</div>");
