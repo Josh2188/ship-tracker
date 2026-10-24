@@ -2248,6 +2248,17 @@ body{font-size:17px; line-height:1.65}
     renderAll();
   }
 
+  function officialHtml(r){
+    var o = r.officialSchedule; if (!o || !o.ports) return "";
+    var PN = { "東京": ["東京","Tokyo"], "橫濱": ["横浜","Yokohama"], "名古屋": ["名古屋","Nagoya"], "大阪": ["大阪","Osaka"], "神戶": ["神戸","Kobe"], "基隆": ["基隆","Keelung"] };
+    var ST = { "實際": ["実績","Actual"], "預估": ["予定","Estimated"] };
+    var tr = function(x, m){ var v = m[x]; return lang === "zh" || !v ? x : (lang === "ja" ? v[0] : v[1]); };
+    var H = lang === "ja" ? ["Yang Ming 公式スケジュール（台湾時間）", "公式スケジュール更新確認 ", "港", "着", "発", "状態", "前回 "] : lang === "en" ? ["Yang Ming official schedule (Taipei time)", "Official schedule checked ", "Port", "Arr.", "Dep.", "Status", "Previous "] : ["陽明官網船期（台北時間）", "官網船期更新時間 ", "港口", "到", "開", "狀態", "前一輪 "];
+    var rows = o.ports.map(function(x){ return "<tr><th>" + esc(tr(x.port, PN)) + "</th><td data-l=\"" + esc(H[3]) + "\">" + esc(x.arr) + "</td><td data-l=\"" + esc(H[4]) + "\">" + esc(x.dep) + "</td><td data-l=\"" + esc(H[5]) + "\">" + esc(tr(x.status, ST)) + "</td></tr>"; }).join("");
+    var hist = (r.history || []).map(function(h){ return "<li>" + esc(H[6]) + "R" + esc(h.round) + "（" + esc(fmt(h.at)) + "）: " + esc(h.kobe) + " → " + esc(h.kee) + "</li>"; }).join("");
+    return "<h3 style=\"margin:14px 0 6px;font-size:1rem\">" + esc(H[0]) + "</h3><p style=\"margin:0 0 6px\"><small>" + esc(H[1]) + esc(fmt(o.checkedAt)) + " · <a href=\"" + esc(o.url) + "\" target=\"_blank\" rel=\"noopener\">yangming.com</a></small></p>" +
+      "<table><thead><tr><th>" + esc(H[2]) + "</th><th>" + esc(H[3]) + "</th><th>" + esc(H[4]) + "</th><th>" + esc(H[5]) + "</th></tr></thead><tbody>" + rows + "</tbody></table>" + (hist ? "<ul style=\"margin:6px 0 0\"><small>" + hist + "</small></ul>" : "");
+  }
   function renderRound(){
     var m = state.meta, r = m && m.forecastRound, sec = document.getElementById("roundSec");
     if (!sec) return; sec.hidden = !r; if (!r) return;
@@ -2264,7 +2275,7 @@ body{font-size:17px; line-height:1.65}
         "<td data-l=\"" + esc(L.h[1]) + "\">" + esc(dw(c.kobe)) + "</td><td data-l=\"" + esc(L.h[2]) + "\">" + esc(c.sea + L.hr) + "</td><td data-l=\"" + esc(L.h[3]) + "\">" + esc(dw(c.kee)) + "</td>" +
         "<td data-l=\"" + esc(L.h[4]) + "\">" + esc(dw(c.first)) + "</td><td data-l=\"" + esc(L.h[5]) + "\">" + esc(dw(c.std)) + "</td><td data-l=\"" + esc(L.h[6]) + "\"><strong>" + esc(L.ok[c.ok]) + "</strong></td><td data-l=\"" + esc(L.h[7]) + "\"><strong>" + esc(L.ok3[c.ok3] || "") + "</strong></td></tr>";
     }).join("");
-    document.getElementById("roundTable").innerHTML = "<table>" + th + "<tbody>" + tb + "</tbody></table>";
+    document.getElementById("roundTable").innerHTML = "<table>" + th + "<tbody>" + tb + "</tbody></table>" + officialHtml(r);
     setText("roundAsH", L.as); setText("roundSrcH", L.src);
     document.getElementById("roundAs").innerHTML = items(pick(r, "assumptions")).map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("");
     document.getElementById("roundSrc").innerHTML = (r.sources || []).map(function(x){ return "<li><a href=\"" + esc(x.url) + "\" target=\"_blank\" rel=\"noopener\">" + esc(pick(x, "label")) + "</a>（" + esc(x.at) + "）</li>"; }).join("");

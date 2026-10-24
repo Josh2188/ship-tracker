@@ -13,13 +13,13 @@
 export const PLAN = {
   "meta": {
     "deadline": "2026-11-02",
-    "lastRunAt": "2026-10-22T22:21:00+08:00",
+    "lastRunAt": "2026-10-25T05:05:00+08:00",
     "level": "watch",
     "summary": [
-      "陽明 YM INCEPTION 251S 又延後：神戶 10/27（二）23:00 開，基隆 10/30（五）07:00 到。照到港後第 2–3 個工作天是 11/3（二）–11/4（三），趕不上 11/2；只有爭取到「到港後第 1 個工作天」11/2（一）當天清關、送廠，才趕得上。",
+      "陽明 YM INCEPTION 251S 又延後：神戶 10/27（二）23:00（日本時間，台北 22:00）開，基隆 10/30（五）07:00 到（10/25 05:05 陽明官網複核，沒變）。照到港後第 2–3 個工作天是 11/3（二）–11/4（三），趕不上 11/2；只有爭取到「到港後第 1 個工作天」11/2（一）當天清關、送廠，才趕得上。",
       "要做的事：請報關行在船到港前就備好報關文件，10/30（五）到港當天或週末完成拆櫃和放行準備，11/2（一）一早放行、當天卡車送龍潭。",
-      "颱風薔琵：10/23–24 最接近台灣東方近海，之後轉往日本；10/26 已減弱的颱風在名古屋、大阪附近，可能讓船在名古屋、大阪再晚 0–12 小時。神戶→基隆這段預報沒有颱風。",
-      "到貨預測（10/22 22:21 第 3 輪）：照現在船期最快 11/2；日本港口再晚 12–48 小時，因為碰到週末，最快仍是 11/2 但更難做到；晚 72 小時以上（11/2 才到基隆）就一定趕不上。細節見下方「到貨預測第 3 輪」。",
+      "颱風：薔琵已減弱成低氣壓等級（氣象廳 10/25 03:45 預報 10/27 02:00 在室戶岬南方、1002 百帕，台北時間），比船 10/27 05:00 到大阪早，大阪、神戶頂多停工半天。煙花（IN-FA）在馬紹爾群島附近往西北走，10/30 02:00 預報點離基隆還有約 3,400 公里，預報期間內不影響神戶→基隆這段。",
+      "到貨預測（10/25 05:05 第 4 輪，官網船期複核後結論不變）：照現在船期最快 11/2、11/3 下班前應趕得上；日本港口再晚 12–48 小時，因為碰到週末，最快仍是 11/2 但更難做到；晚 72 小時以上（11/2 才到基隆）就一定趕不上。細節見下方「到貨預測第 4 輪」。",
       "網頁每次打開、每次按「立即更新」都會重抓陽明、氣象廳、氣象署和 AIS 的最新資料。"
     ],
     "typhoon": {
@@ -440,17 +440,17 @@ export const PLAN = {
     "subtitle_ja": "日本の工場 → 神戸 → 基隆 → 龍潭工場。生産ラインの期限：11/2（月）終業までに龍潭工場着。",
     "subtitle_en": "Japan factory → Kobe → Keelung → Longtan plant. Production deadline: at the Longtan plant by end of business Mon 11/2.",
     "summary_ja": [
-      "Yang Ming YM INCEPTION 251S がさらに遅れ：神戸 10/27（火）23:00 発、基隆 10/30（金）07:00 着。着港後 2–3 営業日なら 11/3（火）–11/4（水）で 11/2 に間に合わない。「着港後 1 営業日目」の 11/2（月）に通関・搬入できた場合のみ間に合う。",
+      "Yang Ming YM INCEPTION 251S がさらに遅れ：神戸 10/27（火）23:00（日本時間、台湾 22:00）発、基隆 10/30（金）07:00 着（10/25 05:05 公式で再確認、変更なし）。着港後 2–3 営業日なら 11/3（火）–11/4（水）で 11/2 に間に合わない。「着港後 1 営業日目」の 11/2（月）に通関・搬入できた場合のみ間に合う。",
       "やること：通関業者に着港前から書類を準備してもらい、10/30（金）着港当日または週末にコンテナの荷降ろしと許可の準備、11/2（月）朝に許可、当日トラックで龍潭へ。",
-      "台風チャンパー：10/23–24 に台湾東方近海へ最接近、その後日本へ。10/26 には弱まった台風が名古屋・大阪付近にあり、名古屋・大阪でさらに 0–12 時間遅れる可能性。神戸→基隆の区間に台風の予報はない。",
-      "到着予測（10/22 22:21 第 3 回）：現行スケジュールで最短 11/2。日本の港でさらに 12–48 時間遅れても週末を挟むため最短は 11/2 のままだが難しくなる。72 時間以上遅れ（基隆着 11/2）なら間に合わない。詳細は下の「到着予測 第 3 回」。",
+      "台風：CHAMPI は弱まり（気象庁 10/25 03:45 発表、10/27 03 時 日本時間に室戸岬の南・1002 hPa）、船の大阪着（10/27 06 時 日本時間）より前に通過。大阪・神戸の停止は最大半日程度。IN-FA はマーシャル諸島付近を北西進、10/30 03 時（日本時間）の予報点でも基隆から約 3,400 km で、予報期間内は神戸→基隆に影響なし。",
+      "到着予測（10/25 05:05 第 4 回、公式再確認で結論変わらず）：現行スケジュールで最短 11/2。日本の港でさらに 12–48 時間遅れても週末を挟むため最短は 11/2 のままだが難しくなる。72 時間以上遅れ（基隆着 11/2）なら間に合わない。詳細は下の「到着予測 第 3 回」。",
       "ページを開くたび・「今すぐ更新」を押すたびに Yang Ming、気象庁、中央気象署、AIS の最新データを取り直します。"
     ],
     "summary_en": [
-      "YM INCEPTION 251S has slipped again: departs Kobe Tue 10/27 23:00, arrives Keelung Fri 10/30 07:00. At 2–3 working days after arrival that is 11/3–11/4, missing 11/2; only clearing and delivering on the first working day after arrival (Mon 11/2) makes it.",
+      "YM INCEPTION 251S has slipped again: departs Kobe Tue 10/27 23:00 JST (22:00 Taipei), arrives Keelung Fri 10/30 07:00 (re-checked on Yang Ming's official site 10/25 05:05, unchanged). At 2–3 working days after arrival that is 11/3–11/4, missing 11/2; only clearing and delivering on the first working day after arrival (Mon 11/2) makes it.",
       "To do: have the customs broker prepare the paperwork before arrival, get the container unloaded and release prepared on 10/30 or over the weekend, release first thing Mon 11/2 and truck to Longtan the same day.",
-      "Typhoon CHAMPI: closest to Taiwan's east coast 10/23–24, then heads to Japan. On 10/26 the weakened storm is near Nagoya/Osaka, which may add 0–12 hours at those ports. No typhoon is forecast on the Kobe → Keelung leg.",
-      "Arrival forecast (round 3, 10/22 22:21): earliest 11/2 on the current schedule; a further 12–48 h delay in Japan still gives 11/2 at best because of the weekend, but it gets harder; 72 h or more (Keelung on 11/2) misses the deadline. See 'Arrival forecast round 3' below.",
+      "Typhoons: CHAMPI has weakened (JMA 03:45 JST 10/25: south of Cape Muroto at 1002 hPa by 03:00 JST 10/27), passing before the ship reaches Osaka (06:00 JST 10/27); at most about half a day of stoppage at Osaka/Kobe. IN-FA is near the Marshall Islands heading NW; its last forecast point (10/30) is still ~3,400 km from Keelung, so no impact on Kobe → Keelung within the forecast period.",
+      "Arrival forecast (round 4, 10/25 05:05, unchanged after official re-check): earliest 11/2 on the current schedule; a further 12–48 h delay in Japan still gives 11/2 at best because of the weekend, but it gets harder; 72 h or more (Keelung on 11/2) misses the deadline. See 'Arrival forecast round 3' below.",
       "Every page load and every 'Refresh now' re-fetches the latest Yang Ming, JMA, CWA and AIS data."
     ],
     "mode": "LCL",
@@ -464,11 +464,27 @@ export const PLAN = {
     "deadlineTime_ja": "終業まで",
     "deadlineTime_en": "by end of business",
     "forecastRound": {
-      "at": "2026-10-22T22:21:00+08:00",
-      "round": 3,
-      "title": "到貨預測第 3 輪（颱風、避颱、延誤情境）",
-      "title_ja": "到着予測 第 3 回（台風・避難・遅延シナリオ）",
-      "title_en": "Arrival forecast round 3 (typhoon, sheltering and delay scenarios)",
+      "at": "2026-10-25T05:05:00+08:00",
+      "round": 4,
+      "title": "到貨預測第 4 輪（陽明官網船期複核＋薔琵、煙花）",
+      "title_ja": "到着予測 第 4 回（Yang Ming 公式スケジュール再確認＋CHAMPI・IN-FA）",
+      "title_en": "Arrival forecast round 4 (Yang Ming official schedule re-check + CHAMPI, IN-FA)",
+      "officialSchedule": {
+        "checkedAt": "2026-10-25T05:05:00+08:00",
+        "url": "https://www.yangming.com/en/esolution/schedule/vessel_schedule",
+        "ports": [
+          {"port": "東京", "arr": "10/24 15:55", "dep": "10/25 04:30", "status": "實際"},
+          {"port": "橫濱", "arr": "10/25 06:00", "dep": "10/25 15:00", "status": "預估"},
+          {"port": "名古屋", "arr": "10/26 04:00", "dep": "10/26 16:00", "status": "預估"},
+          {"port": "大阪", "arr": "10/27 05:00", "dep": "10/27 14:00", "status": "預估"},
+          {"port": "神戶", "arr": "10/27 15:00", "dep": "10/27 22:00", "status": "預估"},
+          {"port": "基隆", "arr": "10/30 07:00", "dep": "10/30 16:00", "status": "預估"}
+        ],
+        "tz": "台北時間"
+      },
+      "history": [
+        {"round": 3, "at": "2026-10-22T22:21:00+08:00", "kobe": "10/27（二）22:00", "kee": "10/30（五）07:00", "result": "最快 11/2；11/3 下班前應趕得上"}
+      ],
       "scenarios": [
         {
           "kobe": "10/27（二）22:00",
@@ -480,15 +496,15 @@ export const PLAN = {
           "ok3": "yes",
           "zh": [
             "A. 照現在船期（颱風不再造成延誤）",
-            "陽明 10/22 最新船期。"
+            "陽明官網 10/25 05:05 複核：神戶 10/27 23:00（日本時間）開＝台北 22:00，基隆 10/30 07:00 到，和第 3 輪相同。"
           ],
           "ja": [
             "A. 現行スケジュール（台風による追加遅れなし）",
-            "Yang Ming 10/22 最新。"
+            "Yang Ming 公式 10/25 05:05 再確認：神戸 10/27 23:00（日本時間）発＝台湾 22:00、基隆 10/30 07:00 着で第 3 回と同じ。"
           ],
           "en": [
             "A. Current schedule (no further typhoon delay)",
-            "Yang Ming latest as of 10/22."
+            "Yang Ming official, re-checked 10/25 05:05: Kobe dep 10/27 23:00 JST = 22:00 Taipei, Keelung arr 10/30 07:00 — same as round 3."
           ]
         },
         {
@@ -500,16 +516,16 @@ export const PLAN = {
           "ok": "fast",
           "ok3": "yes",
           "zh": [
-            "B. 颱風讓名古屋、大阪停工 12 小時",
-            "10/26 減弱的颱風在東海地方；日本港口第一警戒，算 0–12 小時，取上限。"
+            "B. 大阪、神戶停工 12 小時",
+            "薔琵已減弱，氣象廳預報 10/27 02:00 在室戶岬南方、只剩 1002 百帕；船 10/27 05:00 才到大阪，影響應該很小。保守算第一警戒 0–12 小時，取上限。"
           ],
           "ja": [
-            "B. 台風で名古屋・大阪が 12 時間止まる",
-            "10/26 弱まった台風が東海地方。港の第一警戒体制として 0–12 時間の上限。"
+            "B. 大阪・神戸が 12 時間止まる",
+            "CHAMPI は弱まり、気象庁予報で 10/27 03 時（日本時間）室戸岬の南・1002 hPa。船の大阪着は 10/27 06 時（日本時間）で影響は小さい見込み。保守的に第一警戒 0–12 時間の上限。"
           ],
           "en": [
-            "B. Typhoon halts Nagoya/Osaka work 12 h",
-            "Weakened storm over Tokai on 10/26; first-level port alert, 0–12 h, upper end."
+            "B. Osaka/Kobe work halted 12 h",
+            "CHAMPI has weakened; JMA has it south of Cape Muroto at 1002 hPa by 03:00 JST 10/27, before the ship reaches Osaka (06:00 JST). Conservatively a first-level alert, 0–12 h, upper end."
           ]
         },
         {
@@ -563,7 +579,7 @@ export const PLAN = {
           "ok": "no",
           "ok3": "tight",
           "zh": [
-            "E. 延誤 72 小時以上（目前預報沒有這種情況）",
+            "E. 延誤 72 小時以上（目前預報沒有這種情況；煙花預報期間內離台灣還很遠）",
             "例如另有新颱風或基隆港管制。11/2 當天才到港，趕不上。"
           ],
           "ja": [
@@ -614,51 +630,58 @@ export const PLAN = {
       ],
       "sources": [
         {
+          "label": "陽明官網 船期查詢 YM INCEPTION（官網船期更新時間 10/25 05:05 查）",
+          "label_ja": "Yang Ming 公式 船舶スケジュール（10/25 05:05 確認）",
+          "label_en": "Yang Ming official vessel schedule (checked 10/25 05:05)",
+          "url": "https://www.yangming.com/en/esolution/schedule/vessel_schedule",
+          "at": "10/25 05:05"
+        },
+        {
           "label": "陽明日本代理 神戶船期（Voyage Detail）",
           "label_ja": "Yang Ming 日本代理店 神戸",
           "label_en": "Yang Ming Japan agent, Kobe",
           "url": "https://www.toyoshingo.com/yangming/certificate.php?portcode=41&id=10381411",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         },
         {
           "label": "陽明日本代理 東京／名古屋／大阪",
           "label_ja": "同 東京・名古屋・大阪",
           "label_en": "Same, Tokyo / Nagoya / Osaka",
           "url": "https://www.toyoshingo.com/yangming/index.php?port=41&week=4",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         },
         {
           "label": "陽明基隆靠泊表",
           "label_ja": "Yang Ming 基隆着岸予定表",
           "label_en": "Yang Ming Keelung berth list",
           "url": "https://ymkeeweb.yangming.com/YMKEE/vslterm",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         },
         {
-          "label": "日本氣象廳 颱風資訊（10/22 22:45 日本時間發布）",
-          "label_ja": "気象庁 台風情報（10/22 22:45 発表）",
-          "label_en": "JMA typhoon info (issued 10/22 22:45 JST)",
+          "label": "日本氣象廳 颱風資訊（薔琵 10/25 03:45、煙花 04:10 日本時間發布）",
+          "label_ja": "気象庁 台風情報（CHAMPI 10/25 03:45・IN-FA 04:10 発表）",
+          "label_en": "JMA typhoon info (CHAMPI 03:45, IN-FA 04:10 JST 10/25)",
           "url": "https://www.jma.go.jp/bosai/map.html#contents=typhoon",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         },
         {
-          "label": "中央氣象署 颱風消息（10/22 20 時）",
-          "label_ja": "中央気象署 台風情報（10/22 20 時）",
-          "label_en": "Taiwan CWA typhoon news (10/22 20:00)",
+          "label": "中央氣象署 颱風消息（10/25 02 時）",
+          "label_ja": "中央気象署 台風情報（10/25 02 時）",
+          "label_en": "Taiwan CWA typhoon news (10/25 02:00)",
           "url": "https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_NEWS.html",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         },
         {
           "label": "中央氣象署 颱風警報頁（自動抓取讀不到即時狀態）",
           "label_ja": "中央気象署 台風警報（自動取得では状況を読めず）",
           "label_en": "Taiwan CWA typhoon warnings (live status not readable by the automated fetch)",
           "url": "https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_WARN.html",
-          "at": "10/22 22:21"
+          "at": "10/25 05:05"
         }
       ],
-      "note": "規則推算，不是船公司或報關行的承諾；船期以陽明公告為準。",
-      "note_ja": "ルールに基づく推計で、船会社・通関業者の確約ではありません。",
-      "note_en": "A rule-based estimate, not a commitment by the carrier or broker."
+      "note": "官網船期更新時間：10/25 05:05（台北時間）查陽明官網 YM INCEPTION 251S，神戶 10/27 22:00 開、基隆 10/30 07:00 到（台北時間），和第 3 輪（10/22 22:21）相同；官網上的日本港口時間是日本時間，比台北快 1 小時。規則推算，不是船公司或報關行的承諾；船期以陽明公告為準。",
+      "note_ja": "公式スケジュール確認：10/25 05:05（台湾時間）Yang Ming 公式で YM INCEPTION 251S は神戸 10/27 22:00 発・基隆 10/30 07:00 着（台湾時間）、第 3 回（10/22 22:21）と同じ。公式サイトの日本の港は日本時間（台湾より 1 時間進み）。ルールに基づく推計で、船会社・通関業者の確約ではありません。",
+      "note_en": "Official schedule checked 10/25 05:05 Taipei on Yang Ming's site: YM INCEPTION 251S departs Kobe 10/27 22:00, arrives Keelung 10/30 07:00 (Taipei time), unchanged from round 3 (10/22 22:21). Japanese port times on the official site are JST (1 h ahead of Taipei). A rule-based estimate, not a commitment by the carrier or broker."
     }
   },
   "vessels": [
@@ -1341,7 +1364,7 @@ export const PLAN = {
           "已訂艙，貨物和其他人的貨拼同一個貨櫃（併櫃）。",
           "10/21 卡車到日本工廠取貨，10/22 送到神戶收貨倉庫（倉庫已同意延後收貨）。",
           "到基隆後約 2–3 個工作天送進龍潭廠，會加急處理；船到港改成 10/30（五），照 2–3 個工作天是 11/3–11/4，要趕 11/2 只剩「到港後第 1 個工作天」（11/2 一）這條路。",
-          "船期比表定晚約 2.5 天（神戶表定 10/25，現在 10/27 23:00 開，比 10/20 查的又晚 18 小時）。"
+          "船期比表定晚約 2.5 天（神戶表定 10/25，現在 10/27 23:00（日本時間）開，比 10/20 查的又晚 18 小時）。"
         ],
         "text_ja": [
           "予約済み。他の荷主の貨物と同じコンテナに積み合わせ（混載）。",
@@ -1473,7 +1496,7 @@ export const PLAN = {
         "src_en": "Yang Ming Keelung berth list"
       },
       "twPort": "基隆",
-      "updatedAt": "2026-10-22T22:21:00+08:00",
+      "updatedAt": "2026-10-25T05:05:00+08:00",
       "voyage": "251S",
       "id": "ym-inception",
       "role_ja": "予約済み",
