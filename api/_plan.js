@@ -717,30 +717,30 @@ export const PLAN = {
         ]
       },
       "dates": {
-        "etaFrom": "2026-10-26T17:00:00+08:00",
+        "etaFrom": "2026-10-27T06:30:00+08:00",
         "etaTo": null,
-        "etd": "2026-10-24T07:30:00+09:00",
-        "plantFrom": "2026-10-28",
-        "plantTo": "2026-10-29"
+        "etd": "2026-10-24T22:19:00+09:00",
+        "plantFrom": "2026-10-29",
+        "plantTo": "2026-10-30"
       },
       "imo": "9345960",
       "kobeEtd": {
         "note": [
-          "台北時間 10/24 06:30",
-          "預估",
-          "10-23 12:30 到港"
+          "台北時間 10/24 21:19",
+          "實際",
+          "10-23 16:22 到港"
         ],
         "src": "ONE 官網",
-        "text": "10/24（六）07:30",
+        "text": "10/24（六）22:19",
         "note_ja": [
-          "台湾時間 10/24 06:30",
-          "予定",
-          "10-23 12:30 入港"
+          "台湾時間 10/24 21:19",
+          "実績",
+          "10-23 16:22 入港"
         ],
         "note_en": [
-          "Taipei time 10/24 06:30",
-          "Estimated",
-          "Arrives 10-23 12:30"
+          "Taipei time 10/24 21:19",
+          "Actual",
+          "Arrives 10-23 16:22"
         ]
       },
       "links": [
@@ -786,7 +786,7 @@ export const PLAN = {
         "note": [
           "到港後約 2–3 個工作天，會加急處理"
         ],
-        "text": "10/28–29",
+        "text": "10/29–30",
         "note_ja": [
           "着港後 約 2–3 営業日、急ぎで対応"
         ],
@@ -802,7 +802,7 @@ export const PLAN = {
           "ONE 預估"
         ],
         "src": "ONE 官網",
-        "text": "基隆 10/26（一）17:00",
+        "text": "基隆 10/27（二）06:30",
         "note_ja": [
           "ONE 予定"
         ],
@@ -811,7 +811,7 @@ export const PLAN = {
         ]
       },
       "twPort": "基隆",
-      "updatedAt": "2026-10-20T11:46:05+08:00",
+      "updatedAt": "2026-10-25T07:30:00+08:00",
       "voyage": "018S",
       "id": "navios-chrysalis",
       "voyage_ja": "018S",
@@ -854,9 +854,9 @@ export const PLAN = {
         "note_ja": "搬入締切は混載と同じ 10/20（火）16:30",
         "note_en": "Same warehouse deadline as LCL: 10/20 (Tue) 16:30"
       },
-      "noGo": "工廠到神戶約 200 km，10/20 派不到卡車。賣方條件是工廠交貨，日本出口報關沒人辦，也沒訂到艙位。",
-      "noGo_ja": "工場から神戸まで約 200 km で、10/20 はトラックが手配できなかった。売主の条件は工場渡しで、日本の輸出通関の担当がおらず、スペースも取れていない。",
-      "noGo_en": "The factory is about 200 km from Kobe and no truck was available on 10/20. The seller only hands over at the factory, so nobody could do Japan export customs, and no space was booked."
+      "noGo": "官網改為 10/24 22:19（日本時間）離開神戶、10/27（二）06:30 到基隆（到廠約 10/29–30），但貨沒裝上這班，和交期無關。工廠到神戶約 200 km，10/20 派不到卡車。賣方條件是工廠交貨，日本出口報關沒人辦，也沒訂到艙位。",
+      "noGo_ja": "公式では 10/24 22:19（日本時間）神戸発、10/27（火）06:30 基隆着（工場着 10/29–30 頃）に変更されたが、貨物は積まれておらず納期には影響しない。工場から神戸まで約 200 km で、10/20 はトラックが手配できなかった。売主の条件は工場渡しで、日本の輸出通関の担当がおらず、スペースも取れていない。",
+      "noGo_en": "Officially it left Kobe 10/24 22:19 JST and reaches Keelung Tue 10/27 06:30 (plant ~10/29–30), but our cargo is not on it, so delivery is unaffected. The factory is about 200 km from Kobe and no truck was available on 10/20. The seller only hands over at the factory, so nobody could do Japan export customs, and no space was booked."
     },
     {
       "alert": {
@@ -1794,13 +1794,13 @@ export const PLAN = {
       "alert": {
         "level": "alert",
         "text": [
-          "11/4 才到基隆，比已訂的這班還晚"
+          "神戶延到 11/3 開、11/5 才到基隆，到廠約 11/9–10，比已訂的這班晚很多"
         ],
         "text_ja": [
-          "基隆着は 11/4 で、予約済みの便より遅い"
+          "神戸出港が 11/3 に延び基隆着 11/5、工場着 11/9–10 頃で予約済みの便よりかなり遅い"
         ],
         "text_en": [
-          "Only reaches Keelung on 11/4, later than the booked sailing"
+          "Kobe departure slipped to 11/3, Keelung 11/5 (plant ~11/9–10), far later than the booked sailing"
         ]
       },
       "carrier": "德翔 TS Lines",
@@ -1813,17 +1813,17 @@ export const PLAN = {
         "note_en": ""
       },
       "dates": {
-        "etaFrom": "2026-11-04T22:30:00+08:00",
+        "etaFrom": "2026-11-05T09:30:00+08:00",
         "etaTo": null,
-        "etd": "2026-10-23T19:00:00+09:00",
-        "plantFrom": "2026-11-06",
-        "plantTo": "2026-11-09"
+        "etd": "2026-11-03T19:00:00+09:00",
+        "plantFrom": "2026-11-09",
+        "plantTo": "2026-11-10"
       },
       "imo": "9868182",
       "kobeEtd": {
         "note": "",
         "src": "德翔官網",
-        "text": "10/23（五）19:00",
+        "text": "11/3（二）19:00",
         "note_ja": "",
         "note_en": ""
       },
@@ -1841,7 +1841,7 @@ export const PLAN = {
         "note": [
           "到港後約 2–3 個工作天，會加急處理"
         ],
-        "text": "11/6–9",
+        "text": "11/9–10",
         "note_ja": [
           "着港後 約 2–3 営業日、急ぎで対応"
         ],
@@ -1855,12 +1855,12 @@ export const PLAN = {
       "twEta": {
         "note": "",
         "src": "德翔官網",
-        "text": "基隆 11/4（三）22:30",
+        "text": "基隆 11/5（四）09:30",
         "note_ja": "",
         "note_en": ""
       },
       "twPort": "基隆",
-      "updatedAt": "2026-10-20T11:46:10+08:00",
+      "updatedAt": "2026-10-25T07:30:00+08:00",
       "voyage": "2621S",
       "id": "ts-kobe",
       "role_ja": "間に合わない・参考",
@@ -1880,9 +1880,9 @@ export const PLAN = {
         "label_ja": "FCL 可だが遅すぎる",
         "label_en": "FCL possible but too late"
       },
-      "noGo": "要 11/4 才到基隆，比已訂的這班還晚。貨代的併櫃也不走這家船公司。",
-      "noGo_ja": "基隆着は 11/4 で、予約済みの便より遅い。フォワーダーの混載もこの船会社を使わない。",
-      "noGo_en": "It only reaches Keelung on 11/4, later than the booked sailing. The forwarder's shared containers don't use this line either."
+      "noGo": "神戶開船延到 11/3，11/5 才到基隆，到廠約 11/9–10，趕不上 11/2 也趕不上 11/3，比已訂的這班晚很多。貨代的併櫃也不走這家船公司。",
+      "noGo_ja": "神戸出港が 11/3 に延び、基隆着は 11/5、工場着は 11/9–10 頃で、11/2 にも 11/3 にも間に合わず、予約済みの便よりかなり遅い。フォワーダーの混載もこの船会社を使わない。",
+      "noGo_en": "Kobe departure slipped to 11/3 and it only reaches Keelung on 11/5 (plant ~11/9–10), missing both 11/2 and 11/3 and far later than the booked sailing. The forwarder's shared containers don't use this line either."
     }
   ]
 };
