@@ -182,6 +182,33 @@ function typhoonMeta(ty, snap) {
   };
 }
 
+// 多颱風：氣象廳 targetTc 與氣象署各系統，以國際命名（去掉符號後大寫）配對；只收西北太平洋 0–50N、100–180E 的系統
+const normName = (x) => String(x || "").toUpperCase().replace(/[^A-Z]/g, "");
+const JA_CAT = { TY: "台風", STS: "台風", TS: "台風", TD: "熱帯低気圧", LOW: "温帯低気圧" };
+function inBox(p) { return p && typeof p.lat === "number" && p.lat >= 0 && p.lat <= 50 && p.lon >= 100 && p.lon <= 180; }
+export function stormsOf(ty, snap) {
+  if (!ty) return [];
+  const map = new Map();
+  for (const tc of ty.jma || []) {
+    const k = normName(tc.nameEn) || tc.id; if (!inBox(tc.points && tc.points[0])) continue;
+    map.set(k, { key: k, nameEn: (tc.nameEn || "").toUpperCase(), name_ja: tc.nameJp, jmaId: tc.id, jmaNumber: tc.number ? +String(tc.number).slice(-2) : null, category: tc.category,
+      forecast: tc.points, jmaIssued: tc.issued, jmaIssuedJst: tc.issuedJst });
+  }
+  for (const c of (ty.cwa && ty.cwa.storms) || []) {
+    const k = normName(c.en); if (!c.track || !inBox(c.track[0])) continue;
+    const o = map.get(k) || { key: k, nameEn: c.en };
+    Object.assign(o, { name_zh: c.zh, cwaNumber: c.number, cwaClass: c.cls, cwaTrack: c.track, cwaTrackTime: ty.cwa.time });
+    map.set(k, o);
+  }
+  const out = [...map.values()].map((o) => ({ ...o, status: "active", name: o.name_zh || o.nameEn, name_ja: o.name_ja || o.nameEn, name_en: o.nameEn,
+    forecast: o.forecast || [], cwaTrack: o.cwaTrack || [], jmaBadge: o.forecast ? "live" : "none", cwaBadge: o.cwaTrack ? "live" : "none" }));
+  // 快照裡的主角（CHAMPI）若已從兩邊名單消失：標成「已結束」，不畫路徑、不冒充別的颱風
+  const sk = normName(snap && snap.name_en);
+  if (sk && !map.has(sk) && !ty.jmaError && !ty.cwaError) out.push({ key: sk, nameEn: snap.name_en, name: snap.name, name_ja: snap.name_en, name_en: snap.name_en, status: "ended", forecast: [], cwaTrack: [], jmaBadge: "none", cwaBadge: "none" });
+  const rank = (o) => (o.key === sk ? 0 : 1);
+  return out.sort((a, b) => rank(a) - rank(b) || (a.jmaNumber || a.cwaNumber || 99) - (b.jmaNumber || b.cwaNumber || 99));
+}
+
 // Vercel 函式上限 25 秒：每組來源最多等 BUDGET_MS，逾時就先用快照回應，避免整頁 504。
 const BUDGET_MS = 12000;
 function within(p, ms, fallback) {
@@ -216,6 +243,7 @@ export default async function handler(req, res) {
   const S = Object.fromEntries(sched);
   const vessels = PLAN.vessels.map((v) => mergeVessel(v, S[v.id]));
   const meta = { ...PLAN.meta, typhoon: typhoonMeta(ty, PLAN.meta.typhoon), scheduleAt: now(), fresh: force };
+  try { meta.typhoon.storms = stormsOf(ty, PLAN.meta.typhoon); } catch (e) { meta.typhoon.storms = []; meta.typhoon.stormsError = String(e.message); }
   localize(meta, ["title", "eyebrow", "subtitle", "summary"]);
   const body = { meta, vessels, live: ais ? Object.fromEntries(ais) : null, serverTime: now() };
   return res.status(200).json(body);

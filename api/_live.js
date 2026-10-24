@@ -241,7 +241,7 @@ function radii(list) {
 }
 // 氣象署預報點（TY_LIST_2['C']）：「預測 10月20日20時」「中心位置在北緯 16.8 度，東經 133.1 度」「70%機率半徑 40 公里」「七級風暴風半徑 280 公里」…
 // 時間是台灣時間（+08:00）。分析點取自 TY_LIST_1：「20日14時的中心位置在北緯 16.4 度，東經 134.3 度」。
-export function cwaTrack(js, nowText) {
+export function cwaTrack(js, nowText, single) {
   const yr = (() => { const m = js.match(/民國(\d+)年/); return m ? 1911 + +m[1] : new Date().getUTCFullYear(); })();
   const mon0 = (() => { const m = js.match(/民國\d+年(\d+)月/); return m ? +m[1] : null; })();
   const pad = (n) => String(n).padStart(2, "0");
@@ -260,7 +260,7 @@ export function cwaTrack(js, nowText) {
     // 每段前面 80 字就是該系統的標題（含國際命名）；沒有 CHAMPI 時只接受現況在台日航線附近（30N 128E 1500 km 內）的那段，否則不畫
     const head = (b) => all.slice(Math.max(0, all.indexOf(b) - 80), all.indexOf(b));
     const nearB = (b) => { const p = pos(b); if (!p) return Infinity; const r = Math.PI / 180, x = Math.sin((30 - p[0]) * r / 2) ** 2 + Math.cos(p[0] * r) * Math.cos(30 * r) * Math.sin((128 - p[1]) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); };
-    const pick = blocks.find((b) => /CHAMPI/i.test(head(b))) || blocks.filter((b) => nearB(b) <= 1500).sort((x, y) => nearB(x) - nearB(y))[0] || (blocks.length ? "" : (nearB(all) <= 1500 ? all : ""));
+    const pick = single ? (blocks[0] || "") : blocks.find((b) => /CHAMPI/i.test(head(b))) || blocks.filter((b) => nearB(b) <= 1500).sort((x, y) => nearB(x) - nearB(y))[0] || (blocks.length ? "" : (nearB(all) <= 1500 ? all : ""));
     const t = pick;
     const p0 = pos(t);
     // 分析點（TY_LIST_1）若不是同一個系統（離選到的現況超過 300 km）就丟掉
@@ -276,6 +276,23 @@ export function cwaTrack(js, nowText) {
   pts.forEach((p) => { if (p.hours == null) p.hours = Math.round((Date.parse(p.time) - t0) / 3600e3); });
   return pts;
 }
+// 多系統版：氣象署每個系統一段（標題含中文名、編號、國際命名），各自解析成一條路徑；分析點（TY_LIST_1）也按系統分段配對
+export function cwaTracks(js, nowText) {
+  const m2 = js.match(/TY_LIST_2\['C'\]\s*=\s*([\s\S]*?);\s*\n/);
+  if (!m2) return [];
+  const all = m2[1].replace(/'\s*\+\s*'/g, "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+  const T = /(\S*颱風|熱帶性低氣壓)\s+(\S+)\s+編號第\s*(\d+)\s*號\s+國際命名\s+([A-Z][A-Z-]*)/g;
+  const heads = [...all.matchAll(T)];
+  const nowHeads = nowText ? [...nowText.matchAll(T)] : [];
+  return heads.map((h, i) => {
+    const seg = all.slice(h.index, i + 1 < heads.length ? heads[i + 1].index : all.length);
+    const nh = nowHeads.findIndex((x) => x[4] === h[4]);
+    const nowSeg = nh >= 0 ? nowText.slice(nowHeads[nh].index, nh + 1 < nowHeads.length ? nowHeads[nh + 1].index : nowText.length) : "";
+    const fake = "TY_LIST_2['C'] = '" + seg.replace(/'/g, " ") + "';\n";
+    const yr = js.match(/民國\d+年\d+月/); 
+    return { cls: h[1], zh: h[2], number: +h[3], en: h[4], track: cwaTrack((yr ? yr[0] : "") + fake, nowSeg, true) };
+  });
+}
 export async function liveTyphoon(force) {
   return cached("typhoon", async () => {
     const out = { fetchedAt: new Date().toISOString(), jma: [], cwa: null };
@@ -286,7 +303,7 @@ export async function liveTyphoon(force) {
           const spec = await (await get(`https://www.jma.go.jp/bosai/typhoon/data/${tc.tropicalCyclone}/specifications.json`)).json();
           const title = spec.find((p) => p.part === "title") || {};
           out.jma.push({
-            id: tc.tropicalCyclone, category: tc.category,
+            id: tc.tropicalCyclone, category: tc.category, number: tc.typhoonNumber || title.typhoonNumber,
             nameEn: title.name && title.name.en, nameJp: title.name && title.name.jp, issued: title.issue && title.issue.UTC,
             issuedJst: title.issue && title.issue.JST,
             // 暴風警戒域／暴風域（stormWarning）與強風域（galeWarning）：[{ area: "北東"|"南西"|"東"|"西"|{jp:"全域"}, range:{km} }]
@@ -302,6 +319,7 @@ export async function liveTyphoon(force) {
       const names = [...js.matchAll(/'([A-Z]+)':\{'Name':\{'C':'([^']+)','E':'([^']+)'\}\}/g)].map((x) => ({ zh: x[2], en: x[3] }));
       out.cwa = { time: (js.match(/TY_TIME = \{'C':'([^']*)'/) || [])[1] || null, text: m ? strip(m[1].trim()) : null, names };
       try { out.cwa.track = cwaTrack(js, m ? strip(m[1].trim()) : ""); } catch (e) { out.cwa.trackError = String(e.message); }
+      try { out.cwa.storms = cwaTracks(js, m ? strip(m[1].trim()) : ""); } catch (e) { out.cwa.stormsError = String(e.message); }
     } catch (e) { out.cwaError = String(e.message); }
     return out;
   }, force);

@@ -297,6 +297,8 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
   .tlabel{font-size:16px}
 }
 .typhoon{padding:20px 22px}
+.storm-ov ul.storm-l{padding-left:1.1em; margin:2px 0 8px; font-size:14px; display:grid; gap:2px}
+.by-storm{color:var(--ink-2)}
 .typhoon h2{margin-bottom:10px}
 .typhoon p{margin-top:8px}
 .typhoon ul{padding-left:1.15em; display:grid; gap:4px; margin-top:6px}
@@ -480,7 +482,7 @@ body{font-size:17px; line-height:1.65}
       <div class="sim-map">
         <div class="panel map-wrap" id="chartWrap"><svg class="chart" id="chart" viewBox="0 0 1000 1064" role="img"></svg></div>
         <div class="scrub" id="scrub">
-          <div class="scrub-top"><button class="btn" id="playBtn" type="button"></button><span class="tlabel" id="tLabel"></span><button class="btn ghost" id="nowBtn" type="button"></button></div>
+          <div class="scrub-top"><button class="btn" id="playBtn" type="button"></button><span class="tlabel" id="tLabel"></span><button class="btn ghost" id="nowBtn" type="button"></button><button class="btn ghost" id="viewBtn" type="button"></button></div>
           <svg class="strip" id="strip" aria-hidden="true"></svg>
           <input type="range" id="tSlider">
         </div>
@@ -1133,6 +1135,18 @@ body{font-size:17px; line-height:1.65}
   // the dynamic layer (ship, typhoon centres and wind areas at the chosen time) by drawAt().
   var LON0 = 118, LON1 = 141, LAT0 = 15, LAT1 = 37, K = Math.cos(26 * Math.PI / 180);
   var SX = 1000 / ((LON1 - LON0) * K), MAPH = Math.round((LAT1 - LAT0) * SX);
+  // "wide" view: auto-fit every active storm's official track plus the Taiwan–Japan route (all typhoons in the evaluation stay visible)
+  var VIEW = { wide: false };
+  function setExtent(wide){
+    VIEW.wide = !!wide;
+    if (!VIEW.wide){ LON0 = 118; LON1 = 141; LAT0 = 15; LAT1 = 37; }
+    else {
+      var lo0 = 118, lo1 = 141, la0 = 15, la1 = 37;
+      allTracks().forEach(function(x){ x.tr.pts.forEach(function(p){ if (p.ext) return; lo0 = Math.min(lo0, p.c[0] - 3); lo1 = Math.max(lo1, p.c[0] + 3); la0 = Math.min(la0, p.c[1] - 3); la1 = Math.max(la1, p.c[1] + 3); }); });
+      LON0 = Math.max(100, Math.floor(lo0)); LON1 = Math.min(180, Math.ceil(lo1)); LAT0 = Math.max(0, Math.floor(la0)); LAT1 = Math.min(50, Math.ceil(la1));
+    }
+    K = Math.cos((LAT0 + LAT1) / 2 * Math.PI / 180); SX = 1000 / ((LON1 - LON0) * K); MAPH = Math.round((LAT1 - LAT0) * SX);
+  }
   function P(lon, lat){ return [(lon - LON0) * K * SX, (LAT1 - lat) * SX]; }
   function inMap(lon, lat){ return typeof lon === "number" && typeof lat === "number" && lon >= LON0 && lon <= LON1 && lat >= LAT0 && lat <= LAT1; }
   function path(pts, open){ return pts.map(function(p, i){ var q = P(p[0], p[1]); return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + (open ? "" : " Z"); }
@@ -1207,9 +1221,24 @@ body{font-size:17px; line-height:1.65}
     return best ? best.km : null;
   }
   var BRG = []; for (var bi = 0; bi < 36; bi++) BRG.push(bi * 10);
-  function track(kind){
-    var ty = state.meta && state.meta.typhoon; if (!ty) return null;
-    var src = kind === "jma" ? ty.forecast : ty.cwaTrack;
+  // every active storm from the API (meta.typhoon.storms); old single-storm payloads fall back to the legacy fields
+  function stormList(){
+    var ty = state.meta && state.meta.typhoon; if (!ty) return [];
+    if (!Array.isArray(ty.storms)) return [{ key: ty.nameEn || "TY", name: ty.name, name_ja: ty.name_ja, name_en: ty.name_en, status: "active", forecast: ty.forecast, cwaTrack: ty.cwaTrack, jmaBadge: ty.forecastBadge || ty.badge, cwaBadge: ty.cwaTrackBadge || ty.badge, jmaIssued: ty.jmaIssued, jmaIssuedJst: ty.jmaIssuedJst, cwaTrackTime: ty.cwaTrackTime }];
+    return ty.storms;
+  }
+  function stName(st){ return st ? (pick(st, "name") || st.name_en || st.key || "") : ""; }
+  // composite per agency: all storms' tracks, evaluated together
+  function comp(kind){
+    var list = stormList().filter(function(st){ return st.status !== "ended"; }).map(function(st){ return track(kind, st); }).filter(Boolean);
+    if (!list.length) return null;
+    return { kind: kind, storms: list, t0: Math.min.apply(null, list.map(function(x){ return x.t0; })), t1: Math.max.apply(null, list.map(function(x){ return x.t1; })),
+      live: list.some(function(x){ return x.live; }), issued: list[0].issued };
+  }
+  function allTracks(){ var o = []; [["cwa", SIM.cwa], ["jma", SIM.jma]].forEach(function(x){ if (x[1]) x[1].storms.forEach(function(tr){ o.push({ kind: x[0], tr: tr }); }); }); return o; }
+  function track(kind, st){
+    if (!st) return null;
+    var src = kind === "jma" ? st.forecast : st.cwaTrack;
     if (!Array.isArray(src) || !src.length) return null;
     var pts = src.map(function(p){
       var ms = t(p.time), prob = typeof p.radiusKm === "number" ? p.radiusKm : 0, A, B;
@@ -1232,9 +1261,9 @@ body{font-size:17px; line-height:1.65}
       var v = Pv ? [(L.c[0] - Pv.c[0]) / (L.ms - Pv.ms), (L.c[1] - Pv.c[1]) / (L.ms - Pv.ms)] : [0, 0];
       pts.push({ ms: L.ms + EXT, c: [L.c[0] + v[0] * EXT, L.c[1] + v[1] * EXT], prob: L.prob, A: null, B: lastB, ref: true, ext: true, raw: L.raw });
     }
-    return { kind: kind, pts: pts, t0: pts[0].ms, t1: pts[pts.length - 1].ms, tFc: tFc,
-      live: kind === "jma" ? (ty.forecastBadge || ty.badge) === "live" : (ty.cwaTrackBadge || ty.badge) === "live",
-      issued: kind === "jma" ? (ty.jmaIssuedJst || ty.jmaIssued) : ty.cwaTrackTime };
+    return { kind: kind, pts: pts, t0: pts[0].ms, t1: pts[pts.length - 1].ms, tFc: tFc, storm: st, name: stName(st),
+      live: (kind === "jma" ? st.jmaBadge : st.cwaBadge) === "live",
+      issued: kind === "jma" ? (st.jmaIssuedJst || st.jmaIssued) : st.cwaTrackTime };
   }
   function lerpArr(a, b, f){ if (!a && !b) return null; a = a || BRG.map(function(){ return 0; }); b = b || BRG.map(function(){ return 0; }); return a.map(function(x, i){ return x + (b[i] - x) * f; }); }
   function tyAt(tr, ms){
@@ -1264,34 +1293,45 @@ body{font-size:17px; line-height:1.65}
   function simulate(tr, plan, now){
     if (!tr || !plan.length) return null;
     var shiftMin = 0, shiftMax = 0, rows = [], beyond = false, closest = null;
-    function check(ms, q){ var s = tyAt(tr, ms); if (!s) return null; var r = rel2(s, q); if (!closest || r.d < closest.d) closest = { d: r.d, ms: ms, mA: r.mA, mB: r.mB, z: r.z }; return r; }
+    // every storm is checked; the worst one (storm area > gale area > nearest edge) decides, and its name is kept
+    function check(ms, q){
+      var best = null, zr = { A: 2, B: 1, "": 0 };
+      (tr.storms || [tr]).forEach(function(st){ var s = tyAt(st, ms); if (!s) return; var r = rel2(s, q); r.storm = st.name;
+        var e = r.mB != null ? r.mB : (r.mA != null ? r.mA : r.d);
+        if (!best || zr[r.z] > zr[best.z] || (zr[r.z] === zr[best.z] && e < best.e)){ r.e = e; best = r; } });
+      if (best && (!closest || best.d < closest.d)) closest = { d: best.d, ms: ms, mA: best.mA, mB: best.mB, z: best.z, storm: best.storm };
+      return best;
+    }
+    function by(set, name){ if (name && set.indexOf(name) < 0) set.push(name); }
     for (var i = 0; i < plan.length; i++){
       var a = plan[i].a + shiftMin, d = plan[i].d + shiftMin;
       // leg before this call
       if (i > 0){
-        var d0 = plan[i - 1].d + shiftMin, hA = 0, hB = 0, legBeyond = false, legMin = null, legRef = false;
+        var d0 = plan[i - 1].d + shiftMin, hA = 0, hB = 0, legBeyond = false, legMin = null, legRef = false, legBy = [];
         if (a > now){
           for (var ms = Math.max(d0, now); ms <= a; ms += H){
             if (ms > tr.t1){ legBeyond = true; break; }
             var sp = shipAt(ms, plan, shiftMin, 0); if (!sp || sp.k !== "sea") continue;
             var r = check(ms, sp.p); if (!r) continue; if (r.ref && (r.z || (r.mB != null && r.mB < 500))) legRef = true;
-            if (!legMin || r.d < legMin.d) legMin = { d: r.d, ms: ms, z: r.z, mA: r.mA, mB: r.mB };
+            if (!legMin || r.d < legMin.d) legMin = { d: r.d, ms: ms, z: r.z, mA: r.mA, mB: r.mB, storm: r.storm };
+            if (r.z) by(legBy, r.storm); if (r.ref && (r.z || (r.mB != null && r.mB < 500))) by(legBy, r.storm);
             if (r.z === "A") hA++; else if (r.z === "B") hB++;
           }
           if (hA){ shiftMin += hA * H; shiftMax += hA * H; }
           if (hB) shiftMax += hB * H;
-          rows.push({ k: "leg", from: plan[i - 1].port, to: plan[i].port, d0: d0, a: a, hA: hA, hB: hB, beyond: legBeyond, near: legMin, ref: legRef, past: false });
+          rows.push({ k: "leg", from: plan[i - 1].port, to: plan[i].port, d0: d0, a: a, hA: hA, hB: hB, beyond: legBeyond, near: legMin, ref: legRef, by: legBy, past: false });
           if (legBeyond) beyond = true;
           a = plan[i].a + shiftMin; d = plan[i].d + shiftMin;
         } else rows.push({ k: "leg", from: plan[i - 1].port, to: plan[i].port, d0: d0, a: a, past: true });
       }
       // the port call itself: window from 24 h before arrival to departure
       if (d < now){ rows.push({ k: "port", i: i, port: plan[i].port, a: a, d: d, past: true }); continue; }
-      var q = GEO[plan[i].port], firstA = null, lastA = null, anyB = false, pBeyond = false, pMin = null, pRef = false;
+      var q = GEO[plan[i].port], firstA = null, lastA = null, anyB = false, pBeyond = false, pMin = null, pRef = false, pBy = [];
       for (var m2 = Math.max(a - 24 * H, now); m2 <= d; m2 += H){
         if (m2 > tr.t1){ pBeyond = true; break; }
         var r2 = check(m2, q); if (!r2) continue; if (r2.ref && (r2.z || (r2.mB != null && r2.mB < 500))) pRef = true;
-        if (!pMin || r2.d < pMin.d) pMin = { d: r2.d, ms: m2, z: r2.z, mA: r2.mA, mB: r2.mB };
+        if (!pMin || r2.d < pMin.d) pMin = { d: r2.d, ms: m2, z: r2.z, mA: r2.mA, mB: r2.mB, storm: r2.storm };
+        if (r2.z || (r2.ref && r2.mB != null && r2.mB < 500)) by(pBy, r2.storm);
         if (r2.z === "A"){ if (firstA == null) firstA = m2; lastA = m2; } else if (r2.z === "B") anyB = true;
       }
       var delay = 0, open = false;
@@ -1302,7 +1342,7 @@ body{font-size:17px; line-height:1.65}
         shiftMin += delay; shiftMax += delay;
       } else if (anyB) shiftMax += 12 * H;
       if (pBeyond) beyond = true;
-      rows.push({ k: "port", i: i, port: plan[i].port, a: a, d: d, zA: firstA != null, zB: anyB, delay: delay, open: open, beyond: pBeyond, near: pMin, ref: pRef });
+      rows.push({ k: "port", i: i, port: plan[i].port, a: a, d: d, zA: firstA != null, zB: anyB, delay: delay, open: open, beyond: pBeyond, near: pMin, ref: pRef, by: pBy });
     }
     var last = plan[plan.length - 1];
     return { rows: rows, kee: [last.a + shiftMin, last.a + shiftMax], shift: [shiftMin, shiftMax], beyond: beyond, closest: closest, t1: tr.t1 };
@@ -1483,7 +1523,7 @@ body{font-size:17px; line-height:1.65}
     return [t0, Math.max(t1, t0 + 24 * H)];
   }
   function simPrepare(){
-    SIM.plan = shipPlan(); SIM.jma = track("jma"); SIM.cwa = track("cwa");
+    SIM.plan = shipPlan(); SIM.jma = comp("jma"); SIM.cwa = comp("cwa");
     var r = simRange(); SIM.t0 = r[0]; SIM.t1 = r[1];
     var now = Date.now();
     SIM.simJ = simulate(SIM.jma, SIM.plan, now); SIM.simC = simulate(SIM.cwa, SIM.plan, now);
@@ -1495,27 +1535,31 @@ body{font-size:17px; line-height:1.65}
 
   function renderChart(){
     var svg = document.getElementById("chart"); if (!svg) return;
-    simPrepare();
+    simPrepare(); setExtent(VIEW.wide);
     var cw = document.getElementById("chartWrap").clientWidth || 1000;
     var FS = Math.min(2.6, Math.max(1, 765 / cw)); SIM.FS = FS;
     function f(n){ return (n * FS).toFixed(1); }
     svg.setAttribute("viewBox", "0 0 1000 " + MAPH);
     var o = ["<rect x=\"0\" y=\"0\" width=\"1000\" height=\"" + MAPH + "\" fill=\"var(--sea)\"/>"];
     var step = FS > 1.4 ? 4 : 2, gfs = FS > 1.4 ? 17 : 13;
-    for (var lo = 120; lo <= 140; lo += 2){ var a = P(lo, LAT1); o.push("<line x1=\"" + a[0].toFixed(1) + "\" y1=\"0\" x2=\"" + a[0].toFixed(1) + "\" y2=\"" + MAPH + "\" stroke=\"var(--grid)\"/>"); if ((lo - 120) % step === 0) o.push("<text x=\"" + (a[0] + 4).toFixed(1) + "\" y=\"" + (MAPH - 8) + "\" font-size=\"" + f(gfs) + "\" fill=\"var(--ink-3)\">" + lo + "°E</text>"); }
-    for (var la = 16; la <= 36; la += 2){ var c = P(LON0, la); o.push("<line x1=\"0\" y1=\"" + c[1].toFixed(1) + "\" x2=\"1000\" y2=\"" + c[1].toFixed(1) + "\" stroke=\"var(--grid)\"/>"); if ((la - 16) % step === 0) o.push("<text x=\"6\" y=\"" + (c[1] - 5).toFixed(1) + "\" font-size=\"" + f(gfs) + "\" fill=\"var(--ink-3)\">" + la + "°N</text>"); }
+    var gs = VIEW.wide ? 5 : 2; if (VIEW.wide) step = FS > 1.4 ? 10 : 5;
+    for (var lo = Math.ceil(LON0 / gs) * gs; lo <= LON1; lo += gs){ var a = P(lo, LAT1); o.push("<line x1=\"" + a[0].toFixed(1) + "\" y1=\"0\" x2=\"" + a[0].toFixed(1) + "\" y2=\"" + MAPH + "\" stroke=\"var(--grid)\"/>"); if (lo % step === 0) o.push("<text x=\"" + (a[0] + 4).toFixed(1) + "\" y=\"" + (MAPH - 8) + "\" font-size=\"" + f(gfs) + "\" fill=\"var(--ink-3)\">" + lo + "°E</text>"); }
+    for (var la = Math.ceil(LAT0 / gs) * gs; la <= LAT1; la += gs){ var c = P(LON0, la); o.push("<line x1=\"0\" y1=\"" + c[1].toFixed(1) + "\" x2=\"1000\" y2=\"" + c[1].toFixed(1) + "\" stroke=\"var(--grid)\"/>"); if (la % step === 0) o.push("<text x=\"6\" y=\"" + (c[1] - 5).toFixed(1) + "\" font-size=\"" + f(gfs) + "\" fill=\"var(--ink-3)\">" + la + "°N</text>"); }
     LAND.forEach(function(poly){ o.push("<path d=\"" + path(poly) + "\" fill=\"var(--land)\" stroke=\"var(--land-edge)\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/>"); });
     ISLETS.forEach(function(s){ var q = P(s[0], s[1]); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + Math.max(2, s[2] * SX * K).toFixed(1) + "\" fill=\"var(--land)\" stroke=\"var(--land-edge)\"/>"); });
     // forecast tracks (static)
-    [["cwa", SIM.cwa, "var(--backup)", "6 5"], ["jma", SIM.jma, "var(--alert)", ""]].forEach(function(x){
+    var nameLab = [];
+    allTracks().map(function(y){ return [y.kind, y.tr, y.kind === "jma" ? "var(--alert)" : "var(--backup)", y.kind === "jma" ? "" : "6 5"]; }).forEach(function(x){
       var tr = x[1]; if (!tr) return;
+      // storm name at its first in-map official point (one label per storm)
+      if (x[0] === "jma" || !SIM.jma || !SIM.jma.storms.some(function(j){ return j.storm.key === tr.storm.key; })){ var fp = null; tr.pts.forEach(function(p){ if (!fp && !p.ext && inMap(p.c[0], p.c[1])) fp = p; }); if (fp){ var nq = P(fp.c[0], fp.c[1]); nameLab.push("<text x=\"" + (nq[0] + 10 * FS).toFixed(1) + "\" y=\"" + (nq[1] + 18 * FS).toFixed(1) + "\" font-size=\"" + f(15) + "\" font-weight=\"800\" fill=\"var(--ink)\" stroke=\"var(--sea)\" stroke-width=\"4\" paint-order=\"stroke\">" + esc((lang === "en" ? "" : "") + tr.name) + "</text>"); } }
       o.push("<path d=\"" + path(tr.pts.map(function(p){ return p.c; }), true) + "\" fill=\"none\" stroke=\"" + x[2] + "\" stroke-width=\"" + f(2.2) + "\"" + (x[3] ? " stroke-dasharray=\"" + x[3] + "\"" : "") + " opacity=\".9\"/>");
       tr.pts.forEach(function(p){ var q = P(p.c[0], p.c[1]); if (p.prob) o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + (p.prob / 111.2 * SX).toFixed(1) + "\" fill=\"none\" stroke=\"" + x[2] + "\" stroke-width=\"1\" stroke-dasharray=\"3 4\" opacity=\".7\"/>"); o.push("<circle cx=\"" + q[0].toFixed(1) + "\" cy=\"" + q[1].toFixed(1) + "\" r=\"" + f(x[0] === "jma" ? 3.6 : 3) + "\" fill=\"" + x[2] + "\"/>"); });
     });
     // ship lanes (static): every leg of the plan
     var plan = SIM.plan;
     for (var i = 0; i + 1 < plan.length; i++) o.push("<path d=\"" + path(lane(plan[i].port, plan[i + 1].port), true) + "\" fill=\"none\" stroke=\"var(--route)\" stroke-width=\"" + f(2) + "\" stroke-dasharray=\"7 6\"/>");
-    svg.innerHTML = o.join("") + "<g id=\"chartDyn\"></g>";
+    svg.innerHTML = o.join("") + nameLab.join("") + "<g id=\"chartDyn\"></g>";
     renderStrip();
     drawAt(SIM.ms);
   }
@@ -1529,7 +1573,7 @@ body{font-size:17px; line-height:1.65}
     var o = [], labels = [], placed = [], marks = [];
     var sp = shipAt(ms, SIM.plan, 0, 0);
     // typhoon areas + centres
-    var TS = [["cwa", SIM.cwa, "var(--backup)"], ["jma", SIM.jma, "var(--alert)"]], states = {};
+    var TS = allTracks().map(function(y){ return [y.kind + ":" + y.tr.storm.key, y.tr, y.kind === "jma" ? "var(--alert)" : "var(--backup)", y.kind]; }), states = {};
     TS.forEach(function(x){
       var s = tyAt(x[1], ms); states[x[0]] = s; if (!s) return;
       if (s.B && s.ref) o.push("<path d=\"" + areaPath(s, s.B) + "\" fill=\"" + x[2] + "\" fill-opacity=\".05\" stroke=\"" + x[2] + "\" stroke-width=\"2.2\" stroke-dasharray=\"2 5\" stroke-linecap=\"round\"><title>" + esc(Q(s.ext ? "refExt" : "refTip")) + "</title></path>");
@@ -1538,13 +1582,13 @@ body{font-size:17px; line-height:1.65}
     });
     // ship → typhoon distance lines
     if (sp && (sp.k === "sea" || sp.k === "port" || sp.k === "before")){
-      TS.forEach(function(x){ var s = states[x[0]]; if (!s) return; var a = P(sp.p[0], sp.p[1]), b = P(s.c[0], s.c[1]); o.push("<line x1=\"" + a[0].toFixed(1) + "\" y1=\"" + a[1].toFixed(1) + "\" x2=\"" + b[0].toFixed(1) + "\" y2=\"" + b[1].toFixed(1) + "\" stroke=\"" + x[2] + "\" stroke-width=\"" + f(1.4) + "\" stroke-dasharray=\"2 4\"/>");
+      TS.forEach(function(x){ var s = states[x[0]]; if (!s || !inMap(s.c[0], s.c[1])) return; var a = P(sp.p[0], sp.p[1]), b = P(s.c[0], s.c[1]); o.push("<line x1=\"" + a[0].toFixed(1) + "\" y1=\"" + a[1].toFixed(1) + "\" x2=\"" + b[0].toFixed(1) + "\" y2=\"" + b[1].toFixed(1) + "\" stroke=\"" + x[2] + "\" stroke-width=\"" + f(1.4) + "\" stroke-dasharray=\"2 4\"/>");
         var d = km(sp.p, s.c), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; labels.push({ x: mx, y: my, text: n0(d) + " km", col: x[2], fs: 14, w: (n0(d).length + 3) * 8.5 * FS, prio: 3 }); });
     }
     TS.forEach(function(x){ var s = states[x[0]]; if (!s || !inMap(s.c[0], s.c[1])) return; var q = P(s.c[0], s.c[1]);
-      marks.push("<g transform=\"translate(" + q[0].toFixed(1) + " " + q[1].toFixed(1) + ") scale(" + (FS * (x[0] === "jma" ? 1 : .8)).toFixed(2) + ")\"><circle r=\"16\" fill=\"var(--panel)\" opacity=\".8\"/><path d=\"M0 -12 C12 -12 12 3 3.5 5 M0 12 C-12 12 -12 -3 -3.5 -5\" fill=\"none\" stroke=\"" + x[2] + "\" stroke-width=\"3.4\" stroke-linecap=\"round\"/><circle r=\"3.4\" fill=\"" + x[2] + "\"/></g>");
+      marks.push("<g transform=\"translate(" + q[0].toFixed(1) + " " + q[1].toFixed(1) + ") scale(" + (FS * (x[3] === "jma" ? 1 : .8)).toFixed(2) + ")\"><circle r=\"16\" fill=\"var(--panel)\" opacity=\".8\"/><path d=\"M0 -12 C12 -12 12 3 3.5 5 M0 12 C-12 12 -12 -3 -3.5 -5\" fill=\"none\" stroke=\"" + x[2] + "\" stroke-width=\"3.4\" stroke-linecap=\"round\"/><circle r=\"3.4\" fill=\"" + x[2] + "\"/></g>");
       placed.push({ x0: q[0] - 16 * FS, x1: q[0] + 16 * FS, y0: q[1] - 16 * FS, y1: q[1] + 16 * FS });
-      var lab = Q(x[0]) + (s.ref ? (s.ext ? Q("refExtTag") : Q("refTag")) : "");
+      var lab = Q(x[3]) + " " + x[1].name + (s.ref ? (s.ext ? Q("refExtTag") : Q("refTag")) : "");
       labels.push({ x: q[0], y: q[1], text: lab, col: x[2], fs: 15, w: lab.length * (lang === "en" ? 9 : 15) * FS, anchorPt: true, prio: 1 }); });
     // ports + date labels
     var portDates = {};
@@ -1645,7 +1689,7 @@ body{font-size:17px; line-height:1.65}
   function shipStatus(ms){
     var sp = shipAt(ms, SIM.plan, 0, 0), worst = "ok";
     if (!sp || sp.k === "after") return { k: "none", col: "var(--ink-2)", sp: sp };
-    [SIM.jma, SIM.cwa].forEach(function(tr){ var s = tyAt(tr, ms); if (!s) return; var r = rel2(s, sp.p);
+    allTracks().forEach(function(y){ var s = tyAt(y.tr, ms); if (!s) return; var r = rel2(s, sp.p);
       var z = r.z === "A" ? "A" : (r.z === "B" ? "B" : ((r.mA != null && r.mA < 300) || (r.mB != null && r.mB < 300) ? "near" : (r.ref && r.mB != null && r.mB < 500 ? "ref" : "ok")));
       var rank = { ok: 0, ref: 1, near: 2, B: 3, A: 4 }; if (rank[z] > rank[worst]) worst = z; });
     return { k: worst, col: worst === "A" ? "var(--alert)" : (worst === "B" || worst === "near" || worst === "ref" ? "var(--watch)" : "var(--ok)"), sp: sp };
@@ -1669,11 +1713,13 @@ body{font-size:17px; line-height:1.65}
     if (last && ms > last.a){ var pl = plantOf(last.a); h.push("<p class=\"sim-cargo\">" + esc(ms >= pl.from * 864e5 - 8 * H ? Q("cargo").plant : Q("cargo").wait) + "</p>"); }
     if (st.k !== "none") h.push("<p>" + zoneChip(st.k) + (st.k === "A" || st.k === "B" ? " <span class=\"sim-rule\">" + esc((sp && sp.k === "port" ? Q("zPort") : Q("zSea"))[st.k]) + "</span>" : "") + "</p>");
     h.push("</div>");
+    h.push(stormOverview());
     [["jma", SIM.jma], ["cwa", SIM.cwa]].forEach(function(x){
-      var tr = x[1], s = states[x[0]];
-      h.push("<div class=\"sim-row\" data-ag=\"" + x[0] + "\"><h4>" + esc(Q(x[0])) + (tr && tr.issued ? " <small class=\"num\">" + esc(issuedLabel(tr)) + "</small>" : "") + badge(tr && tr.live ? "live" : "") + "</h4>");
-      if (!tr) h.push("<p>" + esc(T("tyNone") || "—") + "</p>");
-      else if (!s) h.push("<p>" + esc(ms > tr.t1 ? Q("noFc")(twLabel(tr.t1)) : Q("notYet")) + "</p>");
+      var C = x[1];
+      if (!C){ h.push("<div class=\"sim-row\" data-ag=\"" + x[0] + "\"><h4>" + esc(Q(x[0])) + "</h4><p>" + esc(T("tyNone") || "—") + "</p></div>"); return; }
+      C.storms.forEach(function(tr){ var s = states[x[0] + ":" + tr.storm.key];
+      h.push("<div class=\"sim-row\" data-ag=\"" + x[0] + "\"><h4>" + esc(Q(x[0])) + " · " + esc(tr.name) + (tr && tr.issued ? " <small class=\"num\">" + esc(issuedLabel(tr)) + "</small>" : "") + badge(tr && tr.live ? "live" : "") + "</h4>");
+      if (!s) h.push("<p>" + esc(ms > tr.t1 ? Q("noFc")(twLabel(tr.t1)) : Q("notYet")) + "</p>");
       else {
         if (s.ref) h.push("<p class=\"ref-note\">⚠ " + esc(Q(s.ext ? "refExt" : "refTip")) + "</p>");
         h.push("<p class=\"num\">" + esc(T("latlon")(+s.c[1].toFixed(1), +s.c[0].toFixed(1))) + (s.raw && s.raw.pressure ? "・" + esc(s.raw.pressure) + " hPa" : "") + "</p>");
@@ -1683,9 +1729,64 @@ body{font-size:17px; line-height:1.65}
           if (s.ref && z === "ok" && r.mB != null && r.mB < 500) z = "ref";
           h.push("<p>" + esc(parts.join(T("listSep") || "、")) + "</p><p>" + zoneChip(z) + "</p>"); }
       }
-      h.push("</div>");
+      h.push("</div>"); });
     });
     box.innerHTML = h.join("");
+  }
+  /* --- multi-storm texts + per-storm overview (official forecast points only; extrapolation is never used here) --- */
+  var MTX = {
+    zh: { viewWide: "縮小地圖：顯示全部颱風", viewNear: "放大：台日航線", by: function(n, hit){ return (hit ? "造成影響：" : "最近的是：") + n; },
+      ovH: "各颱風概況（官方預報）", ended: function(n){ return n + "：已從官方颱風名單移除（消散或轉溫帶），不再列入評估。"; },
+      num: function(j, c){ return [j ? "氣象廳第 " + j + " 號" : "", c ? "氣象署第 " + c + " 號" : ""].filter(Boolean).join("・"); },
+      now: function(la, lo, hp){ return "現在 " + la + "°N " + lo + "°E" + (hp ? "・" + hp + " hPa" : ""); },
+      fcEnd: function(ag, t){ return ag + "預報到 " + t; },
+      atKee: function(t, ag, dk, dn){ return "船到基隆（" + t + "）時，" + ag + "預報中心距基隆約 " + dk + " km、距那霸約 " + dn + " km。"; },
+      short: function(t, ag, te, dk, dn){ return ag + "預報只到 " + te + "，還沒到船抵基隆的 " + t + "，無法判斷那時的位置；最後一個預報點距基隆約 " + dk + " km、距那霸約 " + dn + " km。"; },
+      near: function(d){ return "官方預報期間內最接近台灣／琉球約 " + d + " km，要留意。"; }, far: function(d){ return "官方預報期間內沒有接近台灣／琉球（最近約 " + d + " km）。"; } },
+    ja: { viewWide: "縮小：すべての台風を表示", viewNear: "拡大：台湾–日本航路", by: function(n, hit){ return (hit ? "影響：" : "最も近い：") + n; },
+      ovH: "台風ごとの状況（公式予報）", ended: function(n){ return n + "：公式の台風リストから外れました（消滅または温帯低気圧化）。評価対象外。"; },
+      num: function(j, c){ return [j ? "気象庁 第 " + j + " 号" : "", c ? "中央気象署 第 " + c + " 号" : ""].filter(Boolean).join("・"); },
+      now: function(la, lo, hp){ return "現在 北緯 " + la + "° 東経 " + lo + "°" + (hp ? "・" + hp + " hPa" : ""); },
+      fcEnd: function(ag, t){ return ag + "の予報は " + t + " まで"; },
+      atKee: function(t, ag, dk, dn){ return "基隆着（" + t + "）時点の" + ag + "予報中心は基隆から約 " + dk + " km、那覇から約 " + dn + " km。"; },
+      short: function(t, ag, te, dk, dn){ return ag + "の予報は " + te + " までで、基隆着の " + t + " には届かず判断できません。最後の予報点は基隆から約 " + dk + " km、那覇から約 " + dn + " km。"; },
+      near: function(d){ return "公式予報期間中、台湾・琉球に最も近づくのは約 " + d + " km。要注意。"; }, far: function(d){ return "公式予報期間中、台湾・琉球には近づかない（最接近 約 " + d + " km）。"; } },
+    en: { viewWide: "Zoom out: all typhoons", viewNear: "Zoom in: Taiwan–Japan route", by: function(n, hit){ return (hit ? "Caused by: " : "Nearest: ") + n; },
+      ovH: "Each typhoon (official forecasts)", ended: function(n){ return n + ": no longer on the official typhoon lists (dissipated or extratropical); not evaluated."; },
+      num: function(j, c){ return [j ? "JMA No. " + j : "", c ? "CWA No. " + c : ""].filter(Boolean).join(" · "); },
+      now: function(la, lo, hp){ return "Now " + la + "°N " + lo + "°E" + (hp ? " · " + hp + " hPa" : ""); },
+      fcEnd: function(ag, t){ return ag + " forecast to " + t; },
+      atKee: function(t, ag, dk, dn){ return "At the Keelung arrival (" + t + "), the " + ag + " forecast centre is about " + dk + " km from Keelung and " + dn + " km from Naha."; },
+      short: function(t, ag, te, dk, dn){ return "The " + ag + " forecast ends " + te + ", before the Keelung arrival (" + t + "), so that time can't be judged yet; its last point is about " + dk + " km from Keelung and " + dn + " km from Naha."; },
+      near: function(d){ return "Closest official approach to Taiwan/Ryukyu: about " + d + " km. Watch it."; }, far: function(d){ return "Does not approach Taiwan/Ryukyu within the official forecast (closest about " + d + " km)."; } }
+  };
+  function MT(k){ var d = MTX[lang] || MTX.zh; return d[k] != null ? d[k] : MTX.zh[k]; }
+  function stormOverview(){
+    var list = stormList(); if (!list.length) return "";
+    var last = SIM.plan[SIM.plan.length - 1], arr = last ? last.a : null, KE = GEO["基隆"], NA = GEO["那霸"];
+    var h = ["<div class=\"sim-row storm-ov\"><h4>" + esc(MT("ovH")) + "</h4>"];
+    list.forEach(function(st){
+      var nm = stName(st);
+      if (st.status === "ended"){ h.push("<p><strong>" + esc(nm) + "</strong> " + esc(MT("ended")("")) + "</p>"); return; }
+      var lines = [], num = MT("num")(st.jmaNumber, st.cwaNumber);
+      var f0 = (st.forecast && st.forecast[0]) || (st.cwaTrack && st.cwaTrack[0]);
+      if (f0) lines.push(MT("now")(f0.lat, f0.lon, f0.pressure));
+      var minD = null;
+      [["jma", SIM.jma], ["cwa", SIM.cwa]].forEach(function(x){
+        var tr = x[1] && x[1].storms.filter(function(y){ return y.storm.key === st.key; })[0]; if (!tr) return;
+        var off = tr.pts.filter(function(p){ return !p.ext; }), lp = off[off.length - 1], ag = Q(x[0]);
+        off.forEach(function(p){ var d = Math.min(km(p.c, KE), km(p.c, NA)); if (minD == null || d < minD) minD = d; });
+        if (arr == null) lines.push(MT("fcEnd")(ag, twLabel(tr.tFc)));
+        else {
+          if (arr <= tr.tFc){ var s = tyAt(tr, arr); if (s) lines.push(MT("atKee")(twLabel(arr), ag, n0(km(s.c, KE)), n0(km(s.c, NA)))); }
+          else lines.push(MT("short")(twLabel(arr), ag, twLabel(tr.tFc), n0(km(lp.c, KE)), n0(km(lp.c, NA))));
+        }
+      });
+      if (minD != null) lines.push(minD < 800 ? MT("near")(n0(minD)) : MT("far")(n0(minD)));
+      h.push("<p><strong>" + esc(nm) + "</strong>" + (num ? " <small>" + esc(num) + "</small>" : "") + "</p><ul class=\"storm-l\">" + lines.map(function(l){ return "<li>" + esc(l) + "</li>"; }).join("") + "</ul>");
+    });
+    h.push("</div>");
+    return h.join("");
   }
   function issuedLabel(tr){ if (tr.kind === "jma"){ var m = /T(\d\d):(\d\d)/.exec(tr.issued || ""), dd = /-(\d\d)-(\d\d)T/.exec(tr.issued || ""); return dd ? (+dd[1]) + "/" + (+dd[2]) + " " + m[1] + ":" + m[2] + (lang === "en" ? " JST" : "（日本）") : ""; } var c = /(\d+)月(\d+)日(\d+)時/.exec(tr.issued || ""); return c ? c[1] + "/" + c[2] + " " + String(c[3]).padStart(2, "0") + ":00" : ""; }
 
@@ -1695,7 +1796,8 @@ body{font-size:17px; line-height:1.65}
   function renderStrip(){
     var svg = document.getElementById("strip"), wrap = document.getElementById("scrub"); if (!svg || !wrap) return;
     var W = Math.max(260, wrap.clientWidth), narrow = W < 560; STRIP.W = W; STRIP.x1 = W - 13;
-    var rowH = 18, y0 = 30, rows = [Q("stripShip"), Q("stripJma"), Q("stripCwa")], Hh = y0 + rows.length * (rowH + 6) + 4;
+    var SR = []; [[SIM.jma, "var(--alert)", Q("stripJma")], [SIM.cwa, "var(--backup)", Q("stripCwa")]].forEach(function(x){ if (x[0]) x[0].storms.forEach(function(tr){ SR.push([tr, x[1], x[2] + " " + tr.name]); }); });
+    var rowH = 18, y0 = 30, rows = [Q("stripShip")].concat(SR.map(function(x){ return x[2]; })), Hh = y0 + rows.length * (rowH + 6) + 4;
     svg.setAttribute("viewBox", "0 0 " + W + " " + Hh); svg.setAttribute("width", W); svg.setAttribute("height", Hh);
     var o = [], d0 = twDay(SIM.t0), d1 = twDay(SIM.t1) + 1, wk = (STRIP.x1 - STRIP.x0) / (d1 - d0) < 34 ? WK1[lang] : WK[lang];
     for (var dn = d0; dn < d1; dn++){
@@ -1715,7 +1817,7 @@ body{font-size:17px; line-height:1.65}
     });
     var last = SIM.plan[SIM.plan.length - 1];
     if (last){ var pl = plantOf(last.a), xa2 = Math.max(stripX(last.d), STRIP.x0), xb2 = Math.min(stripX((pl.from + 1) * 864e5 - 8 * H), STRIP.x1); if (xb2 > xa2) o.push("<rect x=\"" + xa2.toFixed(1) + "\" y=\"" + (yS + 4) + "\" width=\"" + (xb2 - xa2).toFixed(1) + "\" height=\"" + (rowH - 8) + "\" rx=\"2\" fill=\"var(--watch)\" opacity=\".75\"/>"); }
-    [[SIM.jma, yJ, "var(--alert)", Q("stripJma")], [SIM.cwa, yC, "var(--backup)", Q("stripCwa")]].forEach(function(x){
+    SR.map(function(x, i){ return [x[0], y0 + (i + 1) * (rowH + 6), x[1], x[2]]; }).forEach(function(x){
       var tr = x[0]; if (!tr) return; var xa = Math.max(stripX(tr.t0), STRIP.x0), xb = Math.min(stripX(tr.t1), STRIP.x1);
       if (xb > xa) o.push("<rect x=\"" + xa.toFixed(1) + "\" y=\"" + x[1] + "\" width=\"" + (xb - xa).toFixed(1) + "\" height=\"" + rowH + "\" rx=\"2\" fill=\"" + x[2] + "\" opacity=\".28\"/>");
       o.push("<text x=\"" + (xa + 4).toFixed(1) + "\" y=\"" + (x[1] + 13) + "\" font-size=\"11.5\" font-weight=\"600\" fill=\"var(--ink)\">" + esc(x[3] + " → " + twLabel(tr.t1, false)) + "</text>");
@@ -1759,6 +1861,11 @@ body{font-size:17px; line-height:1.65}
       var r = null; sim.rows.forEach(function(x){ if (x.k === row.k && (row.k === "port" ? x.i === row.i : x.to === row.to && x.from === row.from)) r = x; });
       if (!r) return "—";
       if (r.past) return "<span class=\"muted\">" + esc(R.past) + "</span>";
+      var who = r.by && r.by.length ? r.by : (r.near && r.near.storm ? [r.near.storm] : []);
+      return cell0(sim, r) + (who.length ? "<br><small class=\"by-storm\">" + esc(MT("by")(who.join(lang === "en" ? ", " : "、"), !!(r.by && r.by.length))) + "</small>" : "");
+    }
+    function cell0(sim, r){
+      var row = r;
       var bz = (r.beyond ? "<br><small class=\"muted\">" + esc(R.beyondPart) + "</small>" : "") + (r.ref ? "<br><small class=\"ref-note\">⚠ " + esc(Q("refRes")) + "</small>" : "");
       if (row.k === "port"){
         if (r.zA) return "<span class=\"chip\" data-level=\"alert\">" + esc(R.portA(Math.round(r.delay / H), r.open)) + "</span>" + bz;
@@ -1802,7 +1909,7 @@ body{font-size:17px; line-height:1.65}
   function renderMapChrome(){
     setText("mapH", Q("mapH")); setText("mapSub", Q("mapSub"));
     var pb = document.getElementById("playBtn"); if (pb){ pb.textContent = SIM.playing ? "❚❚ " + Q("pause") : "▶ " + Q("play"); pb.setAttribute("aria-pressed", SIM.playing ? "true" : "false"); }
-    setText("nowBtn", Q("now"));
+    setText("nowBtn", Q("now")); setText("viewBtn", MT(VIEW.wide ? "viewNear" : "viewWide"));
     var st2 = document.getElementById("shadowTop"); if (st2){ st2.textContent = { zh: "影子模擬紀錄", ja: "シャドー記録", en: "Shadow archive" }[lang]; st2.href = "shadow.html?lang=" + lang; st2.title = { zh: "每 8 小時備份的模擬，可比較預報和船期怎麼變", ja: "8 時間ごとの保存。予報とスケジュールの変化を比較", en: "Saved every 8 hours; compare how the forecast and schedule changed" }[lang]; }
     var sl2 = document.getElementById("shadowLink"); if (sl2){ sl2.textContent = { zh: "影子模擬紀錄：每 8 小時自動備份，可以比較颱風預報和船期怎麼變 →", ja: "シャドー・シミュレーション記録：8 時間ごとに自動保存、台風予報とスケジュールの変化を比較 →", en: "Shadow simulation archive: saved every 8 hours, compare how the forecast and schedule changed →" }[lang]; sl2.href = "shadow.html?lang=" + lang; }
     var sl = document.getElementById("tSlider"); if (sl) sl.setAttribute("aria-label", Q("mapH"));
@@ -1822,7 +1929,7 @@ body{font-size:17px; line-height:1.65}
   // the typhoon days shown on the single-sailing calendar: days when either forecast centre is within 500 km of Keelung
   function tyDays(){
     var out = [];
-    [SIM.jma || track("jma"), SIM.cwa || track("cwa")].forEach(function(tr){ if (!tr) return; for (var ms = tr.t0; ms <= tr.t1; ms += 3 * H){ var s = tyAt(tr, ms); if (s && km(s.c, GEO["基隆"]) <= 500){ var dn = twDay(ms); if (out.indexOf(dn) < 0) out.push(dn); } } });
+    (SIM.jma || SIM.cwa ? allTracks().map(function(y){ return y.tr; }) : [].concat((comp("jma") || { storms: [] }).storms, (comp("cwa") || { storms: [] }).storms)).forEach(function(tr){ if (!tr) return; for (var ms = tr.t0; ms <= tr.t1; ms += 3 * H){ var s = tyAt(tr, ms); if (s && km(s.c, GEO["基隆"]) <= 500){ var dn = twDay(ms); if (out.indexOf(dn) < 0) out.push(dn); } } });
     out.sort(function(a, b){ return a - b; });
     return out.length ? [ymd(out[0]), ymd(out[out.length - 1])] : null;
   }
@@ -2229,6 +2336,7 @@ body{font-size:17px; line-height:1.65}
   window.addEventListener("pageshow", function(e){ if (e.persisted) fetchData(true); });
   document.getElementById("tSlider").addEventListener("input", function(){ if (SIM.playing){ clearInterval(SIM.playing); SIM.playing = null; renderMapChrome(); } setSim(+this.value, true); });
   document.getElementById("playBtn").addEventListener("click", togglePlay);
+  document.getElementById("viewBtn").addEventListener("click", function(){ VIEW.wide = !VIEW.wide; renderMapChrome(); renderChart(); });
   document.getElementById("nowBtn").addEventListener("click", function(){ if (SIM.playing){ clearInterval(SIM.playing); SIM.playing = null; } SIM.user = false; renderMapChrome(); simPrepare(); setSim(SIM.t0, false); });
   setInterval(function(){ if (state.meta){ renderHeader(); renderRuler(); } }, 60000);
 
