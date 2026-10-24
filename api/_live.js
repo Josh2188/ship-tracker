@@ -257,8 +257,14 @@ export function cwaTrack(js, nowText) {
     const all = m2[1].replace(/'\s*\+\s*'/g, "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
     // 氣象署同時發布多個系統時（例如 CHAMPI + TD34），每個系統各有一段「現況…預測…」；只取第一段（或含 CHAMPI 的那段），不能把別的系統的點接進來
     const blocks = all.split(/(?=現況\s*\d{4}年)/).slice(1);
-    const pick = blocks.find((b, i) => /CHAMPI/i.test((blocks[i - 1] || all.slice(0, all.indexOf(b))).slice(-80))) || blocks[0] || all;
+    // 每段前面 80 字就是該系統的標題（含國際命名）；沒有 CHAMPI 時只接受現況在台日航線附近（30N 128E 1500 km 內）的那段，否則不畫
+    const head = (b) => all.slice(Math.max(0, all.indexOf(b) - 80), all.indexOf(b));
+    const nearB = (b) => { const p = pos(b); if (!p) return Infinity; const r = Math.PI / 180, x = Math.sin((30 - p[0]) * r / 2) ** 2 + Math.cos(p[0] * r) * Math.cos(30 * r) * Math.sin((128 - p[1]) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); };
+    const pick = blocks.find((b) => /CHAMPI/i.test(head(b))) || blocks.filter((b) => nearB(b) <= 1500).sort((x, y) => nearB(x) - nearB(y))[0] || (blocks.length ? "" : (nearB(all) <= 1500 ? all : ""));
     const t = pick;
+    const p0 = pos(t);
+    // 分析點（TY_LIST_1）若不是同一個系統（離選到的現況超過 300 km）就丟掉
+    if (pts.length && (!p0 || Math.abs(pts[0].lat - p0[0]) + Math.abs(pts[0].lon - p0[1]) > 3)) pts.length = 0;
     for (const seg of t.split(/預測\s*/).slice(1)) {
       const tm = seg.match(/^(\d+)月(\d+)日(\d+)時/), p = pos(seg);
       if (!tm || !p) continue;

@@ -146,11 +146,15 @@ export function mergeVessel(v, L) {
   return out;
 }
 
+function kmTo(a1, o1, a2, o2) { const r = Math.PI / 180, x = Math.sin((a2 - a1) * r / 2) ** 2 + Math.cos(a1 * r) * Math.cos(a2 * r) * Math.sin((o2 - o1) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); }
 function typhoonMeta(ty, snap) {
   if (!ty || (!ty.jma.length && !(ty.cwa && ty.cwa.text))) return localize({ ...snap, badge: "fallback" }, ["name", "text", "src"]);
   const rank = { TY: 4, STS: 3, TS: 2, TD: 1 };
   // 多個系統同時存在時（例如 CHAMPI + 新的熱帶性低氣壓），優先抓 CHAMPI，否則抓最強的，不要只抓第一個
-  const tc = ty.jma.find((t) => /CHAMPI/i.test(t.nameEn || "")) || ty.jma.slice().sort((a, b) => (rank[b.category] || 0) - (rank[a.category] || 0))[0], cur = tc && tc.points && tc.points[0];
+  // 找不到 CHAMPI（消散／轉溫帶／下架）時，只接受離台日航線近的系統（中心距 30N 128E 1500 km 內），挑最近的；都沒有就不畫，不能偷換成遠方的別的颱風
+  const near = (t) => { const p = t.points && t.points[0]; return p && typeof p.lat === "number" ? kmTo(p.lat, p.lon, 30, 128) : Infinity; };
+  const tc = ty.jma.find((t) => /CHAMPI/i.test(t.nameEn || "")) || ty.jma.filter((t) => near(t) <= 1500).sort((a, b) => near(a) - near(b) || (rank[b.category] || 0) - (rank[a.category] || 0))[0], cur = tc && tc.points && tc.points[0];
+  const jmaOk = !ty.jmaError;
   const zh = ty.cwa && ty.cwa.names && ty.cwa.names[0] && ty.cwa.names[0].zh;
   const en = tc && tc.nameEn ? tc.nameEn.toUpperCase() : (ty.cwa && ty.cwa.names && ty.cwa.names[0] && ty.cwa.names[0].en) || "";
   const jmaLine = (l) => !cur ? "" : l === "en"
@@ -168,7 +172,7 @@ function typhoonMeta(ty, snap) {
     text: ty.cwa && ty.cwa.text ? bullets(ty.cwa.text, "zh") : [],
     cwaTime: ty.cwa && ty.cwa.time,
     jmaIssued: tc ? tc.issued : snap.jmaIssued, jmaIssuedJst: tc ? tc.issuedJst : snap.jmaIssuedJst,
-    forecast: tc ? tc.points : (snap.forecast || []), forecastBadge: tc ? "live" : "fallback",
+    forecast: tc ? tc.points : jmaOk ? [] : (snap.forecast || []), forecastBadge: tc ? "live" : jmaOk ? "none" : "fallback",
     cwaTrack: ty.cwa && ty.cwa.track && ty.cwa.track.length > 1 ? ty.cwa.track : (snap.cwaTrack || []),
     cwaTrackBadge: ty.cwa && ty.cwa.track && ty.cwa.track.length > 1 ? "live" : "fallback", cwaTrackTime: ty.cwa && ty.cwa.track && ty.cwa.track.length > 1 ? ty.cwa.time : snap.cwaTrackTime,
     src: "中央氣象署", src_ja: "台湾・中央気象署", src_en: "Taiwan CWA", srcUrl: "https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_NEWS.html",
