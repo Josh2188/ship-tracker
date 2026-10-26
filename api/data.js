@@ -47,8 +47,12 @@ export function mergeVessel(v, L) {
   // "officialLive" next to the snapshot estimate and never replace the snapshot text, dates or plant.
   const contra = new Set((v.officialContradicted && v.officialContradicted.fields) || []);
   const f = Object.fromEntries(Object.entries(fAll).filter(([k]) => !contra.has(k)));
-  const changes = [];
+  // 只有會影響交期判斷的變動才進 changes（警示）；其餘（已過港口、估計→實際、小於容許差、神戶以前的港）放 infos（中性提示）
+  const TOL = (Number(process.env.CHANGE_TOL_HOURS) || 6) * 3600e3;
+  const changes = [], infos = [];
   const ch = (zh, ja, en) => changes.push({ zh, ja, en });
+  const info = (zh, ja, en) => infos.push({ zh, ja, en });
+  const big = (a, b) => Math.abs(Date.parse(a) - Date.parse(b)) >= TOL;
   out.liveError = L && L.error ? L.error : null;
   out.liveError_ja = L && L.error ? L.error_ja || tr(L.error, "ja") : null;
   out.liveError_en = L && L.error ? L.error_en || tr(L.error, "en") : null;
@@ -65,7 +69,7 @@ export function mergeVessel(v, L) {
       f.twEta = { iso: est, port: v.twPort || "基隆", ...{ note: "依神戶最新開船時間推估（神戶→基隆航程不變）", note_ja: "神戸の最新出港時刻から推定（神戸→基隆の航海時間は同じ）", note_en: "Estimated from the latest Kobe departure (same Kobe → Keelung passage time)" },
         src: "依陽明日本代理推估", src_ja: "Yang Ming 日本代理店から推定", src_en: "Estimated from Yang Ming Japan agent", estimated: true };
       fAll.twEta = f.twEta;
-      ch(`基隆到港：神戶開船改了 ${Math.round(keeShift / 3600e3)} 小時，基隆跟著推估為 ${taipeiHM(est)}`, `基隆着：神戸出港が ${Math.round(keeShift / 3600e3)} 時間変わったため ${taipeiHM(est)} と推定`, `Keelung arrival: Kobe departure moved ${Math.round(keeShift / 3600e3)} h, so Keelung is estimated at ${taipeiHM(est)}`);
+      (Math.abs(keeShift) >= TOL ? ch : info)(`基隆到港：神戶開船改了 ${Math.round(keeShift / 3600e3)} 小時，基隆跟著推估為 ${taipeiHM(est)}`, `基隆着：神戸出港が ${Math.round(keeShift / 3600e3)} 時間変わったため ${taipeiHM(est)} と推定`, `Keelung arrival: Kobe departure moved ${Math.round(keeShift / 3600e3)} h, so Keelung is estimated at ${taipeiHM(est)}`);
     }
   }
   for (const k of ["cyCut", "kobeEtd", "twEta"]) {
@@ -98,15 +102,16 @@ export function mergeVessel(v, L) {
   const d = v.dates || {};
   if (f.kobeEtd && f.kobeEtd.iso && d.etd) {
     const a = parts(f.kobeEtd.iso), b = parts(d.etd);
-    if (a && b && md(a) !== md(b)) ch(`神戶開航：快照 ${md(b)} → 官網 ${md(a)}`, `神戸出港：スナップショット ${md(b)} → 公式 ${md(a)}`, `Kobe departure: snapshot ${md(b)} → official ${md(a)}`);
+    if (a && b && Date.parse(f.kobeEtd.iso) !== Date.parse(d.etd)) (big(f.kobeEtd.iso, d.etd) ? ch : info)(`神戶開航：快照 ${md(b)} → 官網 ${md(a)}`, `神戸出港：スナップショット ${md(b)} → 公式 ${md(a)}`, `Kobe departure: snapshot ${md(b)} → official ${md(a)}`);
   }
   if (f.twEta && f.twEta.iso && d.etaFrom) {
     const live = taipeiDay(f.twEta.iso), lo = taipeiDay(d.etaFrom), hi = d.etaTo ? taipeiDay(d.etaTo) : lo;
-    if (live < lo || live > hi) ch(`台灣到港：快照 ${v.twEta.text} → 官網 ${out.twEta.text}`, `台湾着：スナップショット ${tr(v.twEta.text, "ja")} → 公式 ${out.twEta.text_ja}`, `Taiwan arrival: snapshot ${tr(v.twEta.text, "en")} → official ${out.twEta.text_en}`);
+    const far = big(f.twEta.iso, d.etaFrom) && (!d.etaTo || Date.parse(f.twEta.iso) > Date.parse(d.etaTo) + TOL || Date.parse(f.twEta.iso) < Date.parse(d.etaFrom) - TOL);
+    if (!keeShift && (live < lo || live > hi || far)) (far ? ch : info)(`台灣到港：快照 ${v.twEta.text} → 官網 ${out.twEta.text}`, `台湾着：スナップショット ${tr(v.twEta.text, "ja")} → 公式 ${out.twEta.text_ja}`, `Taiwan arrival: snapshot ${tr(v.twEta.text, "en")} → official ${out.twEta.text_en}`);
   }
   if (f.cyCut && f.cyCut.iso) {
     const p = parts(f.cyCut.iso);
-    if (!String(v.cyCut && v.cyCut.text || "").includes(md(p))) ch(`CY 截止：快照「${v.cyCut.text}」→ 官網 ${out.cyCut.text}`, `CY 締切：スナップショット「${tr(v.cyCut.text, "ja")}」→ 公式 ${out.cyCut.text_ja}`, `CY cut-off: snapshot "${tr(v.cyCut.text, "en")}" → official ${out.cyCut.text_en}`);
+    if (!String(v.cyCut && v.cyCut.text || "").includes(md(p))) (Date.parse(f.cyCut.iso) < Date.now() ? info : ch)(`CY 截止：快照「${v.cyCut.text}」→ 官網 ${out.cyCut.text}`, `CY 締切：スナップショット「${tr(v.cyCut.text, "ja")}」→ 公式 ${out.cyCut.text_ja}`, `CY cut-off: snapshot "${tr(v.cyCut.text, "en")}" → official ${out.cyCut.text_en}`);
   }
   // dates / plant from live values
   out.dates = { ...d };
@@ -130,7 +135,8 @@ export function mergeVessel(v, L) {
         return { ...s, badge: "fallback" };
       }
       const m = { ...s, arr: l.arr || s.arr, berth: l.berth || s.berth, dep: l.dep || s.dep, origArr: l.origArr || s.origArr, origDep: l.origDep || s.origDep, updated: l.updated || s.updated, srcUrl: l.srcUrl || s.srcUrl, badge: "live" };
-      if (s.arr && l.arr && Date.parse(s.arr) !== Date.parse(l.arr)) ch(`${s.port} 到港：快照 ${taipeiHM(s.arr)} → 官網 ${taipeiHM(l.arr)}（台北時間）`, `${tr(s.port, "ja")} 入港：スナップショット ${taipeiHM(s.arr)} → 公式 ${taipeiHM(l.arr)}（台湾時間）`, `${tr(s.port, "en")} arrival: snapshot ${taipeiHM(s.arr)} → official ${taipeiHM(l.arr)} (Taipei time)`);
+      // 各港到港時間只當參考：神戶開船、基隆到港另外判斷；已開走的港、神戶以前的港都不警示
+      if (s.arr && l.arr && Date.parse(s.arr) !== Date.parse(l.arr)) info(`${s.port} 到港：快照 ${taipeiHM(s.arr)} → 官網 ${taipeiHM(l.arr)}（台北時間）`, `${tr(s.port, "ja")} 入港：スナップショット ${taipeiHM(s.arr)} → 公式 ${taipeiHM(l.arr)}（台湾時間）`, `${tr(s.port, "en")} arrival: snapshot ${taipeiHM(s.arr)} → official ${taipeiHM(l.arr)} (Taipei time)`);
       return m;
     });
   }
@@ -143,6 +149,9 @@ export function mergeVessel(v, L) {
   out.changes = changes.map((c) => c.zh);
   out.changes_ja = changes.map((c) => c.ja);
   out.changes_en = changes.map((c) => c.en);
+  out.infos = infos.map((c) => c.zh);
+  out.infos_ja = infos.map((c) => c.ja);
+  out.infos_en = infos.map((c) => c.en);
   return out;
 }
 

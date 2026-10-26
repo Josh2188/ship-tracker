@@ -16,7 +16,7 @@ export const PLAN = {
     "lastRunAt": "2026-10-25T05:05:00+08:00",
     "level": "watch",
     "summary": [
-      "陽明 YM INCEPTION 251S 又延後：神戶 10/27（二）23:00（日本時間，台北 22:00）開，基隆 10/30（五）07:00 到（10/25 05:05 陽明官網複核，沒變）。照到港後第 2–3 個工作天是 11/3（二）–11/4（三），趕不上 11/2；只有爭取到「到港後第 1 個工作天」11/2（一）當天清關、送廠，才趕得上。",
+      "陽明 YM INCEPTION 251S 又延後：神戶 10/27（二）23:00（日本時間，台北 22:00）開，基隆 10/30（五）07:00 到（10/25 05:05 陽明官網複核）。10/26 14:08 官網再更新：神戶改 10/28（三）12:00（日本時間，台北 11:00）開，基隆推估 10/30（五）20:00 到；到港後第 1、2 個工作天仍是 11/2、11/3，到廠估 11/3–4 不變。照到港後第 2–3 個工作天是 11/3（二）–11/4（三），趕不上 11/2；只有爭取到「到港後第 1 個工作天」11/2（一）當天清關、送廠，才趕得上。",
       "要做的事：請報關行在船到港前就備好報關文件，10/30（五）到港當天或週末完成拆櫃和放行準備，11/2（一）一早放行、當天卡車送龍潭。",
       "颱風：薔琵已減弱成低氣壓等級（氣象廳 10/25 03:45 預報 10/27 02:00 在室戶岬南方、1002 百帕，台北時間），比船 10/27 05:00 到大阪早，大阪、神戶頂多停工半天。煙花（IN-FA）在馬紹爾群島附近往西北走，10/30 02:00 預報點離基隆還有約 3,400 公里，預報期間內不影響神戶→基隆這段。",
       "到貨預測（10/25 05:05 第 4 輪，官網船期複核後結論不變）：照現在船期最快 11/2、11/3 下班前應趕得上；日本港口再晚 12–48 小時，因為碰到週末，最快仍是 11/2 但更難做到；晚 72 小時以上（11/2 才到基隆）就一定趕不上。細節見下方「到貨預測第 4 輪」。",
@@ -440,14 +440,14 @@ export const PLAN = {
     "subtitle_ja": "日本の工場 → 神戸 → 基隆 → 龍潭工場。生産ラインの期限：11/2（月）終業までに龍潭工場着。",
     "subtitle_en": "Japan factory → Kobe → Keelung → Longtan plant. Production deadline: at the Longtan plant by end of business Mon 11/2.",
     "summary_ja": [
-      "Yang Ming YM INCEPTION 251S がさらに遅れ：神戸 10/27（火）23:00（日本時間、台湾 22:00）発、基隆 10/30（金）07:00 着（10/25 05:05 公式で再確認、変更なし）。着港後 2–3 営業日なら 11/3（火）–11/4（水）で 11/2 に間に合わない。「着港後 1 営業日目」の 11/2（月）に通関・搬入できた場合のみ間に合う。",
+      "Yang Ming YM INCEPTION 251S がさらに遅れ：神戸 10/27（火）23:00（日本時間、台湾 22:00）発、基隆 10/30（金）07:00 着（10/25 05:05 公式で再確認）。10/26 14:08 公式更新：神戸 10/28（水）12:00（日本時間、台湾 11:00）発、基隆 10/30（金）20:00 着と推定。着港後 1・2 営業日目は引き続き 11/2・11/3、工場着 11/3–4 は変わらず。着港後 2–3 営業日なら 11/3（火）–11/4（水）で 11/2 に間に合わない。「着港後 1 営業日目」の 11/2（月）に通関・搬入できた場合のみ間に合う。",
       "やること：通関業者に着港前から書類を準備してもらい、10/30（金）着港当日または週末にコンテナの荷降ろしと許可の準備、11/2（月）朝に許可、当日トラックで龍潭へ。",
       "台風：CHAMPI は弱まり（気象庁 10/25 03:45 発表、10/27 03 時 日本時間に室戸岬の南・1002 hPa）、船の大阪着（10/27 06 時 日本時間）より前に通過。大阪・神戸の停止は最大半日程度。IN-FA はマーシャル諸島付近を北西進、10/30 03 時（日本時間）の予報点でも基隆から約 3,400 km で、予報期間内は神戸→基隆に影響なし。",
       "到着予測（10/25 05:05 第 4 回、公式再確認で結論変わらず）：現行スケジュールで最短 11/2。日本の港でさらに 12–48 時間遅れても週末を挟むため最短は 11/2 のままだが難しくなる。72 時間以上遅れ（基隆着 11/2）なら間に合わない。詳細は下の「到着予測 第 3 回」。",
       "ページを開くたび・「今すぐ更新」を押すたびに Yang Ming、気象庁、中央気象署、AIS の最新データを取り直します。"
     ],
     "summary_en": [
-      "YM INCEPTION 251S has slipped again: departs Kobe Tue 10/27 23:00 JST (22:00 Taipei), arrives Keelung Fri 10/30 07:00 (re-checked on Yang Ming's official site 10/25 05:05, unchanged). At 2–3 working days after arrival that is 11/3–11/4, missing 11/2; only clearing and delivering on the first working day after arrival (Mon 11/2) makes it.",
+      "YM INCEPTION 251S has slipped again: departs Kobe Tue 10/27 23:00 JST (22:00 Taipei), arrives Keelung Fri 10/30 07:00 (re-checked on Yang Ming's official site 10/25 05:05). Official update 10/26 14:08: Kobe now Wed 10/28 12:00 JST (11:00 Taipei), Keelung estimated Fri 10/30 20:00; the 1st/2nd working days after arrival are still 11/2 and 11/3, factory 11/3–4 unchanged. At 2–3 working days after arrival that is 11/3–11/4, missing 11/2; only clearing and delivering on the first working day after arrival (Mon 11/2) makes it.",
       "To do: have the customs broker prepare the paperwork before arrival, get the container unloaded and release prepared on 10/30 or over the weekend, release first thing Mon 11/2 and truck to Longtan the same day.",
       "Typhoons: CHAMPI has weakened (JMA 03:45 JST 10/25: south of Cape Muroto at 1002 hPa by 03:00 JST 10/27), passing before the ship reaches Osaka (06:00 JST 10/27); at most about half a day of stoppage at Osaka/Kobe. IN-FA is near the Marshall Islands heading NW; its last forecast point (10/30) is still ~3,400 km from Keelung, so no impact on Kobe → Keelung within the forecast period.",
       "Arrival forecast (round 4, 10/25 05:05, unchanged after official re-check): earliest 11/2 on the current schedule; a further 12–48 h delay in Japan still gives 11/2 at best because of the weekend, but it gets harder; 72 h or more (Keelung on 11/2) misses the deadline. See 'Arrival forecast round 3' below.",
@@ -1393,28 +1393,28 @@ export const PLAN = {
         "note_en": ""
       },
       "dates": {
-        "etd": "2026-10-27T23:00:00+09:00",
-        "etaFrom": "2026-10-30T07:00:00+08:00",
+        "etd": "2026-10-28T12:00:00+09:00",
+        "etaFrom": "2026-10-30T20:00:00+08:00",
         "etaTo": null,
         "plantFrom": "2026-11-03",
         "plantTo": "2026-11-04"
       },
       "imo": "9319155",
       "kobeEtd": {
-        "text": "10/27（二）23:00",
-        "text_ja": "10/27（火）23:00",
-        "text_en": "10/27 (Tue) 23:00",
+        "text": "10/28（三）12:00",
+        "text_ja": "10/28（水）12:00",
+        "text_en": "10/28 (Wed) 12:00",
         "src": "陽明日本代理",
         "src_ja": "Yang Ming 日本代理店",
         "src_en": "Yang Ming Japan agent",
         "note": [
-          "台北時間 10/27 22:00；神戶 10/27 16:00 到、17:00 靠碼頭；表定 10/25（日）"
+          "台北時間 10/28 11:00；神戶 10/27 21:20 到、22:20 靠碼頭（日本時間）；表定 10/25（日）；10/26 14:08 官網再延 13 小時"
         ],
         "note_ja": [
-          "台湾時間 10/27 22:00、神戸 10/27 16:00 着・17:00 着岸、当初予定 10/25（日）"
+          "台湾時間 10/28 11:00、神戸 10/27 21:20 着・22:20 着岸（日本時間）、当初予定 10/25（日）、10/26 14:08 公式でさらに 13 時間遅れ"
         ],
         "note_en": [
-          "Taipei time 10/27 22:00; Kobe arr 10/27 16:00, berth 17:00; original schedule Sun 10/25"
+          "Taipei time 10/28 11:00; Kobe arr 10/27 21:20, berth 22:20 JST; original schedule Sun 10/25; delayed another 13 h per official update 10/26 14:08"
         ],
         "badge": "fallback"
       },
@@ -1479,7 +1479,7 @@ export const PLAN = {
         }
       ],
       "twEta": {
-        "text": "基隆 10/30（五）07:00",
+        "text": "基隆 10/30（五）20:00（推估）",
         "src": "陽明基隆靠泊表",
         "note": [
           "陽明基隆靠泊表（基隆聯興碼頭）"
@@ -1490,13 +1490,13 @@ export const PLAN = {
         "note_en": [
           "Yang Ming Keelung berth list"
         ],
-        "text_ja": "基隆 10/30（金）07:00",
-        "text_en": "Keelung 10/30 (Fri) 07:00",
+        "text_ja": "基隆 10/30（金）20:00（推定）",
+        "text_en": "Keelung 10/30 (Fri) 20:00 (est.)",
         "src_ja": "Yang Ming 基隆着岸予定表",
         "src_en": "Yang Ming Keelung berth list"
       },
       "twPort": "基隆",
-      "updatedAt": "2026-10-25T05:05:00+08:00",
+      "updatedAt": "2026-10-26T14:08:00+08:00",
       "voyage": "251S",
       "id": "ym-inception",
       "role_ja": "予約済み",
@@ -1553,56 +1553,56 @@ export const PLAN = {
           "port": "東京",
           "voyage": "250N/251S",
           "arr": "2026-10-24T16:55:00+09:00",
-          "berth": "2026-10-24T16:55:00+09:00",
+          "berth": "2026-10-24T17:33:00+09:00",
           "dep": "2026-10-25T05:30:00+09:00",
           "origArr": "2026-10-22",
           "origDep": "2026-10-22",
           "terminal": "青海 A0/A1/A2",
-          "updated": "10/22 23:08",
+          "updated": "10/26 14:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=13&id=10381408"
         },
         {
           "port": "名古屋",
           "voyage": "250N/251S",
-          "arr": "2026-10-26T07:00:00+09:00",
-          "berth": "2026-10-26T08:00:00+09:00",
-          "dep": "2026-10-26T17:00:00+09:00",
+          "arr": "2026-10-26T06:40:00+09:00",
+          "berth": "2026-10-26T07:55:00+09:00",
+          "dep": "2026-10-26T22:00:00+09:00",
           "origArr": "2026-10-24",
           "origDep": "2026-10-24",
           "terminal": "鍋田ふ頭 NUCT",
-          "updated": "10/22 23:08",
+          "updated": "10/26 14:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=35&id=10381410"
         },
         {
           "port": "大阪",
           "voyage": "250N/251S",
-          "arr": "2026-10-27T07:00:00+09:00",
-          "berth": "2026-10-27T08:00:00+09:00",
-          "dep": "2026-10-27T15:00:00+09:00",
+          "arr": "2026-10-27T13:00:00+09:00",
+          "berth": "2026-10-27T14:00:00+09:00",
+          "dep": "2026-10-27T20:30:00+09:00",
           "origArr": "2026-10-25",
           "origDep": "2026-10-25",
           "terminal": "南港 C-9",
-          "updated": "10/22 23:08",
+          "updated": "10/26 14:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=40&id=10381412"
         },
         {
           "port": "神戶",
           "voyage": "250N/251S",
-          "arr": "2026-10-27T16:00:00+09:00",
-          "berth": "2026-10-27T17:00:00+09:00",
-          "dep": "2026-10-27T23:00:00+09:00",
+          "arr": "2026-10-27T21:20:00+09:00",
+          "berth": "2026-10-27T22:20:00+09:00",
+          "dep": "2026-10-28T12:00:00+09:00",
           "origArr": "2026-10-25",
           "origDep": "2026-10-25",
           "terminal": "六甲アイランド RC-1/2",
-          "updated": "10/22 23:08",
+          "updated": "10/26 14:08",
           "srcUrl": "https://www.toyoshingo.com/yangming/certificate.php?portcode=41&id=10381411",
           "load": true
         },
         {
           "port": "基隆",
           "voyage": "251S",
-          "arr": "2026-10-30T07:00:00+08:00",
-          "dep": "2026-10-30T16:00:00+08:00",
+          "arr": "2026-10-30T20:00:00+08:00",
+          "dep": "2026-10-31T05:00:00+08:00",
           "terminal": "基隆聯興碼頭",
           "origArr": null,
           "origDep": null,

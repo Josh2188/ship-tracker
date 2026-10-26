@@ -187,6 +187,7 @@ h2{font-size:24px; line-height:1.25; font-weight:700; text-wrap:balance}
 .assess ul{padding-left:1.15em; display:grid; gap:6px}
 .assess li::marker{color:var(--ink-3)}
 .assess p{max-width:60ch}
+.infoline{margin-top:8px; font-size:12.5px; color:var(--muted,#777)}
 .flag{margin-top:12px; padding:10px 12px; border-radius:6px; background:var(--alert-soft); font-size:14.5px}
 .flag strong{color:var(--alert)}
 .pos{background:var(--panel-2); border-radius:6px; padding:12px 14px; align-self:start}
@@ -632,6 +633,7 @@ body{font-size:17px; line-height:1.65}
       liveMap: "即時地圖：", detailsH: "細節與來源", srcH: "各欄位來源", linksH: "船位與船期連結", ids: "IMO / MMSI",
       lerr: function(e){ return "官網即時抓取：" + e + "。抓不到的欄位用先前資料。"; },
       flagH: "官網日期和判斷撰寫時不同，請重新確認：",
+      infoH: "官網小幅更新（不影響交期判斷）",
       stripNote: function(names, at){ return names + " 的官網日期和判斷撰寫時（" + at + "）不同，判斷需要重新確認。"; },
       discharge: "卸貨港 ",
       mapH: "船現在在哪裡", mapSub: "依船上定位訊號（AIS）最新回報繪製；藍綠色是已訂的這班，灰色是其他船；虛線是神戶到基隆的一般航路。", chartAria: "神戶到台灣海域的船位圖", rulerAria: "各船班神戶開航、到港與預估到廠日，和到廠期限比較",
@@ -697,6 +699,7 @@ body{font-size:17px; line-height:1.65}
       liveMap: "ライブマップ：", detailsH: "詳細と出典", srcH: "各項目の出典", linksH: "船位・スケジュールのリンク", ids: "IMO / MMSI",
       lerr: function(e){ return e + "。取得できない項目は前回データを表示します。"; },
       flagH: "公式の日程が判断作成時と異なります。再確認してください：",
+      infoH: "公式の小さな更新（納期判断に影響なし）",
       stripNote: function(names, at){ return names + " の公式日程が判断作成時（" + at + "）と異なります。判断を再確認してください。"; },
       discharge: "揚地 ",
       mapH: "現在の船位", mapSub: "船の位置信号（AIS）の最新報告に基づく。青緑が予約済みの便、灰色はその他の船。点線は神戸–基隆の一般的な航路です。", chartAria: "神戸から台湾までの海域の船位図", rulerAria: "各船便の神戸出港・着港・工場着予定と期限の比較",
@@ -762,6 +765,7 @@ body{font-size:17px; line-height:1.65}
       liveMap: "Live map: ", detailsH: "Details and sources", srcH: "Source of each field", linksH: "Position and schedule links", ids: "IMO / MMSI",
       lerr: function(e){ return String(e).replace(/[.。]\s*$/, "") + ". Fields not fetched show earlier data."; },
       flagH: "Official dates differ from when this was assessed. Please re-check:",
+      infoH: "Minor official updates (no effect on the delivery outlook)",
       stripNote: function(names, at){ return "Official dates for " + names + " differ from when the assessment was written (" + at + "); please re-check."; },
       discharge: "Discharge: ",
       mapH: "Where the ships are now", mapSub: "From the ships' latest position signals (AIS). Teal is the booked sailing, grey are other ships; the dashed line is the usual Kobe–Keelung route.", chartAria: "Map of ship positions between Kobe and Taiwan", rulerAria: "Kobe departure, arrival and estimated factory date of each sailing against the deadline",
@@ -992,10 +996,12 @@ body{font-size:17px; line-height:1.65}
       (v.twPort ? "<span>" + esc(T("discharge")) + esc(pick(v, "twPort")) + "</span>" : "");
     var legs = "<ol class=\"legs\">" + leg(0, curMode() === "LCL" ? ((v.lcl && v.lcl.cut) || { text: "—" }) : v.cyCut) + leg(1, v.kobeEtd) + leg(2, v.twEta) + leg(3, v.plant, { fit: f }, "plant") + "</ol>";
 
+    var infos = items(lang !== "zh" && filled(v["infos_" + lang]) ? v["infos_" + lang] : v.infos);
     var changes = items(lang !== "zh" && filled(v["changes_" + lang]) ? v["changes_" + lang] : v.changes);
     var assess = "<div class=\"assess\"><h4>" + esc(T("assessH")) + " <span class=\"chip\" data-level=\"" + L + "\">" + esc(T("levels")[L]) + "</span></h4>" +
       bul(pick(alert, "text")) +
-      (changes.length ? "<div class=\"flag\"><strong>" + esc(T("flagH")) + "</strong>" + bul(changes) + "</div>" : "") + "</div>";
+      (changes.length ? "<div class=\"flag\"><strong>" + esc(T("flagH")) + "</strong>" + bul(changes) + "</div>" : "") +
+      (infos.length ? "<details class=\"infoline\"><summary>" + esc(T("infoH")) + "（" + infos.length + "）</summary>" + bul(infos) + "</details>" : "") + "</div>";
 
     var st = liveStatus(live), wh = liveWhere(live), nx = liveNext(live);
     var stale = live.at && (Date.now() - (t(live.at) || 0)) > 24 * 3600e3;
