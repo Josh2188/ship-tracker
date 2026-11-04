@@ -1,0 +1,329 @@
+{
+ "v": 1,
+ "id": "20261104-0943",
+ "takenAt": "2026-11-04T01:43:16.490Z",
+ "kind": "auto",
+ "note": "",
+ "deadline": "2026-11-02",
+ "deadlineTime": "下班前",
+ "holidays": [
+  "2026-10-26"
+ ],
+ "ship": {
+  "name": "YM INCEPTION",
+  "voyage": "251S",
+  "portCalls": [
+   {
+    "port": "基隆",
+    "voyage": "250N",
+    "arr": "2026-10-20T12:15:00+08:00",
+    "berth": null,
+    "dep": "2026-10-21T00:15:00+08:00",
+    "origArr": null,
+    "origDep": null,
+    "north": true,
+    "load": false,
+    "discharge": false,
+    "badge": "fallback",
+    "updated": null
+   },
+   {
+    "port": "東京",
+    "voyage": "250N/251S",
+    "arr": "2026-10-24T16:55:00+09:00",
+    "berth": "2026-10-24T17:33:00+09:00",
+    "dep": "2026-10-25T05:30:00+09:00",
+    "origArr": "2026-10-22",
+    "origDep": "2026-10-22",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "11/04 10:38"
+   },
+   {
+    "port": "名古屋",
+    "voyage": "250N/251S",
+    "arr": "2026-10-26T06:40:00+09:00",
+    "berth": "2026-10-26T07:55:00+09:00",
+    "dep": "2026-10-26T21:40:00+09:00",
+    "origArr": "2026-10-24",
+    "origDep": "2026-10-24",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "11/04 10:38"
+   },
+   {
+    "port": "大阪",
+    "voyage": "250N/251S",
+    "arr": "2026-10-27T12:51:00+09:00",
+    "berth": "2026-10-27T13:34:00+09:00",
+    "dep": "2026-10-27T19:59:00+09:00",
+    "origArr": "2026-10-25",
+    "origDep": "2026-10-25",
+    "north": false,
+    "load": false,
+    "discharge": false,
+    "badge": "live",
+    "updated": "11/04 10:38"
+   },
+   {
+    "port": "神戶",
+    "voyage": "250N/251S",
+    "arr": "2026-10-27T20:30:00+09:00",
+    "berth": "2026-10-27T21:28:00+09:00",
+    "dep": "2026-10-28T13:50:00+09:00",
+    "origArr": "2026-10-25",
+    "origDep": "2026-10-25",
+    "north": false,
+    "load": true,
+    "discharge": false,
+    "badge": "live",
+    "updated": "11/04 10:38"
+   },
+   {
+    "port": "基隆",
+    "voyage": "251S",
+    "arr": "2026-10-30T21:50:00+08:00",
+    "berth": null,
+    "dep": "2026-10-31T06:50:00+08:00",
+    "origArr": null,
+    "origDep": null,
+    "north": false,
+    "load": false,
+    "discharge": true,
+    "badge": "estimated",
+    "updated": null
+   }
+  ],
+  "kobeEtd": {
+   "iso": "2026-10-28T13:50:00+09:00",
+   "badge": "live"
+  },
+  "twEta": {
+   "iso": "2026-10-30T21:50:00+08:00",
+   "badge": "estimated"
+  },
+  "plant": {
+   "from": "2026-11-03",
+   "to": "2026-11-04"
+  },
+  "ais": {
+   "at": "2026-11-04T01:39:42.000Z",
+   "lat": 22.558481666666665,
+   "lon": 120.32022333333333,
+   "sog": 0,
+   "cog": 37.9,
+   "src": "VesselFinder"
+  },
+  "aisErrors": [
+   "AIS-catcher：讀不到船位欄位"
+  ],
+  "liveError": null,
+  "portErrors": [
+   "基隆: This operation was aborted"
+  ]
+ },
+ "ty": {
+  "name": "IN-FA",
+  "nameJa": "インファ",
+  "nameEn": "IN-FA",
+  "now": {
+   "lat": 24.2,
+   "lon": 138.5,
+   "at": "2026-11-04T00:00:00Z"
+  },
+  "jma": {
+   "issued": "2026-11-04T09:45:00+09:00",
+   "badge": "live",
+   "points": [
+    {
+     "hours": 0,
+     "time": "2026-11-04T00:00:00Z",
+     "lat": 24.2,
+     "lon": 138.5,
+     "pressure": "970",
+     "windMs": "35",
+     "course": "北北西",
+     "storm": [
+      {
+       "dir": 90,
+       "km": 130
+      },
+      {
+       "dir": 270,
+       "km": 110
+      }
+     ],
+     "gale": [
+      {
+       "dir": 90,
+       "km": 330
+      },
+      {
+       "dir": 270,
+       "km": 280
+      }
+     ],
+     "intensity": "強い"
+    },
+    {
+     "hours": 12,
+     "time": "2026-11-04T12:00:00Z",
+     "lat": 25.8,
+     "lon": 138.4,
+     "pressure": "970",
+     "windMs": "35",
+     "course": "北",
+     "speedKmh": "15",
+     "radiusKm": 45,
+     "storm": [
+      {
+       "dir": 90,
+       "km": 175
+      },
+      {
+       "dir": 270,
+       "km": 155
+      }
+     ],
+     "intensity": "強い"
+    },
+    {
+     "hours": 24,
+     "time": "2026-11-05T00:00:00Z",
+     "lat": 27.9,
+     "lon": 139.5,
+     "pressure": "975",
+     "windMs": "30",
+     "course": "北北東",
+     "speedKmh": "20",
+     "radiusKm": 65,
+     "storm": [
+      {
+       "dir": 135,
+       "km": 210
+      },
+      {
+       "dir": 315,
+       "km": 175
+      }
+     ],
+     "intensity": "-"
+    },
+    {
+     "hours": 48,
+     "time": "2026-11-06T00:00:00Z",
+     "lat": 37,
+     "lon": 150.4,
+     "pressure": "970",
+     "windMs": "35",
+     "course": "北東",
+     "speedKmh": "60",
+     "radiusKm": 155,
+     "storm": [
+      {
+       "dir": 135,
+       "km": 400
+      },
+      {
+       "dir": 315,
+       "km": 270
+      }
+     ],
+     "intensity": "強い"
+    },
+    {
+     "hours": 72,
+     "time": "2026-11-07T00:00:00Z",
+     "lat": 48.7,
+     "lon": 167.6,
+     "pressure": "968",
+     "windMs": "30",
+     "course": "北東",
+     "speedKmh": "80",
+     "radiusKm": 300,
+     "storm": [
+      {
+       "dir": 135,
+       "km": 570
+      },
+      {
+       "dir": 315,
+       "km": 410
+      }
+     ],
+     "intensity": "-"
+    }
+   ]
+  },
+  "cwa": {
+   "issued": "民國115年11月04日08時",
+   "badge": "live",
+   "points": [
+    {
+     "hours": 0,
+     "time": "2026-11-04T00:00:00.000Z",
+     "lat": 24.3,
+     "lon": 138.5,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 6,
+     "time": "2026-11-04T06:00:00.000Z",
+     "lat": 25,
+     "lon": 138.3,
+     "radiusKm": 30,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 12,
+     "time": "2026-11-04T12:00:00.000Z",
+     "lat": 25.9,
+     "lon": 138.4,
+     "radiusKm": 40,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 18,
+     "time": "2026-11-04T18:00:00.000Z",
+     "lat": 27,
+     "lon": 138.8,
+     "radiusKm": 80,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 24,
+     "time": "2026-11-05T00:00:00.000Z",
+     "lat": 28.2,
+     "lon": 139.7,
+     "radiusKm": 90,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 36,
+     "time": "2026-11-05T12:00:00.000Z",
+     "lat": 32.1,
+     "lon": 143.8,
+     "radiusKm": 120,
+     "galeKm": 180,
+     "stormKm": 60
+    },
+    {
+     "hours": 48,
+     "time": "2026-11-06T00:00:00.000Z",
+     "lat": 39.1,
+     "lon": 151.8,
+     "radiusKm": 190
+    }
+   ]
+  }
+ }
+}
